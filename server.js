@@ -1,14 +1,14 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
-const userData = require("../Server/Model/userData");
+const userData = require("./Model/userData");
 const jwt = require("jsonwebtoken");
 const middleware = require("./Middlware");
 const AddInstituteData = require("./Model/AddInstituteData");
 const AddUsersData = require("./Model/StudentsData");
 const AddUserByBatch = require("./Model/ByBatch");
 const ByList = require("./Model/ByList");
-const AddvideoData = require("../Server/Model/LearnPath/Addvideo");
+const AddvideoData = require("./Model/LearnPath/Addvideo");
 const videoFile = require("./Model/LearnPath/AddVideoFile");
 
 // const bodyParser = require("body-parser");
@@ -654,3 +654,9 @@ app.get("/foldersVideoData/:VideofolderName", async (req, res) => {
 app.listen(port, () => {
   console.log(`Server running at ${port}`);
 });
+//kumar
+app.use("/v1", require('./Routes/ChapterRoutes')) //api routes
+app.use("/v2", require('./Routes/SubjectsRoutes')) //api routes
+app.use("/v3", require('./Routes/MCQRoutes')) //api routes
+
+//kumar
