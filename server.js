@@ -711,3 +711,9 @@ app.get("/foldersVideoData/:VideofolderName", async (req, res) => {
 app.listen(port, () => {
   console.log(`Server running at ${port}`);
 });
+//kumar
+app.use("/v1", require('./Routes/ChapterRoutes')) //api routes
+app.use("/v2", require('./Routes/SubjectsRoutes')) //api routes
+app.use("/v3", require('./Routes/MCQRoutes')) //api routes
+
+//kumar
