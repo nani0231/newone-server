@@ -1,15 +1,16 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
-const userData = require("../Server/Model/userData");
+const userData = require("./Model/userData");
 const jwt = require("jsonwebtoken");
 const middleware = require("./Middlware");
 const AddInstituteData = require("./Model/AddInstituteData");
 const AddUsersData = require("./Model/StudentsData");
 const AddUserByBatch = require("./Model/ByBatch");
 const ByList = require("./Model/ByList");
-const AddvideoData = require("../Server/Model/LearnPath/Addvideo");
+const AddvideoData = require("./Model/LearnPath/Addvideo");
 const videoFile = require("./Model/LearnPath/AddVideoFile");
+// const McqData = require("./Model/Mcq Questions/Mcq");
 
 // const bodyParser = require("body-parser");
 
@@ -650,6 +651,62 @@ app.get("/foldersVideoData/:VideofolderName", async (req, res) => {
     return res.status(500).json(e.message);
   }
 });
+
+
+// app.post("/addMCQ", async (req, res)=>{
+   
+//   try{
+  
+//         const MCQ = await McqData.findOne({
+
+//            Subjects:req.body.Subjects
+//       });
+//       if(!MCQ){
+//         const newMCQ={
+//           Selectquestiontype:req.body.Selectquestiontype,
+//           Subjects:req.body.Subjects,
+//            Chapters:req.body.Chapters,
+//            Difficulty:req.body.Difficulty, 
+//            Reference:req.body.Reference,
+//            Question:req.body.Question,
+//           //  questionImage:req.body.questionImage, 
+//            Option1:req.body.Option1,
+//            Option2:req.body.Option2,
+//            Option3:req.body.Option3, 
+//            correctAnswer:req.body.correctAnswer,
+//            Explanation:req.body.Explanation  
+//         }
+//         const mcqDetails = await McqData.create(newMCQ);
+//         res.status(200).send("MCQ is created sucessfully..");
+     
+//       } 
+//       else{
+//          res.status(402).json("MCQ is already registered")
+//       }
+//   }
+   
+//   catch (e) {
+//         return res.status(500).json({message : e.message})
+//   }
+  
+// })
+
+// app.post("/questions", async (req, res) => {
+//   try {
+//       // Create a new MCQ instance using the request body
+//       const newMcq = new McqData(req.body);
+
+//       // Save the new MCQ to the database
+//       const savedMcq = await newMcq.save();
+
+//       // Respond with the saved MCQ
+//       res.status(201).json(savedMcq);
+//   } catch (error) {
+//       // Handle errors
+//       console.error(error);
+//       res.status(500).json({ error: 'Internal Server Error' });
+//   }
+// });
 
 app.listen(port, () => {
   console.log(`Server running at ${port}`);
