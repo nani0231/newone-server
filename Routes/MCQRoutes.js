@@ -23,16 +23,17 @@ router.post('/addMCQ/:subjectId/:chapterId', async (req, res) => {
       correctAnswer,
       Explanation,
     } = req.body;
-    console.log(req.params,subjectId,chapterId,req.body,"sai")
+    console.log(subjectId,chapterId,req.body,"sai")
     // Find the subject by ID
     const existingSubject = await Subject.findById(subjectId);
-
+    console.log(existingSubject)
     if (!existingSubject) {
       return res.status(404).json({ msg: 'Subject not found', status: 'failed' });
     }
 
     // Find the specific chapter within the subject
     const chapter = existingSubject.chapter.id(chapterId);
+    console.log(chapter)
 
     if (!chapter) {
       return res.status(404).json({ msg: 'Chapter not found', status: 'failed' });
