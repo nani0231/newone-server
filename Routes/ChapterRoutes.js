@@ -1,5 +1,5 @@
 const express = require("express");
-const Subject= require("../Model/Subjects")
+const Subject= require("../Model/Subject")
 const router =  express.Router()
 
 // Create a new chapter (POST)
@@ -8,7 +8,7 @@ router.post('/addchapter/:subjectId', async (req, res) => {
   try {
     const subjectId = req.params.subjectId;
     const { Name, Description, subject, ChapterTag } = req.body;
-    console.log(req.body,"sai")
+
     // Find the existing subject by ID
     const existingSubject = await Subject.findById(subjectId);
 
@@ -77,13 +77,12 @@ router.post('/addchapter/:subjectId', async (req, res) => {
     
  
   // Update a chapter by ID (PUT)
-  //http://localhost:4010/v1/updateChapter/65703407efe6483c89c14829
+  //http://localhost:4010/v1/chapter/65703407efe6483c89c14829
   router.put('/updateChapter/:subjectId/:chapterId', async (req, res) => {
     try {
       const subjectId = req.params.subjectId;
       const chapterId = req.params.chapterId;
       const { Name, Description, subject, ChapterTag } = req.body;
-      console.log(req.body,"sai")
   
       // Find the existing subject by ID
       const existingSubject = await Subject.findById(subjectId);
@@ -108,7 +107,7 @@ router.post('/addchapter/:subjectId', async (req, res) => {
       // Save the updated subject document
       await existingSubject.save();
   
-      return res.status(200).json({ msg: 'Chapter updated successfully', status: 'success', updatedChapter: chapterToUpdate });
+      return res.json({ msg: 'Chapter updated successfully', status: 'success', updatedChapter: chapterToUpdate });
     } catch (error) {
       console.error(error.message);
       return res.status(500).json({ msg: 'Internal Server Error', status: 'failed' });
@@ -118,11 +117,10 @@ router.post('/addchapter/:subjectId', async (req, res) => {
   //delete chapter
  // http://localhost:4010/v1/deleteChapter/65718fc0ac242c99efb6ea4b/65719d18570281262d5d0e31
   router.delete('/deleteChapter/:subjectId/:chapterId', async (req, res) => {
-    
     try {
       const subjectId = req.params.subjectId;
       const chapterId = req.params.chapterId;
-      console.log(subjectId,chapterId,"sai")
+  
       // Find the existing subject by ID
       const existingSubject = await Subject.findById(subjectId);
   
