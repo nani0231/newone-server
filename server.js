@@ -1,6 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
+const Subject =require('./Model/Subject')
 const userData = require("./Model/userData");
 const jwt = require("jsonwebtoken");
 const middleware = require("./Middlware");
@@ -10,7 +11,7 @@ const AddUserByBatch = require("./Model/ByBatch");
 const ByList = require("./Model/ByList");
 const AddvideoData = require("./Model/LearnPath/Addvideo");
 const videoFile = require("./Model/LearnPath/AddVideoFile");
-
+const paragMCQRouter = require('./Routes/ParagRoutes');
 // const bodyParser = require("body-parser");
 
 const app = express();
@@ -656,7 +657,12 @@ app.listen(port, () => {
 });
 //kumar
 app.use("/v1", require('./Routes/ChapterRoutes')) //api routes
-app.use("/v2", require('./Routes/SubjectsRoutes')) //api routes
-app.use("/v3", require('./Routes/MCQRoutes')) //api routes
+app.use('/v1',  require('./Routes/MCQRoutes'));
+app.use("/v1", require('./Routes/SubjectsRoutes')) 
+app.use('/v2',paragMCQRouter)
+
+//app.use("/v2", require('./Routes/SubjectsRoutes')) //api routes
+//app.use('/v1',  require('./Routes/MCQRoutes'));
+// app.use('v3', require("./Routes/ChapterRoutes"))
 
 //kumar

@@ -1,20 +1,29 @@
 const express = require("express");
-const Subject = require('../Model/Subjects');
+const Subject = require("../Model/Subject")
 const router =  express.Router()
 // Create a subject
 //http://localhost:4010/v2/subject
-router.post('/subject', async (req, res) => {
-    try {
-      const newSubject = new Subject(req.body);
-      await newSubject.save();
-      //res.status(201).json(newSubject);
-      return res.status(201).json({message:" create subjects Success"})
-    //   return res.json(await Subject.find())
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: 'Server Error' });
-    }
-  });
+router.post('/subjects', async (req, res) => {
+  try {
+    const { name, Description, subjectTag, chapter } = req.body;
+
+    // Create a new subject
+    const newSubject = new Subject({
+      name,
+      Description,
+      subjectTag,
+      chapter: chapter || [], // Initialize chapter as an empty array if not provided
+    });
+
+    // Save the new subject to the database
+    await newSubject.save();
+
+    res.status(201).json({ message: 'Subject added successfully', subject: newSubject });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
   // Get all subjects
   http://localhost:4010/v2/subjects
 router.get('/subjects', async (req, res) => {
@@ -28,72 +37,54 @@ router.get('/subjects', async (req, res) => {
     }
   });
   // Update a subject
-  //http://localhost:4010/v2/subject/65703804dcc1f80c4441e4be
-  router.put('/subject/:id', async (req, res) => {
-    const { id } = req.params; 
-    const { name, description, subjectTag } = req.body; 
-  
+  //http://localhost:4010/v2/subjects/6571acacb1836e0d95e23760
+  router.put('/subjects/:subjectId', async (req, res) => {
     try {
-      // Find the subject by ID and update its fields
-      const updatedSubject = await Subject.findOneAndUpdate(
-        { _id: id },
-        { name, description, subjectTag },
-        { new: true } 
-      );
+      const { name, Description, subjectTag } = req.body;
+      const subjectId = req.params.subjectId;
   
-      if (!updatedSubject) {
-        return res.status(404).json({ message: 'Subject not found' });
+      // Find the subject by ID
+      const subject = await Subject.findById(subjectId);
+  
+      if (!subject) {
+        return res.status(404).json({ error: 'Subject not found' });
       }
   
-      // Respond with the updated subject
-      return res.status(200).json(updatedSubject);
+      // Update the subject properties
+      subject.name = name;
+      subject.Description = Description;
+      subject.subjectTag = subjectTag;
+  
+      // Save the updated subject
+      await subject.save();
+  
+      res.json({ msg: 'Subject updated successfully', status: 'success' });
     } catch (error) {
-      // Handle errors
-      return res.status(500).json({ message: 'Internal server error' });
+      console.error(error);
+      res.status(500).json({ error: 'Internal Server Error', status: 'failed' });
     }
   });
-  
-  module.exports = router;
 //Delete a subject
 //http://localhost:4010/v2/subjet/657039965dd4899d304ac058
-router.delete("/subjet/:id", async (req, res) => {
+router.delete('/subjects/:subjectId', async (req, res) => {
   try {
-    const id = req.params.id;
-    console.log(id);
+    const subjectId = req.params.subjectId;
 
-    const result = await Subject.deleteOne({ _id: id });
+    // Use deleteOne to remove the subject and its associated data by subject ID
+    const result = await Subject.deleteOne({ _id: subjectId });
 
-    if (result.deletedCount === 1) {
-      res.send({ success: true, message: "Data deleted successfully", data: result });
-    } else {
-      res.status(404).send({ success: false, message: "Subject not found" });
+    if (result.deletedCount === 0) {
+      return res.status(404).json({ error: 'Subject not found' });
     }
+
+    return res.json({ message: 'Subject and associated data deleted successfully' });
   } catch (error) {
     console.error(error);
-    res.status(500).send({ success: false, message: "Error deleting subject", error: error.message });
+    return res.status(500).json({ error: 'Internal Server Error' });
   }
 });
 
 
 
-
-//fileter names
-//http://localhost:4010/v2//filter?name=Mathematics
-router.get('/filter', async (req, res) => {
-    try {
-      const { name } = req.query;
-      let filter = {};
-  
-      if (name) {
-        filter.name = { $regex: new RegExp(name, 'i') }; // Case-insensitive regex search
-      }
-  
-      const subjects = await Subject.find(filter);
-      res.status(200).json(subjects);
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: 'Server Error' });
-    }
-  });
 //kumar
   module.exports= router
