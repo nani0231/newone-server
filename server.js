@@ -11,7 +11,7 @@ const ByList = require("./Model/ByList");
 const AddvideoData = require("./Model/LearnPath/Addvideo");
 const videoFile = require("./Model/LearnPath/AddVideoFile");
 // const allLearningPaths = require("./Model/LearnPath/");
-const paragMCQRouter = require('./Routes/ParagRoutes');
+const paragMCQRouter = require("./Routes/ParagRoutes");
 
 // const bodyParser = require("body-parser");
 
@@ -22,8 +22,6 @@ const mogoURL =
   "mongodb+srv://badasiva22:Siva991276@cluster0.iis7lrd.mongodb.net/perfex-stack-project?retryWrites=true&w=majority";
 app.use(express.json());
 app.use(cors({ origin: "*" }));
-// app.use(bodyParser.json());
-
 //initalizing mongodb to node
 mongoose
   .connect(mogoURL, {
@@ -148,7 +146,7 @@ app.post("/AddInstitute", async (req, res) => {
 
 //update
 
-app.put("/UpdateInstitute/:id", async (req, res) => {
+app.put("/UpdateInstitute/:id", middleware, async (req, res) => {
   try {
     const { id } = req.params;
     const user = await AddInstituteData.findByIdAndUpdate(id, req.body);
@@ -165,7 +163,7 @@ app.put("/UpdateInstitute/:id", async (req, res) => {
 });
 
 //delete
-app.delete("/deleteInstitute/:id", async (req, res) => {
+app.delete("/deleteInstitute/:id", middleware, async (req, res) => {
   try {
     const id = req.params.id; // Use req.params.id to get the instituteId
     const deletedInstitute = await AddInstituteData.findByIdAndRemove(id);
@@ -1109,8 +1107,7 @@ app.get(
         .status(500)
         .json({ msg: "Internal Server Error", status: "failed" });
 
-      // siva
-      // siva
+       
     }
   }
 );
@@ -1131,7 +1128,7 @@ app.delete("/onselectedLearningPath/:_id", middleware, async (req, res) => {
 
     return res.status(200).json("Deleted Successfully");
   } catch (error) {
-    console.error(error, "/onselectedLearningPath/:_id");
+    console.error(error, "/onselectedLearningPath");
     return res.status(500).json("Internal Server Error");
   }
 });
@@ -1176,10 +1173,7 @@ app.delete(
         status: "success",
       });
     } catch (e) {
-      console.error(
-        e.message,
-        "/onselectedTopicinLearningPath/:learningPathId/:topicId"
-      );
+      console.error(e.message, "/onselectedTopicinLearningPath");
       return res
         .status(500)
         .json({ msg: "Internal Server Error", status: "failed" });
@@ -1237,10 +1231,7 @@ app.delete(
         .status(200)
         .json({ msg: "Content deleted successfully", status: "success" });
     } catch (e) {
-      console.error(
-        e.message,
-        "/onselectedContentinTopicinLearningPath/:learningPathId/:topicId/:contentId"
-      );
+      console.error(e.message, "/onselectedContentinTopicinLearningPat");
       return res
         .status(500)
         .json({ msg: "Internal Server Error", status: "failed" });
@@ -1252,9 +1243,8 @@ app.listen(port, () => {
   console.log(`Server running at ${port}`);
 });
 
-
-app.use("/v1", require('./Routes/ChapterRoutes')) //api routes
-app.use('/v1',  require('./Routes/MCQRoutes'));
-app.use("/v2", require('./Routes/SubjectsRoutes')) 
-app.use('/v2',paragMCQRouter)
-app.use('/v4',require('./Routes/CodeingBasic'))
+app.use("/v1", require("./Routes/ChapterRoutes")); //api routes
+app.use("/v1", require("./Routes/MCQRoutes"));
+app.use("/v2", require("./Routes/SubjectsRoutes"));
+app.use("/v2", paragMCQRouter);
+app.use("/v4", require("./Routes/CodeingBasic"));
