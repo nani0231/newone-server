@@ -23,6 +23,7 @@ Content-Type: application/json
 ###
 POST http://localhost:4010/AddInstitute
 Content-Type: application/json
+token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiNjUyZDE1NGRlNWNkYmUzZTg5OTEyMGY0IiwiaWF0IjoxNzAxOTI0MTk5LCJleHAiOjE3Mzc5MjQxOTl9.semyUk4s9aloSeCln9TsnthOfDgi_3wXvMxPGf1zsvU"
 
 {
      
@@ -43,10 +44,13 @@ Content-Type: application/json
 }
 ###
 GET http://localhost:4010/allAddInstitutes
+token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiNjUyZDE1NGRlNWNkYmUzZTg5OTEyMGY0IiwiaWF0IjoxNzAxOTI0MTk5LCJleHAiOjE3Mzc5MjQxOTl9.semyUk4s9aloSeCln9TsnthOfDgi_3wXvMxPGf1zsvU"
+ 
 
 ###
 PUT http://localhost:4010/UpdateInstitute/654b2e12dc639a0f228d0af9
 Content-Type: application/json
+token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiNjUyZDE1NGRlNWNkYmUzZTg5OTEyMGY0IiwiaWF0IjoxNzAxOTI0MTk5LCJleHAiOjE3Mzc5MjQxOTl9.semyUk4s9aloSeCln9TsnthOfDgi_3wXvMxPGf1zsvU"
  
  {
     "InstituteName": "Ramya",
@@ -64,17 +68,20 @@ Content-Type: application/json
     "AxiosPlans": "Mock Interview",
     "Password": "Ramya@1234"
  }
- 
 ###
 DELETE http://localhost:4010/deleteInstitute/652f7fe1e5bbc63a72e0c434
+token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiNjUyZDE1NGRlNWNkYmUzZTg5OTEyMGY0IiwiaWF0IjoxNzAxOTI0MTk5LCJleHAiOjE3Mzc5MjQxOTl9.semyUk4s9aloSeCln9TsnthOfDgi_3wXvMxPGf1zsvU"
 
 ###
 GET http://localhost:4010/individualInstitute/654231e2988003b306627265
+token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiNjUyZDE1NGRlNWNkYmUzZTg5OTEyMGY0IiwiaWF0IjoxNzAxOTI0MTk5LCJleHAiOjE3Mzc5MjQxOTl9.semyUk4s9aloSeCln9TsnthOfDgi_3wXvMxPGf1zsvU"
 ###
 GET http://localhost:4010/individualInstituteNames/Corporate-Office
+token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiNjUyZDE1NGRlNWNkYmUzZTg5OTEyMGY0IiwiaWF0IjoxNzAxOTI0MTk5LCJleHAiOjE3Mzc5MjQxOTl9.semyUk4s9aloSeCln9TsnthOfDgi_3wXvMxPGf1zsvU"
 ###
 POST http://localhost:4010/AddUsers
 Content-Type: application/json
+token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiNjUyZDE1NGRlNWNkYmUzZTg5OTEyMGY0IiwiaWF0IjoxNzAxOTI0MTk5LCJleHAiOjE3Mzc5MjQxOTl9.semyUk4s9aloSeCln9TsnthOfDgi_3wXvMxPGf1zsvU"
 
 { 
     "Regdid": "854DR7458",
@@ -101,12 +108,15 @@ Content-Type: application/json
 }
 ###
 GET http://localhost:4010/allUsersData
+token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiNjUyZDE1NGRlNWNkYmUzZTg5OTEyMGY0IiwiaWF0IjoxNzAxOTI0MTk5LCJleHAiOjE3Mzc5MjQxOTl9.semyUk4s9aloSeCln9TsnthOfDgi_3wXvMxPGf1zsvU"
 ###
 GET http://localhost:4010/individualUser/65423234988003b30662726d
+token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiNjUyZDE1NGRlNWNkYmUzZTg5OTEyMGY0IiwiaWF0IjoxNzAxOTI0MTk5LCJleHAiOjE3Mzc5MjQxOTl9.semyUk4s9aloSeCln9TsnthOfDgi_3wXvMxPGf1zsvU"
 
 ###
 POST http://localhost:4010/ByBatchData
 Content-Type: application/json
+token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiNjUyZDE1NGRlNWNkYmUzZTg5OTEyMGY0IiwiaWF0IjoxNzAxOTI0MTk5LCJleHAiOjE3Mzc5MjQxOTl9.semyUk4s9aloSeCln9TsnthOfDgi_3wXvMxPGf1zsvU"
 
 { 
     
@@ -119,6 +129,7 @@ Content-Type: application/json
 ###
 POST http://localhost:4010/ByListData
 Content-Type: application/json
+token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiNjUyZDE1NGRlNWNkYmUzZTg5OTEyMGY0IiwiaWF0IjoxNzAxOTI0MTk5LCJleHAiOjE3Mzc5MjQxOTl9.semyUk4s9aloSeCln9TsnthOfDgi_3wXvMxPGf1zsvU"
 
 { 
     
@@ -131,6 +142,7 @@ Content-Type: application/json
 ###
 PUT http://localhost:4010/ByBatchData/Corporate-Office
 Content-Type: application/json
+token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiNjUyZDE1NGRlNWNkYmUzZTg5OTEyMGY0IiwiaWF0IjoxNzAxOTI0MTk5LCJleHAiOjE3Mzc5MjQxOTl9.semyUk4s9aloSeCln9TsnthOfDgi_3wXvMxPGf1zsvU"
 
 {
 
@@ -143,6 +155,7 @@ Content-Type: application/json
 ###
 PUT http://localhost:4010/ByListData/Corporate-Office
 Content-Type: application/json
+token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiNjUyZDE1NGRlNWNkYmUzZTg5OTEyMGY0IiwiaWF0IjoxNzAxOTI0MTk5LCJleHAiOjE3Mzc5MjQxOTl9.semyUk4s9aloSeCln9TsnthOfDgi_3wXvMxPGf1zsvU"
 
 {
 
@@ -153,12 +166,14 @@ Content-Type: application/json
 ###
  
 GET http://localhost:4010/InstituteData123/Corporate-Office
+token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiNjUyZDE1NGRlNWNkYmUzZTg5OTEyMGY0IiwiaWF0IjoxNzAxOTI0MTk5LCJleHAiOjE3Mzc5MjQxOTl9.semyUk4s9aloSeCln9TsnthOfDgi_3wXvMxPGf1zsvU"
 
 
 //Learn Path Data 
 ###
 POST http://localhost:4010/AddVideoPath
 Content-Type: application/json
+token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiNjUyZDE1NGRlNWNkYmUzZTg5OTEyMGY0IiwiaWF0IjoxNzAxOTI0MTk5LCJleHAiOjE3Mzc5MjQxOTl9.semyUk4s9aloSeCln9TsnthOfDgi_3wXvMxPGf1zsvU"
 
 {
      
@@ -167,9 +182,11 @@ Content-Type: application/json
 }
 ###
 GET http://localhost:4010/allAddVideosData
+token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiNjUyZDE1NGRlNWNkYmUzZTg5OTEyMGY0IiwiaWF0IjoxNzAxOTI0MTk5LCJleHAiOjE3Mzc5MjQxOTl9.semyUk4s9aloSeCln9TsnthOfDgi_3wXvMxPGf1zsvU"
 ###
 PUT http://localhost:4010/UpdateVideosDetails/655c3eaa8080305e35b2acca
 Content-Type: application/json
+token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiNjUyZDE1NGRlNWNkYmUzZTg5OTEyMGY0IiwiaWF0IjoxNzAxOTI0MTk5LCJleHAiOjE3Mzc5MjQxOTl9.semyUk4s9aloSeCln9TsnthOfDgi_3wXvMxPGf1zsvU"
  
  {
     "VideofolderName": "Codding"
@@ -178,14 +195,17 @@ Content-Type: application/json
 
 ###
 GET http://localhost:4010/DisplayIndividualVideo/655c36a4442a34cc532789f8
+token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiNjUyZDE1NGRlNWNkYmUzZTg5OTEyMGY0IiwiaWF0IjoxNzAxOTI0MTk5LCJleHAiOjE3Mzc5MjQxOTl9.semyUk4s9aloSeCln9TsnthOfDgi_3wXvMxPGf1zsvU"
 ###
 DELETE http://localhost:4010/deleteVideo/655c3eaa8080305e35b2acca
+token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiNjUyZDE1NGRlNWNkYmUzZTg5OTEyMGY0IiwiaWF0IjoxNzAxOTI0MTk5LCJleHAiOjE3Mzc5MjQxOTl9.semyUk4s9aloSeCln9TsnthOfDgi_3wXvMxPGf1zsvU"
 ###
 
 
 
 POST http://localhost:4010/AddVideoFilesData
 Content-Type: application/json
+token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiNjUyZDE1NGRlNWNkYmUzZTg5OTEyMGY0IiwiaWF0IjoxNzAxOTI0MTk5LCJleHAiOjE3Mzc5MjQxOTl9.semyUk4s9aloSeCln9TsnthOfDgi_3wXvMxPGf1zsvU"
  
  {
 
@@ -196,13 +216,150 @@ Content-Type: application/json
 }
 ###
 GET http://localhost:4010/DisplayAllVideos
+token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiNjUyZDE1NGRlNWNkYmUzZTg5OTEyMGY0IiwiaWF0IjoxNzAxOTI0MTk5LCJleHAiOjE3Mzc5MjQxOTl9.semyUk4s9aloSeCln9TsnthOfDgi_3wXvMxPGf1zsvU"
 ###
 GET http://localhost:4010/foldersVideoData/React-Js
+token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiNjUyZDE1NGRlNWNkYmUzZTg5OTEyMGY0IiwiaWF0IjoxNzAxOTI0MTk5LCJleHAiOjE3Mzc5MjQxOTl9.semyUk4s9aloSeCln9TsnthOfDgi_3wXvMxPGf1zsvU"
+
+# Learn-Path
+###
+
+POST http://localhost:4010/addlearningpath
+Content-Type: application/json
+token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiNjUyZDE1NGRlNWNkYmUzZTg5OTEyMGY0IiwiaWF0IjoxNzAxOTI0MTk5LCJleHAiOjE3Mzc5MjQxOTl9.semyUk4s9aloSeCln9TsnthOfDgi_3wXvMxPGf1zsvU"
+ 
+ 
+
+{
+    "learningPathTitle":"ReactJS",
+    "relevantSkillTags": "Web Development",
+    "coverLetter":"React Introduction",
+    "difficultyLevel":"Easy",
+    "subscription":"Free",
+    "price":"0",
+    "discount":"0",
+    "AboutLearnPath":"ReactJs Intro",
+    "authorName": "Prakash",
+    "hours":"0",
+    "minutes":"30",
+    "learningimg":"https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.freecodecamp.org%2Fnews%2Freact-js-for-beginners-props-state-explained%2F&psig=AOvVaw1veEzxuEouaxuVoIWycseZ&ust=1700582301207000&source=images&cd=vfe&ved=0CBIQjRxqFwoTCODxiPL40oIDFQAAAAAdAAAAABAE",
+    "fileName":"ReactJs Introduction",
+    "requirements":"laptop need nodeJs installation"
+    
+}
+###
+GET http://localhost:4010/alllearningpathsDetails
+token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiNjUyZDE1NGRlNWNkYmUzZTg5OTEyMGY0IiwiaWF0IjoxNzAxOTI0MTk5LCJleHAiOjE3Mzc5MjQxOTl9.semyUk4s9aloSeCln9TsnthOfDgi_3wXvMxPGf1zsvU"
+
+# Update Data
+###
+PUT  http://localhost:4010/updatelearningpath/6564207d843d3ca5f6f22ca3
+Content-Type: application/json
+token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiNjUyZDE1NGRlNWNkYmUzZTg5OTEyMGY0IiwiaWF0IjoxNzAxOTI0MTk5LCJleHAiOjE3Mzc5MjQxOTl9.semyUk4s9aloSeCln9TsnthOfDgi_3wXvMxPGf1zsvU"
+ 
+
+{
+    "learningPathTitle":"ReactJs",
+    "relevantSkillTags": "Web Development",
+    "coverLetter":"React Introduction",
+    "difficultyLevel":"Easy",
+    "subscription":"Free",
+    "price":"0",
+    "discount":"0",
+    "AboutLearnPath":"ReactJs Intro",
+    "authorName": "Prakash",
+    "hours":"0",
+    "minutes":"30",
+    "learningimg":"https://res.cloudinary.com/dzvqo0oeu/image/upload/v1701064850/image_ywmakw.jpg",
+    "fileName":"ReactJs Introduction",
+    "requirements":"laptop need nodeJs installation"
+    
+}
+###
+POST  http://localhost:4010/addTopic/6565774065db3ec8aa743c80
+Content-Type: application/json
+token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiNjUyZDE1NGRlNWNkYmUzZTg5OTEyMGY0IiwiaWF0IjoxNzAxOTI0MTk5LCJleHAiOjE3Mzc5MjQxOTl9.semyUk4s9aloSeCln9TsnthOfDgi_3wXvMxPGf1zsvU"
+
+
+{
+   "_id" :"6565774065db3ec8aa743c80",
+   "topicName":"Java",
+   "description":"Reactjs introduction part",
+   "publish":"now"
+}
+###
+GET http://localhost:4010/getTopic/6564784671dfaa7aad2d1eb9
+token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiNjUyZDE1NGRlNWNkYmUzZTg5OTEyMGY0IiwiaWF0IjoxNzAxOTI0MTk5LCJleHAiOjE3Mzc5MjQxOTl9.semyUk4s9aloSeCln9TsnthOfDgi_3wXvMxPGf1zsvU"
+
+###
+GET http://localhost:4010/getTopic/6564784671dfaa7aad2d1eb9/6565b4755572b4e4029ea26b
+token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiNjUyZDE1NGRlNWNkYmUzZTg5OTEyMGY0IiwiaWF0IjoxNzAxOTI0MTk5LCJleHAiOjE3Mzc5MjQxOTl9.semyUk4s9aloSeCln9TsnthOfDgi_3wXvMxPGf1zsvU"
+###
+PUT http://localhost:4010/updateTopic/6564784671dfaa7aad2d1eb9/6565b4755572b4e4029ea26b
+Content-Type: application/json
+token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiNjUyZDE1NGRlNWNkYmUzZTg5OTEyMGY0IiwiaWF0IjoxNzAxOTI0MTk5LCJleHAiOjE3Mzc5MjQxOTl9.semyUk4s9aloSeCln9TsnthOfDgi_3wXvMxPGf1zsvU"
+ 
+{
+   "_id" :"6564784671dfaa7aad2d1eb9",
+   "topicName":"Node",
+   "description":"Nodejs introduction part",
+   "publish":"now"
+}
+###
+POST http://localhost:4010/addContentOfTopicsinlearningpath/6564784671dfaa7aad2d1eb9
+Content-Type: application/json
+token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiNjUyZDE1NGRlNWNkYmUzZTg5OTEyMGY0IiwiaWF0IjoxNzAxOTI0MTk5LCJleHAiOjE3Mzc5MjQxOTl9.semyUk4s9aloSeCln9TsnthOfDgi_3wXvMxPGf1zsvU"
+
+
+{
+    "_id":"6564784671dfaa7aad2d1eb9",
+    "topicName":"React Js",
+    "contentTitle" :"intro",
+    "contentdes" : " Installation part description",
+    "contentimg" : "https://res.cloudinary.com/dzvqo0oeu/image/upload/v1701064850/image_ywmakw.jpg",
+    "publish" : "now"
+}
+###
+GET http://localhost:4010/getContentPath/6564784671dfaa7aad2d1eb9
+token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiNjUyZDE1NGRlNWNkYmUzZTg5OTEyMGY0IiwiaWF0IjoxNzAxOTI0MTk5LCJleHAiOjE3Mzc5MjQxOTl9.semyUk4s9aloSeCln9TsnthOfDgi_3wXvMxPGf1zsvU"
+###
+PUT http://localhost:4010/updateContent/6564207d843d3ca5f6f22ca3/6564271a44b92fe9c7709f9e/6564207d843d3ca5f6f22ca3
+Content-Type: application/json
+token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiNjUyZDE1NGRlNWNkYmUzZTg5OTEyMGY0IiwiaWF0IjoxNzAxOTI0MTk5LCJleHAiOjE3Mzc5MjQxOTl9.semyUk4s9aloSeCln9TsnthOfDgi_3wXvMxPGf1zsvU"
+
+
+{
+    "_id":"6564207d843d3ca5f6f22ca3",
+    "topicName":"React Js",
+    "contentTitle" :"NodeJs installation part",
+    "contentdes" : "React Installation part description",
+    "contentimg" : "https://res.cloudinary.com/dzvqo0oeu/image/upload/v1701064850/image_ywmakw.jpg",
+    "publish" : "now"
+}
+
+###
+GET http://localhost:4010/onselectedContentinTopicinLearningPath/6564784671dfaa7aad2d1eb9/6565b4df5572b4e4029ea287
+token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiNjUyZDE1NGRlNWNkYmUzZTg5OTEyMGY0IiwiaWF0IjoxNzAxOTI0MTk5LCJleHAiOjE3Mzc5MjQxOTl9.semyUk4s9aloSeCln9TsnthOfDgi_3wXvMxPGf1zsvU"
+###
+DELETE http://localhost:4010/onselectedLearningPath/656576b265db3ec8aa743c70
+token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiNjUyZDE1NGRlNWNkYmUzZTg5OTEyMGY0IiwiaWF0IjoxNzAxOTI0MTk5LCJleHAiOjE3Mzc5MjQxOTl9.semyUk4s9aloSeCln9TsnthOfDgi_3wXvMxPGf1zsvU"
+###
+
+
+###
+DELETE http://localhost:4010/onselectedContentinTopicinLearningPath/6564207d843d3ca5f6f22ca3/656437786a1f649580da456a/6564207d843d3ca5f6f22ca3
+token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiNjUyZDE1NGRlNWNkYmUzZTg5OTEyMGY0IiwiaWF0IjoxNzAxOTI0MTk5LCJleHAiOjE3Mzc5MjQxOTl9.semyUk4s9aloSeCln9TsnthOfDgi_3wXvMxPGf1zsvU"
+
+###
+DELETE http://localhost:4010/onselectedTopicinLearningPath/6564784671dfaa7aad2d1eb9/6565b4755572b4e4029ea26b
+token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiNjUyZDE1NGRlNWNkYmUzZTg5OTEyMGY0IiwiaWF0IjoxNzAxOTI0MTk5LCJleHAiOjE3Mzc5MjQxOTl9.semyUk4s9aloSeCln9TsnthOfDgi_3wXvMxPGf1zsvU"
 
 
 
 
-//siva
+
+
+
 
 
 
