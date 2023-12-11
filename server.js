@@ -657,7 +657,7 @@ app.listen(port, () => {
 //kumar
 app.use("/v1", require('./Routes/ChapterRoutes')) //api routes
 app.use('/v1',  require('./Routes/MCQRoutes'));
-app.use("/v1", require('./Routes/SubjectsRoutes')) 
+app.use("/v2", require('./Routes/SubjectsRoutes')) 
 app.use('/v2',paragMCQRouter)
 app.use('/v4',require('./Routes/CodeingBasic'))
 
