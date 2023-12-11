@@ -3,7 +3,7 @@ const Subject = require('../Model/Subjects');
 const router =  express.Router()
 // Create a subject
 //http://localhost:4010/v2/subject
-router.post('/subjects', async (req, res) => {
+router.post('/subject', async (req, res) => {
     try {
       console.log(req.body,"sai")
       const newSubject = new Subject(req.body);
