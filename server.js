@@ -10,6 +10,8 @@ const AddUserByBatch = require("./Model/ByBatch");
 const ByList = require("./Model/ByList");
 const AddvideoData = require("./Model/LearnPath/Addvideo");
 const videoFile = require("./Model/LearnPath/AddVideoFile");
+// const paragMCQRouter = require("./Routes/ParagRoutes");
+
 // const McqData = require("./Model/Mcq Questions/Mcq");
 
 // const bodyParser = require("body-parser");
@@ -173,42 +175,6 @@ app.delete("/deleteInstitute/:id", async (req, res) => {
   }
 });
 
-// app.delete("/deleteInstitute/:id", async (req, res) => {
-//   try {
-//     const id = req.params.id;
-
-//     if (!mongoose.Types.ObjectId.isValid(id)) {
-//       return res.status(400).json("Invalid ID");
-//     }
-
-//     const deletedInstitute = await AddInstituteData.findByIdAndRemove(id);
-
-//     if (deletedInstitute) {
-//       return res.status(200).json("Institute deleted successfully");
-//     } else {
-//       return res.status(404).json("Institute not found");
-//     }
-//   } catch (e) {
-//     console.error(e.message);
-//     return res.status(500).json(e.message);
-//   }
-// });
-
-// app.put("/update",async(req, res) => {
-//   console.log(req.body);
-
-//   const { id , ...rest} = req.body;
-//   console.log(rest);
-//   await AddInstituteData.updateOne({_id : req.body.id}, rest)
-//   res.send({success : true, message : "update success"})
-// })
-//siva
-//siva
-//siva
-//siva
-//siva
-//siva
-//siva
 
 app.get("/allAddInstitutes", async (req, res) => {
   const allInstitutes = await AddInstituteData.find({});
@@ -289,34 +255,7 @@ app.post("/AddUsers", async (req, res) => {
   }
 });
 
-//login Data
-// app.post("/UserDetailslogin", async (req, res) => {
-//   const { userEmail, Password } = req.body;
-//   try {
-//     const user = await AddUsersData.findOne({ userEmail });
-//     if (!user) {
-//       return res.status(401).json({ message: "Email not found" });
-//     }
-//     if (Password !== user.Password) {
-//       return res.status(401).json({ message: "Incorrect password" });
-//     }
-//     const payload = {
-//       user: user.id,
-//     };
-//     jwt.sign(payload, "jwtpassword", { expiresIn: 36000000 }, (err, token) => {
-//       if (err) {
-//         throw err;
-//       }
 
-//       res.json({ token });
-//     });
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({
-//       message: "An error occurred on the server. Please try again later.",
-//     });
-//   }
-// });
 app.post("/UserDetailslogin", async (req, res) => {
   const { userEmail, Password } = req.body;
 
@@ -653,67 +592,17 @@ app.get("/foldersVideoData/:VideofolderName", async (req, res) => {
 });
 
 
-// app.post("/addMCQ", async (req, res)=>{
-   
-//   try{
-  
-//         const MCQ = await McqData.findOne({
-
-//            Subjects:req.body.Subjects
-//       });
-//       if(!MCQ){
-//         const newMCQ={
-//           Selectquestiontype:req.body.Selectquestiontype,
-//           Subjects:req.body.Subjects,
-//            Chapters:req.body.Chapters,
-//            Difficulty:req.body.Difficulty, 
-//            Reference:req.body.Reference,
-//            Question:req.body.Question,
-//           //  questionImage:req.body.questionImage, 
-//            Option1:req.body.Option1,
-//            Option2:req.body.Option2,
-//            Option3:req.body.Option3, 
-//            correctAnswer:req.body.correctAnswer,
-//            Explanation:req.body.Explanation  
-//         }
-//         const mcqDetails = await McqData.create(newMCQ);
-//         res.status(200).send("MCQ is created sucessfully..");
-     
-//       } 
-//       else{
-//          res.status(402).json("MCQ is already registered")
-//       }
-//   }
-   
-//   catch (e) {
-//         return res.status(500).json({message : e.message})
-//   }
-  
-// })
-
-// app.post("/questions", async (req, res) => {
-//   try {
-//       // Create a new MCQ instance using the request body
-//       const newMcq = new McqData(req.body);
-
-//       // Save the new MCQ to the database
-//       const savedMcq = await newMcq.save();
-
-//       // Respond with the saved MCQ
-//       res.status(201).json(savedMcq);
-//   } catch (error) {
-//       // Handle errors
-//       console.error(error);
-//       res.status(500).json({ error: 'Internal Server Error' });
-//   }
-// });
+// app.use("/assignedQB",require("./Routes/assignedQBRoutes"));
 
 app.listen(port, () => {
   console.log(`Server running at ${port}`);
 });
 //kumar
-app.use("/v1", require('./Routes/ChapterRoutes')) //api routes
-app.use("/v2", require('./Routes/SubjectsRoutes')) //api routes
-app.use("/v3", require('./Routes/MCQRoutes')) //api routes
 
-//kumar
+app.use("/v1", require("./Routes/ChapterRoutes")); //api routes
+// app.use("/v1", require("./Routes/MCQRoutes"));
+// app.use("/v2", require("./Routes/SubjectsRoutes"));
+// app.use("/v2", paragMCQRouter);
+// app.use("/v4", require("./Routes/CodeingBasic"));
+
+app.use("/assignedQB",require("./Routes/assignedQBRoutes"));
