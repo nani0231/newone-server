@@ -5,7 +5,6 @@ const router =  express.Router()
 //http://localhost:4010/v2/subject
 router.post('/subject', async (req, res) => {
     try {
-      console.log(req.body,"sai")
       const newSubject = new Subject(req.body);
       await newSubject.save();
       //res.status(201).json(newSubject);
@@ -20,7 +19,6 @@ router.post('/subject', async (req, res) => {
   http://localhost:4010/v2/subjects
 router.get('/subjects', async (req, res) => {
     try {
-      console.log(req.body,"sai")
       const subjects = await Subject.find();
       res.json(subjects);
 
@@ -34,7 +32,6 @@ router.get('/subjects', async (req, res) => {
   router.put('/subject/:id', async (req, res) => {
     const { id } = req.params; 
     const { name, description, subjectTag } = req.body; 
-    console.log(id,req.body,"sai")
     try {
       // Find the subject by ID and update its fields
       const updatedSubject = await Subject.findOneAndUpdate(
@@ -61,7 +58,6 @@ router.get('/subjects', async (req, res) => {
 router.delete("/subjet/:id", async (req, res) => {
   try {
     const id = req.params.id;
-    console.log(id);
 
     const result = await Subject.deleteOne({ _id: id });
 

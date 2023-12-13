@@ -155,7 +155,6 @@ router.put('/updateMCQ/:subjectId/:chapterId/:mcqId', async (req, res) => {
       correctAnswer,
       Explanation,
     } = req.body;
-    console.log(req.body,req.params,"sai")
     // Find the subject by ID
     const existingSubject = await Subject.findById(subjectId);
 
