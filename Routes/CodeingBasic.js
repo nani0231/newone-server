@@ -52,7 +52,7 @@ router.post('/addbasic/:subjectId/:chapterId', async (req, res) => {
   
       return res.json({ msg: 'Coding Basic added successfully', status: 'success' });
     } catch (error) {
-      console.error(error.message);
+      console.error(error.message,'postcodingBasic');
       return res.status(500).json({ msg: 'Internal Server Error', status: 'failed' });
     }
   });
@@ -106,7 +106,7 @@ router.put('/:subjectId/chapters/:chapterId/codingbasic/:codingbasicId', async (
   
       return res.json({ msg: 'Coding Basic updated successfully', status: 'success' });
     } catch (error) {
-      console.error(error.message,);
+      console.error(error.message,'updatecodingbasicId');
       return res.status(500).json({ msg: 'Internal Server Error', status: 'failed' });
     }
   });
@@ -142,7 +142,7 @@ router.put('/:subjectId/chapters/:chapterId/codingbasic/:codingbasicId', async (
   
       return res.json({ codingBasic, status: 'success' });
     } catch (error) {
-      console.error(error.message);
+      console.error(error.message,'codingbasic get specfic id ');
       return res.status(500).json({ msg: 'Internal Server Error', status: 'failed' });
     }
   });
@@ -172,12 +172,46 @@ router.put('/:subjectId/chapters/:chapterId/codingbasic/:codingbasicId', async (
   
       return res.json({ codingBasics, status: 'success' });
     } catch (error) {
-      console.error(error.message);
+      console.error(error.message,'all codingbasicids Aarray');
+      return res.status(500).json({ msg: 'Internal Server Error', status: 'failed' });
+    }
+  });
+
+ // http://localhost:4010/v4/deletebasic/6576dd26909ed7abedf02912/6571ae96cf0acc567c54829c/6573001e69a8af271bf62c80
+  router.delete('/deletebasic/:subjectId/:chapterId/:codingBasicId', async (req, res) => {
+    try {
+      // Extract parameters
+      const subjectId = req.params.subjectId;
+      const chapterId = req.params.chapterId;
+      const codingBasicId = req.params.codingBasicId;
+  
+      // Find the subject by ID
+      const existingSubject = await Subject.findById(subjectId);
+  
+      if (!existingSubject) {
+        return res.status(404).json({ msg: 'Subject not found', status: 'failed' });
+      }
+  
+      // Find the specific chapter within the subject
+      const chapter = existingSubject.chapter.id(chapterId);
+  
+      if (!chapter) {
+        return res.status(404).json({ msg: 'Chapter not found', status: 'failed' });
+      }
+  
+      // Use pull to remove the coding basic entry from the array
+      chapter.codingbasic.pull({ _id: codingBasicId });
+  
+      // Save the changes to the subject
+      await existingSubject.save();
+  
+      return res.json({ msg: 'Coding Basic entry deleted successfully', status: 'success' });
+    } catch (error) {
+      console.error(error.message,"deletecodingBasicId");
       return res.status(500).json({ msg: 'Internal Server Error', status: 'failed' });
     }
   });
   
-
 
 
 
