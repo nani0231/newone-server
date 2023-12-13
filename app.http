@@ -360,9 +360,17 @@ token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiNjUyZDE1NGRlNWNkYmUzZT
 
 
 ###
+get http://localhost:4010/v1/subjects
+###
+post http://localhost:4010/v1/subjects
+Content-Type: application/json
+token:"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiNjUyZDE0ZWNlNWNkYmUzZTg5OTEyMGYwIiwiaWF0IjoxNzAyNDQ0NTI4LCJleHAiOjE3Mzg0NDQ1Mjh9.sCZomdprYESoQuKjLpO9kOWJi-980dHOnS5-cfhLEew"
 
-
-
+{
+   "name":"AWSEC2",
+"Description":"cloud",
+"subjectTag":"coloud"
+}
 
 
 
