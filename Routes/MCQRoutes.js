@@ -23,16 +23,17 @@ router.post('/addMCQ/:subjectId/:chapterId', async (req, res) => {
       correctAnswer,
       Explanation,
     } = req.body;
-
+    console.log(subjectId,chapterId,req.body,"sai")
     // Find the subject by ID
     const existingSubject = await Subject.findById(subjectId);
-
+    console.log(existingSubject)
     if (!existingSubject) {
       return res.status(404).json({ msg: 'Subject not found', status: 'failed' });
     }
 
     // Find the specific chapter within the subject
     const chapter = existingSubject.chapter.id(chapterId);
+    console.log(chapter)
 
     if (!chapter) {
       return res.status(404).json({ msg: 'Chapter not found', status: 'failed' });
@@ -60,7 +61,7 @@ router.post('/addMCQ/:subjectId/:chapterId', async (req, res) => {
     // Save the updated subject document
     await existingSubject.save();
 
-    return res.json({ msg: 'MCQ added successfully', status: 'success' });
+    return res.status(200).json({ msg: 'MCQ added successfully', status: 'success' });
   } catch (error) {
     console.error(error.message);
     return res.status(500).json({ msg: 'Internal Server Error', status: 'failed' });
@@ -201,6 +202,45 @@ router.delete('/deleteMCQ/:subjectId/:chapterId/:mcqId', async (req, res) => {
     return res.status(500).json({ msg: 'Internal Server Error', status: 'failed' });
   }
 });
+
+
+// Assuming you have a model named "MCQ" for individual MCQs
+const MCQ = require('./MCQModel'); // Import the MCQ model
+
+router.get('/getMCQById/:subjectId/:chapterId/:mcqId', async (req, res) => {
+  try {
+    const subjectId = req.params.subjectId;
+    const chapterId = req.params.chapterId;
+    const mcqId = req.params.mcqId;
+
+    // Find the subject by ID
+    const existingSubject = await Subject.findById(subjectId);
+
+    if (!existingSubject) {
+      return res.status(404).json({ msg: 'Subject not found', status: 'failed' });
+    }
+
+    // Find the specific chapter within the subject
+    const chapter = existingSubject.chapter.id(chapterId);
+
+    if (!chapter) {
+      return res.status(404).json({ msg: 'Chapter not found', status: 'failed' });
+    }
+
+    // Find the specific MCQ within the chapter
+    const mcq = chapter.MCQ.id(mcqId);
+
+    if (!mcq) {
+      return res.status(404).json({ msg: 'MCQ not found', status: 'failed' });
+    }
+
+    return res.json({ mcq, status: 'success' });
+  } catch (error) {
+    console.error(error.message);
+    return res.status(500).json({ msg: 'Internal Server Error', status: 'failed' });
+  }
+});
+
 
 
 module.exports = router;

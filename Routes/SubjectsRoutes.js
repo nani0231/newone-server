@@ -3,31 +3,23 @@ const Subject = require("../Model/Subject")
 const router =  express.Router()
 // Create a subject
 //http://localhost:4010/v2/subject
-router.post('/subjects', async (req, res) => {
-  try {
-    const { name, Description, subjectTag, chapter } = req.body;
-
-    // Create a new subject
-    const newSubject = new Subject({
-      name,
-      Description,
-      subjectTag,
-      chapter: chapter || [], // Initialize chapter as an empty array if not provided
-    });
-
-    // Save the new subject to the database
-    await newSubject.save();
-
-    res.status(201).json({ message: 'Subject added successfully', subject: newSubject });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-});
+router.post('/subject', async (req, res) => {
+    try {
+      const newSubject = new Subject(req.body);
+      await newSubject.save();
+      //res.status(201).json(newSubject);
+      return res.status(201).json({message:" create subjects Success"})
+    //   return res.json(await Subject.find())
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Server Error' });
+    }
+  });
   // Get all subjects
   http://localhost:4010/v2/subjects
 router.get('/subjects', async (req, res) => {
     try {
+      console.log(req.body,"sai")
       const subjects = await Subject.find();
       res.json(subjects);
 
@@ -37,14 +29,18 @@ router.get('/subjects', async (req, res) => {
     }
   });
   // Update a subject
-  //http://localhost:4010/v2/subjects/6571acacb1836e0d95e23760
-  router.put('/subjects/:subjectId', async (req, res) => {
-    try {
-      const { name, Description, subjectTag } = req.body;
-      const subjectId = req.params.subjectId;
+  //http://localhost:4010/v2/subject/65703804dcc1f80c4441e4be
+  router.put('/subject/:id', async (req, res) => {
+    const { id } = req.params; 
+    const { name, description, subjectTag } = req.body; 
   
-      // Find the subject by ID
-      const subject = await Subject.findById(subjectId);
+    try {
+      // Find the subject by ID and update its fields
+      const updatedSubject = await Subject.findOneAndUpdate(
+        { _id: id },
+        { name, description, subjectTag },
+        { new: true } 
+      );
   
       if (!subject) {
         return res.status(404).json({ error: 'Subject not found' });
