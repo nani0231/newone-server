@@ -17,6 +17,7 @@ router.post('/subjects' ,async (req, res) => {
       res.status(500).json({ message: 'Server Error' });
     }
   });
+  //server
   // Get all subjects
  // http://localhost:4010/v1/subjects
 router.get('/subjects', async (req, res) => {
