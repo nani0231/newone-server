@@ -43,7 +43,7 @@ router.post('/addparaMcq/:subjectId/:chapterId/', async (req, res) => {
   
       return res.json({ msg: 'Paragraph MCQ added successfully', status: 'success' });
     } catch (error) {
-      console.error(error.message);
+      console.error(error.message,"postparag");
       return res.status(500).json({ msg: 'Internal Server Error', status: 'failed' });
     }
   });
@@ -96,7 +96,7 @@ router.put('/update/:subjectId/:chapterId/:paragMCQId', async (req, res) => {
   
       return res.json({ msg: 'Paragraph MCQ updated successfully', status: 'success' });
     } catch (error) {
-      console.error(error.message);
+      console.error(error.message,"PARAGMCQ UPDATE");
       return res.status(500).json({ msg: 'Internal Server Error', status: 'failed' });
     }
   });
@@ -133,7 +133,7 @@ router.put('/update/:subjectId/:chapterId/:paragMCQId', async (req, res) => {
   
       return res.json({ msg: 'Paragraph MCQ deleted successfully', status: 'success' });
     } catch (error) {
-      console.error(error.message);
+      console.error(error.message,"DeletePARAGMCQ");
       return res.status(500).json({ msg: 'Internal Server Error', status: 'failed' });
     }
   });
@@ -162,7 +162,7 @@ router.get('/getparamcq/:subjectId/:chapterId/paragMCQ', async (req, res) => {
   
       return res.json({ paragMCQs, status: 'success' });
     } catch (error) {
-      console.error(error.message);
+      console.error(error.message,"getparagMCQID");
       return res.status(500).json({ msg: 'Internal Server Error', status: 'failed' });
     }
   });

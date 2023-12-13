@@ -202,19 +202,6 @@ GET http://localhost:4010/foldersVideoData/React-Js
 
 
 ###
-POST http://localhost:4010/v1/ddParagMCQ/6571ad89cf0acc567c54829/6571ae96cf0acc567c54829c
-
- Content-Type: application/json
-
-{
-    
-  "Subjects": "SampleSubject",
-  "Chapters": "SampleChapter",
-  "Difficulty": "Easy",
-  "Reference": "SampleReference",
-  "Question": "What is a sample question?",
-  "questionImage": "sample-image-url"
-}
 
 //siva
 
