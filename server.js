@@ -10,7 +10,7 @@ const AddUserByBatch = require("./Model/ByBatch");
 const ByList = require("./Model/ByList");
 const AddvideoData = require("./Model/LearnPath/Addvideo");
 const videoFile = require("./Model/LearnPath/AddVideoFile");
-// const paragMCQRouter = require("./Routes/ParagRoutes");
+const paragMCQRouter = require("./Routes/ParagRoutes");
 
 // const McqData = require("./Model/Mcq Questions/Mcq");
 
@@ -600,9 +600,9 @@ app.listen(port, () => {
 //kumar
 
 app.use("/v1", require("./Routes/ChapterRoutes")); //api routes
-// app.use("/v1", require("./Routes/MCQRoutes"));
-// app.use("/v2", require("./Routes/SubjectsRoutes"));
-// app.use("/v2", paragMCQRouter);
-// app.use("/v4", require("./Routes/CodeingBasic"));
+app.use("/v1", require("./Routes/MCQRoutes"));
+app.use("/v2", require("./Routes/SubjectsRoutes"));
+app.use("/v2", paragMCQRouter);
+app.use("/v4", require("./Routes/CodeingBasic"));
 
 app.use("/assignedQB",require("./Routes/assignedQBRoutes"));
