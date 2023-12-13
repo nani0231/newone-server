@@ -1,39 +1,41 @@
 const express = require("express");
 const Subject = require('../Model/Subjects');
-const middleware = require("../Middlware")
 const router =  express.Router()
+//const middleware = require('../Middlware')
 // Create a subject
-//http://localhost:4010/v2/subject
-router.post('/subject', async (req, res) => {
+//http://localhost:4010/v1/subjects
+router.post('/subjects' ,async (req, res) => {
     try {
+      console.log(req.body,"sai")
       const newSubject = new Subject(req.body);
       await newSubject.save();
       //res.status(201).json(newSubject);
       return res.status(201).json({message:" create subjects Success"})
     //   return res.json(await Subject.find())
     } catch (error) {
-      console.error(error);
+      console.error(error.message,'post subjects');
       res.status(500).json({ message: 'Server Error' });
     }
   });
   // Get all subjects
-  http://localhost:4010/v2/subjects
+ // http://localhost:4010/v1/subjects
 router.get('/subjects', async (req, res) => {
     try {
+      console.log(req.body,"sai")
       const subjects = await Subject.find();
       res.json(subjects);
 
     } catch (error) {
-      console.error(error);
+      console.error(error.message,'get all subjects');
       res.status(500).json({ message: 'Server Error' });
     }
   });
   // Update a subject
-  //http://localhost:4010/v2/subject/65703804dcc1f80c4441e4be
+  //http://localhost:4010/v1/subject/65703804dcc1f80c4441e4be
   router.put('/subject/:id', async (req, res) => {
     const { id } = req.params; 
     const { name, description, subjectTag } = req.body; 
-  
+    console.log(id,req.body,"sai")
     try {
       // Find the subject by ID and update its fields
       const updatedSubject = await Subject.findOneAndUpdate(
@@ -49,6 +51,7 @@ router.get('/subjects', async (req, res) => {
       // Respond with the updated subject
       return res.status(200).json(updatedSubject);
     } catch (error) {
+      console.error(error.message,'updatesubjectid');
       // Handle errors
       return res.status(500).json({ message: 'Internal server error' });
     }
@@ -56,7 +59,7 @@ router.get('/subjects', async (req, res) => {
   
   module.exports = router;
 //Delete a subject
-//http://localhost:4010/v2/subjet/657039965dd4899d304ac058
+//http://localhost:4010/v1/subjet/657039965dd4899d304ac058
 router.delete("/subjet/:id", async (req, res) => {
   try {
     const id = req.params.id;
@@ -70,7 +73,7 @@ router.delete("/subjet/:id", async (req, res) => {
       res.status(404).send({ success: false, message: "Subject not found" });
     }
   } catch (error) {
-    console.error(error);
+    console.error(error.message,'deletesubjectid');
     res.status(500).send({ success: false, message: "Error deleting subject", error: error.message });
   }
 });
@@ -79,7 +82,7 @@ router.delete("/subjet/:id", async (req, res) => {
 
 
 //fileter names
-//http://localhost:4010/v2//filter?name=Mathematics
+//http://localhost:4010/v1/filter?name=Mathematics
 router.get('/filter', async (req, res) => {
     try {
       const { name } = req.query;
