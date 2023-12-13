@@ -49,6 +49,7 @@ router.post('/addchapter/:subjectId', async (req, res) => {
     return res.status(500).json({ msg: 'Internal Server Error', status: 'failed' });
   }
 });
+// server
 
     // Read  get all chapters 
     //http://localhost:4010/v1/getChapters/65718fc0ac242c99efb6ea4b
