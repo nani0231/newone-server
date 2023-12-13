@@ -1,6 +1,9 @@
+
 const express = require("express");
 const Subject= require("../Model/Subject")
 const router =  express.Router()
+
+
 
 
 
@@ -177,6 +180,7 @@ router.put('/:subjectId/chapters/:chapterId/codingbasic/:codingbasicId', async (
     }
   });
 
+
  // http://localhost:4010/v4/deletebasic/6576dd26909ed7abedf02912/6571ae96cf0acc567c54829c/6573001e69a8af271bf62c80
   router.delete('/deletebasic/:subjectId/:chapterId/:codingBasicId', async (req, res) => {
     try {
@@ -224,4 +228,6 @@ router.put('/:subjectId/chapters/:chapterId/codingbasic/:codingbasicId', async (
 
 
 
+
 module.exports = router;
+

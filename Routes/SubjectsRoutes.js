@@ -1,5 +1,5 @@
 const express = require("express");
-const Subject = require('../Model/Subject');
+const Subject = require('../Model/Subjects');
 const router =  express.Router()
 //const middleware = require('../Middlware')
 // Create a subject

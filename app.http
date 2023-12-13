@@ -355,6 +355,16 @@ DELETE http://localhost:4010/onselectedTopicinLearningPath/6564784671dfaa7aad2d1
 token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiNjUyZDE1NGRlNWNkYmUzZTg5OTEyMGY0IiwiaWF0IjoxNzAxOTI0MTk5LCJleHAiOjE3Mzc5MjQxOTl9.semyUk4s9aloSeCln9TsnthOfDgi_3wXvMxPGf1zsvU"
 
 
+### 
+post http://localhost:4010/v2/subject
+Content-Type: application/json
+token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiNjUyZDE1NGRlNWNkYmUzZTg5OTEyMGY0IiwiaWF0IjoxNzAyNDQ3OTg5LCJleHAiOjE3Mzg0NDc5ODl9.04ltF3XvLFzqT2XLQGxuj8qnEIPKQIma-gPbkUafCSg"
+
+{
+    "name" : "mocking",
+    "Description" : "mock",
+    "subjectTag" : "mock-test"
+}
 
 
 
