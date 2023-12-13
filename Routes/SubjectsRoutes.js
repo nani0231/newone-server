@@ -1,9 +1,10 @@
 const express = require("express");
 const Subject = require('../Model/Subject');
 const router =  express.Router()
+//const middleware = require('../Middlware')
 // Create a subject
-//http://localhost:4010/v2/subject
-router.post('/subjects', async (req, res) => {
+//http://localhost:4010/v1/subjects
+router.post('/subjects' ,async (req, res) => {
     try {
       console.log(req.body,"sai")
       const newSubject = new Subject(req.body);
@@ -17,7 +18,7 @@ router.post('/subjects', async (req, res) => {
     }
   });
   // Get all subjects
-  http://localhost:4010/v2/subjects
+ // http://localhost:4010/v1/subjects
 router.get('/subjects', async (req, res) => {
     try {
       console.log(req.body,"sai")
@@ -30,7 +31,7 @@ router.get('/subjects', async (req, res) => {
     }
   });
   // Update a subject
-  //http://localhost:4010/v2/subject/65703804dcc1f80c4441e4be
+  //http://localhost:4010/v1/subject/65703804dcc1f80c4441e4be
   router.put('/subject/:id', async (req, res) => {
     const { id } = req.params; 
     const { name, description, subjectTag } = req.body; 
@@ -58,7 +59,7 @@ router.get('/subjects', async (req, res) => {
   
   module.exports = router;
 //Delete a subject
-//http://localhost:4010/v2/subjet/657039965dd4899d304ac058
+//http://localhost:4010/v1/subjet/657039965dd4899d304ac058
 router.delete("/subjet/:id", async (req, res) => {
   try {
     const id = req.params.id;
@@ -81,7 +82,7 @@ router.delete("/subjet/:id", async (req, res) => {
 
 
 //fileter names
-//http://localhost:4010/v2//filter?name=Mathematics
+//http://localhost:4010/v1/filter?name=Mathematics
 router.get('/filter', async (req, res) => {
     try {
       const { name } = req.query;
