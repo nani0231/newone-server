@@ -18,7 +18,7 @@ router.post('/subjects' ,async (req, res) => {
     }
   });
 
-  // Get all subjects
+  // Get all subjects and
  // http://localhost:4010/v1/subjects
 router.get('/subjects', async (req, res) => {
     try {
