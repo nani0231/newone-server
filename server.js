@@ -1247,8 +1247,5 @@ app.use('/v1',  require('./Routes/MCQRoutes'));
 app.use("/v1", require('./Routes/SubjectsRoutes')) 
 app.use('/v2',paragMCQRouter)
 app.use('/v4',require('./Routes/CodeingBasic'))
-//app.use("/v2", require('./Routes/SubjectsRoutes')) //api routes
-//app.use('/v1',  require('./Routes/MCQRoutes'));
-// app.use('v3', require("./Routes/ChapterRoutes"))
 
 //kumar
