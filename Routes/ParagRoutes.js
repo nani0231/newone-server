@@ -1,5 +1,5 @@
 const express = require("express");
-const Subject= require("../Model/Subjects")
+const Subject= require("../Model/Subject")
 const router =  express.Router()
 // routes/paragMCQ.js create
 //http://localhost:4010/v2/addparaMcq/6571ad89cf0acc567c548296/6571ae96cf0acc567c54829c
@@ -166,4 +166,6 @@ router.get('/getparamcq/:subjectId/:chapterId/paragMCQ', async (req, res) => {
       return res.status(500).json({ msg: 'Internal Server Error', status: 'failed' });
     }
   });
+
+  //kuumar
   module.exports = router;

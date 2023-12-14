@@ -355,17 +355,61 @@ DELETE http://localhost:4010/onselectedTopicinLearningPath/6564784671dfaa7aad2d1
 token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiNjUyZDE1NGRlNWNkYmUzZTg5OTEyMGY0IiwiaWF0IjoxNzAxOTI0MTk5LCJleHAiOjE3Mzc5MjQxOTl9.semyUk4s9aloSeCln9TsnthOfDgi_3wXvMxPGf1zsvU"
 
 
+### 
+post http://localhost:4010/v2/subject
+Content-Type: application/json
+token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiNjUyZDE1NGRlNWNkYmUzZTg5OTEyMGY0IiwiaWF0IjoxNzAyNDQ3OTg5LCJleHAiOjE3Mzg0NDc5ODl9.04ltF3XvLFzqT2XLQGxuj8qnEIPKQIma-gPbkUafCSg"
+
+{
+    "name" : "mocking",
+    "Description" : "mock",
+    "subjectTag" : "mock-test"
+}
 
 
 
 
+###
+get http://localhost:4010/v1/subjects
+###
+post http://localhost:4010/v1/subjects
+Content-Type: application/json
+token:"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiNjUyZDE0ZWNlNWNkYmUzZTg5OTEyMGYwIiwiaWF0IjoxNzAyNDQ0NTI4LCJleHAiOjE3Mzg0NDQ1Mjh9.sCZomdprYESoQuKjLpO9kOWJi-980dHOnS5-cfhLEew"
+
+{
+   "name":"AWSEC2",
+"Description":"cloud",
+"subjectTag":"coloud"
+}
+###
+GET  http://localhost:4010/v1/getChapters/6576dd26909ed7abedf02912
+
+###
+//addchapter
+POST http://localhost:4010/v1/addchapter/6576a611b57ae6d227c878a2
+Content-Type: application/json
+
+{
+    "Name": "Components",
+"Description": "Documents built-in components that you can use in your JSX.",
+"subject": "react.js",
+"ChapterTag": " React Components"
+}
 
 
+###
+//coding
+ POST http://localhost:4010/v4/addbasic/6576a611b57ae6d227c878a2/657977148dd7d692e794ec35
+Content-Type: application/json
 
-
-
-
-
+{
+   "Subjects": "React",
+"Chapters": "componet",
+"Title": "Componet",
+"Programminglanguage": "react.js",
+"Description": "Documents built-in components that you can use in your JSX",
+"Constraints": "functional comopnet feature"
+}
 
 
 

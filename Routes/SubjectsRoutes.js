@@ -1,9 +1,10 @@
 const express = require("express");
-const Subject = require('../Model/Subjects');
+const Subject = require('../Model/Subject');
 const router =  express.Router()
+//const middleware = require('../Middlware')
 // Create a subject
-//http://localhost:4010/v2/subject
-router.post('/subject', async (req, res) => {
+//http://localhost:4010/v2/subjects
+router.post('/subjects' ,async (req, res) => {
     try {
       console.log(req.body,"sai")
       const newSubject = new Subject(req.body);
@@ -12,12 +13,12 @@ router.post('/subject', async (req, res) => {
       return res.status(201).json({message:" create subjects Success"})
     //   return res.json(await Subject.find())
     } catch (error) {
-      console.error(error);
+      console.error(error.message,'post subjects');
       res.status(500).json({ message: 'Server Error' });
     }
   });
   // Get all subjects
-  http://localhost:4010/v2/subjects
+ // http://localhost:4010/v2/subjects
 router.get('/subjects', async (req, res) => {
     try {
       console.log(req.body,"sai")
@@ -25,7 +26,7 @@ router.get('/subjects', async (req, res) => {
       res.json(subjects);
 
     } catch (error) {
-      console.error(error);
+      console.error(error.message,'get all subjects');
       res.status(500).json({ message: 'Server Error' });
     }
   });
@@ -50,6 +51,7 @@ router.get('/subjects', async (req, res) => {
       // Respond with the updated subject
       return res.status(200).json(updatedSubject);
     } catch (error) {
+      console.error(error.message,'updatesubjectid');
       // Handle errors
       return res.status(500).json({ message: 'Internal server error' });
     }
@@ -71,7 +73,7 @@ router.delete("/subjet/:id", async (req, res) => {
       res.status(404).send({ success: false, message: "Subject not found" });
     }
   } catch (error) {
-    console.error(error);
+    console.error(error.message,'deletesubjectid');
     res.status(500).send({ success: false, message: "Error deleting subject", error: error.message });
   }
 });
@@ -80,7 +82,7 @@ router.delete("/subjet/:id", async (req, res) => {
 
 
 //fileter names
-//http://localhost:4010/v2//filter?name=Mathematics
+//http://localhost:4010/v2/filter?name=Mathematics
 router.get('/filter', async (req, res) => {
     try {
       const { name } = req.query;
