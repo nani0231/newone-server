@@ -1,8 +1,7 @@
-
 const express = require("express");
-const Subject= require("../Model/Subject")
+const Subject= require("../Model/Subjects")
 const router =  express.Router()
-//paragMCQ.js create
+// routes/paragMCQ.js create
 //http://localhost:4010/v2/addparaMcq/6571ad89cf0acc567c548296/6571ae96cf0acc567c54829c
 router.post('/addparaMcq/:subjectId/:chapterId/', async (req, res) => {
     try {
@@ -168,4 +167,3 @@ router.get('/getparamcq/:subjectId/:chapterId/paragMCQ', async (req, res) => {
     }
   });
   module.exports = router;
-
