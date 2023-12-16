@@ -20,7 +20,6 @@ const port = 4010;
 
 const mogoURL =
   "mongodb+srv://badasiva22:Siva991276@cluster0.iis7lrd.mongodb.net/perfex-stack-project?retryWrites=true&w=majority";
-  // "mongodb+srv://saiprakash2115:m1Yb7ZlsB0nVVGbY@cluster0.r19eo2o.mongodb.net/skillhub2?retryWrites=true&w=majority"
   
 app.use(express.json());
 app.use(cors({ origin: "*" }));
