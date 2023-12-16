@@ -8,7 +8,7 @@ router.post('/subject', async (req, res) => {
       const newSubject = new Subject(req.body);
       await newSubject.save();
       //res.status(201).json(newSubject);
-      return res.status(201).json({message:" create subjects Success"})
+      return res.status(200).json({message:" create subjects Success"})
     //   return res.json(await Subject.find())
     } catch (error) {
       console.error(error);
