@@ -167,5 +167,76 @@ router.get('/getparamcq/:subjectId/:chapterId/paragMCQ', async (req, res) => {
     }
   });
 
+//   // GET method for retrieving a single paragMCQ by ID
+// // http://localhost:4010/v2/getparagmcq/:subjectId/:chapterId/:paragMCQId
+// router.get('/getparagmcq/:subjectId/:chapterId/:paragMCQId', async (req, res) => {
+//   try {
+//     const subjectId = req.params.subjectId;
+//     const chapterId = req.params.chapterId;
+//     const paragMCQId = req.params.paragMCQId;
+
+//     const existingSubject = await Subject.findById(subjectId);
+
+//     if (!existingSubject) {
+//       return res.status(404).json({ msg: 'Subject not found', status: 'failed' });
+//     }
+
+//     const chapter = existingSubject.chapter.id(chapterId);
+
+//     if (!chapter) {
+//       return res.status(404).json({ msg: 'Chapter not found', status: 'failed' });
+//     }
+
+//     const paragMCQ = chapter.paragMCQ.id(paragMCQId);
+
+//     if (!paragMCQ) {
+//       return res.status(404).json({ msg: 'paragMCQ not found', status: 'failed' });
+//     }
+
+//     return res.json({ paragMCQ, status: 'success' });
+//   } catch (error) {
+//     console.error(error.message);
+//     return res.status(500).json({ msg: 'Internal Server Error', status: 'failed' });
+//   }
+// });
+
+
+// individualParagMCQID
+ // http://localhost:4010/v2/getParagMCQById/657ae6c6482b3a688302a5fd/657ae786482b3a688302bb1a/657af517c5f4d27fdcc2f456
+ router.get('/getParagMCQById/:subjectId/:chapterId/:paragMCQId', async (req, res) => {
+  try {
+    const subjectId = req.params.subjectId;
+    const chapterId = req.params.chapterId;
+    const paragMCQId = req.params.paragMCQId;
+
+    // Find the subject by ID
+    const existingSubject = await Subject.findById(subjectId);
+
+    if (!existingSubject) {
+      return res.status(404).json({ msg: 'Subject not found', status: 'failed' });
+    }
+
+    // Find the specific chapter within the subject
+    const chapter = existingSubject.chapter.id(chapterId);
+
+    if (!chapter) {
+      return res.status(404).json({ msg: 'Chapter not found', status: 'failed' });
+    }
+
+    // Find the specific paragMCQ within the chapter
+    const paragMCQ = chapter.paragMCQ.id(paragMCQId);
+
+    if (!paragMCQ) {
+      return res.status(404).json({ msg: 'ParagMCQ not found', status: 'failed' });
+    }
+
+    return res.json({ paragMCQ, status: 'success' });
+  } catch (error) {
+    console.error(error.message, 'individualParagMCQID');
+    return res.status(500).json({ msg: 'Internal Server Error', status: 'failed' });
+  }
+});
+
+
   //kuumar
   module.exports = router;
