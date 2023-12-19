@@ -22,8 +22,8 @@ app.use(cors());
 const port = 4010;
 
 const mogoURL =
-  "mongodb+srv://badasiva22:Siva991276@cluster0.iis7lrd.mongodb.net/perfex-stack-project?retryWrites=true&w=majority";
-  // "mongodb+srv://saiprakash2115:m1Yb7ZlsB0nVVGbY@cluster0.r19eo2o.mongodb.net/skillhub2?retryWrites=true&w=majority"
+  // "mongodb+srv://badasiva22:Siva991276@cluster0.iis7lrd.mongodb.net/perfex-stack-project?retryWrites=true&w=majority";
+  "mongodb+srv://saiprakash2115:m1Yb7ZlsB0nVVGbY@cluster0.r19eo2o.mongodb.net/skillhub2?retryWrites=true&w=majority"
   
 app.use(express.json());
 app.use(cors({ origin: "*" }));
@@ -1025,7 +1025,7 @@ app.post(
 //get contentpaths
 app.get("/getContentPaths/:learningPathId/:topicId",middleware, async (req, res) => {
   try {
-    const {learningPathId,topicId} = req.params.id;
+    const {learningPathId,topicId} = req.params;
 
     // Find the learning path by ID
     const learningPath = await allLearningPaths.findById(learningPathId);
@@ -1035,7 +1035,7 @@ app.get("/getContentPaths/:learningPathId/:topicId",middleware, async (req, res)
         .status(404)
         .json({ msg: "Learning path not found", status: "failed" });
     }
-    const topic = allLearningPaths.topic.id(topicId);
+    const topic = learningPath.topics.id(topicId);
 
     if (!topic) {
       return res.status(404).json({ msg: 'topic not found', status: 'failed' });
@@ -1142,7 +1142,7 @@ app.get(
         return res.status(404).json({ msg: 'content not found', status: 'failed' });
       }
       // Return all content items in the specified topic
-      return res.status(200).json({Content, status: 'success'});
+      return res.status(200).json({content, status: 'success'});
     } catch (e) {
       console.error(e.message, "get content");
       return res
