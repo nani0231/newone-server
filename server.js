@@ -19,6 +19,7 @@ const port = 4010;
 
 const mogoURL =
   "mongodb+srv://badasiva22:Siva991276@cluster0.iis7lrd.mongodb.net/perfex-stack-project?retryWrites=true&w=majority";
+  
 app.use(express.json());
 app.use(cors({ origin: "*" }));
 //initalizing mongodb to node
