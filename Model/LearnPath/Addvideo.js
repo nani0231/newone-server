@@ -26,4 +26,4 @@ const AddvideoData = new mongoose.Schema({
 }]
 })
 
-module.exports = mongoose.model("AddvideoData.data", AddvideoData);
+module.exports = mongoose.model("AddvideoData", AddvideoData);

@@ -22,8 +22,8 @@ app.use(cors());
 const port = 4010;
 
 const mogoURL =
-  // "mongodb+srv://badasiva22:Siva991276@cluster0.iis7lrd.mongodb.net/perfex-stack-project?retryWrites=true&w=majority";
-  "mongodb+srv://saiprakash2115:m1Yb7ZlsB0nVVGbY@cluster0.r19eo2o.mongodb.net/skillhub2?retryWrites=true&w=majority"
+  "mongodb+srv://badasiva22:Siva991276@cluster0.iis7lrd.mongodb.net/perfex-stack-project?retryWrites=true&w=majority";
+  // "mongodb+srv://saiprakash2115:m1Yb7ZlsB0nVVGbY@cluster0.r19eo2o.mongodb.net/skillhub2?retryWrites=true&w=majority"
   
 app.use(express.json());
 app.use(cors({ origin: "*" }));
@@ -484,7 +484,7 @@ app.get("/InstituteData123/:InstituteName", async (req, res) => {
 
 //Learn Path Data
 
-app.post("/AddVideoPath", middleware, async (req, res) => {
+app.post("/AddVideoPath", async (req, res) => {
   try {
     // Check if the VideofolderName already exists
     const existingVideo = await AddvideoData.findOne({
@@ -492,14 +492,11 @@ app.post("/AddVideoPath", middleware, async (req, res) => {
     });
 
     if (!existingVideo) {
-      const AddVideo = {
-        Sno: newSno, // Use the newly calculated ID
-        VideofolderName: req.body.VideofolderName,
-      };
+      const AddVideo = new AddvideoData(req.body)
+    
+      await AddVideo.save();
 
-      const AddVideoDetails = await AddvideoData.create(AddVideo);
-
-      console.log(AddVideoDetails);
+      console.log(AddVideo);
       res.status(200).send("Video path added successfully");
     } else {
       res.status(400).json("Video path with the same name already exists");
@@ -520,10 +517,10 @@ app.get("/allAddVideosData", async (req, res) => {
   }
 });
 
-app.put("/UpdateVideosDetails/:id", middleware, async (req, res) => {
+app.put("/UpdateVideosDetails/:selectedvideopathId", async (req, res) => {
   try {
-    const { id } = req.params;
-    const video = await AddvideoData.findByIdAndUpdate(id, req.body);
+    const { selectedvideopathId } = req.params;
+    const video = await AddvideoData.findByIdAndUpdate(selectedvideopathId, req.body);
 
     if (!video) {
       return res.status(404).json("Video Not Found");
@@ -552,7 +549,7 @@ app.get("/DisplayIndividualVideo/:id", async (req, res) => {
   }
 });
 
-app.delete("/deleteVideo/:id", middleware, async (req, res) => {
+app.delete("/deleteVideo/:id", async (req, res) => {
   try {
     const id = req.params.id; // Use req.params.id to get the instituteId
     const deletedVideo = await AddvideoData.findByIdAndRemove(id);
@@ -567,8 +564,9 @@ app.delete("/deleteVideo/:id", middleware, async (req, res) => {
     return res.status(500).json(e.message);
   }
 });
+
 //create videofile
-app.post("/AddVideoFilesData/:videopathId", middleware, async (req, res) => {
+app.post("/AddVideoFilesData/:videopathId", async (req, res) => {
   try {
     const videopathId = req.params.videopathId
     const {VideofolderName,VideoTitleName,SourceName,Video1} = req.body
@@ -602,6 +600,33 @@ app.post("/AddVideoFilesData/:videopathId", middleware, async (req, res) => {
     return res.status(500).json({ msg: 'Internal Server Error', status: 'failed' });
   }
 });
+//delete videofiles
+app.delete("/deleteVideofiles/:videopathId/:videofileId", async (req, res) => {
+  try {
+    const videopathId = req.params.videopathId;
+    const videofileId = req.params.videofileId;
+    const existingVideopath = await AddvideoData.findById(videopathId);
+    if (!existingVideopath) {
+      return res.status(404).json({ msg: 'Videopath not found', status: 'failed' });
+    }
+    const VideofileIndex = existingVideopath.videoFile.findIndex(
+      (file) => file._id.toString() === videofileId
+    );
+    if (VideofileIndex === -1) {
+      return res.status(404).json({ msg: 'Videofile not found', status: 'failed' });
+    }
+
+    existingVideopath.videoFile.splice(VideofileIndex, 1);
+    await existingVideopath.save();
+    return res.json({ msg: 'VideoFile deleted successfully', status: 'success' });
+  } catch (error) {
+    console.error(error.message);
+    return res.status(500).json({ msg: 'Internal Server Error', status: 'failed' });
+  }
+});
+   
+
+   
 //get videofiles with videopathid
 app.get("/DisplayAllVideos/:videopathId", async (req, res) => {
   try {
@@ -611,7 +636,7 @@ app.get("/DisplayAllVideos/:videopathId", async (req, res) => {
       return res.status(404).json({ msg: 'VideoPath not found', status: 'failed' });
     }
 
-    const allVideos = existingVideoPath.videoFile
+    const allVideos = existingVideoPath
     return res.json({allVideos,status :'success'});
   } catch (error) {
     console.error(error.message, "DisplayAllVideos");
@@ -653,8 +678,36 @@ app.get("/foldersVideoData/:VideofolderName", async (req, res) => {
     return res.status(500).json(e.message);
   }
 });
+//Update videofiles
+app.put("/UpdateVideofileDetails/:selectedvideopathId/:selectedVideofileId", async (req, res) => {
+  try {
+    const selectedvideopathId = req.params.selectedvideopathId;
+      const selectedVideofileId = req.params.selectedVideofileId;
+      const VideoTitleName= req.body.VideoTitle;
+      const Video1= req.body.videofile;
+      
+      const existingVideofile = await AddvideoData.findById(selectedvideopathId);
+    
+      if (!existingVideofile) {
+        return res.status(404).json({ msg: 'Videopath not found', status: 'failed' });
+      }
+      const videofileToUpdate = existingVideofile.videoFile.id(selectedVideofileId);
 
+      if (!videofileToUpdate) {
+        return res.status(404).json({ msg: 'Videofile not found', status: 'failed' });
+      }
 
+      videofileToUpdate.VideoTitleName = VideoTitleName;
+      videofileToUpdate.Video1 = Video1;
+      
+      await existingVideofile.save();
+      return res.json({ msg: 'Videofile updated successfully', status: 'success', updatedVideofile: videofileToUpdate });
+    } catch (error) {
+      console.error(error.message);
+      return res.status(500).json({ msg: 'Internal Server Error', status: 'failed' });
+    }
+  });
+    
 // Create LearningPath
 app.post("/addlearningpath",middleware, async (req, res) => {
   console.log(req.body);
@@ -670,7 +723,6 @@ app.post("/addlearningpath",middleware, async (req, res) => {
       AboutLearnPath,
       authorName,
       hours,
-      minutes,
       learningimg,
       fileName,
       requirements,
@@ -681,7 +733,7 @@ app.post("/addlearningpath",middleware, async (req, res) => {
     if (isLearningPathExist) {
       return res.send({ msg: "Path Already Registered", status: "failed" });
     }
-    
+    const minutes = new Date();
     let newLearningPath = new allLearningPaths({
       learningPathTitle,
       relevantSkillTags,
@@ -1199,7 +1251,6 @@ app.delete(
 app.listen(port, () => {
   console.log(`Server running at ${port}`);
 });
-
 
 app.use("/v1", require('./Routes/ChapterRoutes')) //api routes
 app.use('/v1',  require('./Routes/MCQRoutes'));
