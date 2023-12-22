@@ -18,7 +18,6 @@ app.use(express.json());
 app.use(cors());
 
 // const bodyParser = require("body-parser");
-
 const port = 4010;
 
 const mogoURL =
