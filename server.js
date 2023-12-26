@@ -10,9 +10,8 @@ const AddUserByBatch = require("./Model/ByBatch");
 const ByList = require("./Model/ByList");
 const AddvideoData = require("./Model/LearnPath/Addvideo");
 const videoFile = require("./Model/LearnPath/AddVideoFile");
-// const allLearningPaths = require("./Model/LearnPath/");
+const allLearningPaths = require("./Model/LearnPath/learnpath");
 const paragMCQRouter = require('./Routes/ParagRoutes');
-
 // const bodyParser = require("body-parser");
 
 const app = express();
@@ -20,8 +19,7 @@ const port = 4010;
 
 const mogoURL =
   "mongodb+srv://badasiva22:Siva991276@cluster0.iis7lrd.mongodb.net/perfex-stack-project?retryWrites=true&w=majority";
-  // "mongodb+srv://saiprakash2115:m1Yb7ZlsB0nVVGbY@cluster0.r19eo2o.mongodb.net/skillhub2?retryWrites=true&w=majority"
-  
+  // "mongodb+srv://umadevikavuru:umadevi1234@cluster0.drlbwri.mongodb.net/perfex-stack-project?retryWrites=true&w=majority";
 app.use(express.json());
 app.use(cors({ origin: "*" }));
 // app.use(bodyParser.json());
@@ -80,16 +78,14 @@ app.post("/Userlogin", async (req, res) => {
     if (UserPassword !== user.UserPassword) {
       return res.status(401).json({ message: "Incorrect password" });
     }
+   
     const payload = {
-      user: user._id,
-    };
-    jwt.sign(payload, "jwtpassword", { expiresIn: 36000000 }, (err, token) => {
-      if (err) {
-        throw err;
-      }
-
-      res.json({ token });
-    });
+      id: user._id
+    }
+    let token = jwt.sign(payload, 'siva', { expiresIn: '24hr' })
+        console.log(token);
+        return res.status(200).json({ message: "User Login Success", token: token });
+  
   } catch (error) {
     console.error(error.message, "Userlogin");
     res.status(500).json({
@@ -97,7 +93,6 @@ app.post("/Userlogin", async (req, res) => {
     });
   }
 });
-
 //Add Institute
 
 app.post("/AddInstitute", async (req, res) => {
@@ -643,7 +638,55 @@ app.get("/foldersVideoData/:VideofolderName", async (req, res) => {
   }
 });
 // Learn-Path
-app.post("/addlearningpath", middleware, async (req, res) => {
+// app.post("/addlearningpath", middleware, async (req, res) => {
+//   console.log(req.body);
+//   try {
+//     const {
+//       learningPathTitle,
+//       relevantSkillTags,
+//       coverLetter,
+//       difficultyLevel,
+//       subscription,
+//       price,
+//       discount,
+//       AboutLearnPath,
+//       authorName,
+//       hours,
+//       minutes,
+//       learningimg,
+//       fileName,
+//       requirements,
+//     } = req.body;
+//     const isLearningPathExist = await allLearningPaths.findOne({
+//       learningPathTitle: learningPathTitle,
+//     });
+//     if (isLearningPathExist) {
+//       return res.send({ msg: "Path Already Registered", status: "failed" });
+//     }
+//     let newLearningPath = new allLearningPaths({
+//       learningPathTitle,
+//       relevantSkillTags,
+//       coverLetter,
+//       difficultyLevel,
+//       subscription,
+//       price,
+//       discount,
+//       AboutLearnPath,
+//       authorName,
+//       hours,
+//       minutes,
+//       learningimg,
+//       fileName,
+//       requirements,
+//     });
+//     newLearningPath.save(); //saving mongodb collection
+//     return res.send({ msg: "Path Created Successfully", status: "success" });
+//   } catch (e) {
+//     console.error(e.message, "addlearningpath");
+//     res.status(500).send("Internal Server Error");
+//   }
+// });
+app.post("/addlearningpath",  middleware, async (req, res) => {
   console.log(req.body);
   try {
     const {
@@ -656,18 +699,19 @@ app.post("/addlearningpath", middleware, async (req, res) => {
       discount,
       AboutLearnPath,
       authorName,
-      hours,
-      minutes,
       learningimg,
       fileName,
       requirements,
     } = req.body;
+
     const isLearningPathExist = await allLearningPaths.findOne({
       learningPathTitle: learningPathTitle,
     });
+
     if (isLearningPathExist) {
       return res.send({ msg: "Path Already Registered", status: "failed" });
     }
+    const minutes = new Date();
     let newLearningPath = new allLearningPaths({
       learningPathTitle,
       relevantSkillTags,
@@ -678,21 +722,19 @@ app.post("/addlearningpath", middleware, async (req, res) => {
       discount,
       AboutLearnPath,
       authorName,
-      hours,
       minutes,
       learningimg,
       fileName,
       requirements,
     });
-    newLearningPath.save(); //saving mongodb collection
+    newLearningPath.save(); // Saving mongodb collection
     return res.send({ msg: "Path Created Successfully", status: "success" });
   } catch (e) {
     console.error(e.message, "addlearningpath");
     res.status(500).send("Internal Server Error");
   }
 });
-
-app.get("/alllearningpathsDetails", async (req, res) => {
+app.get("/alllearningpathsDetails",  middleware, async (req, res) => {
   try {
     const allUsersDetails = await allLearningPaths.find();
     res.status(200).send(allUsersDetails);
@@ -704,7 +746,7 @@ app.get("/alllearningpathsDetails", async (req, res) => {
 
 //updatelearningpath
 
-app.put("/updatelearningpath/:learningPathId", middleware, async (req, res) => {
+app.put("/updatelearningpath/:learningPathId",  middleware, async (req, res) => {
   try {
     const learningPathId = req.params.learningPathId;
     const {
@@ -716,7 +758,6 @@ app.put("/updatelearningpath/:learningPathId", middleware, async (req, res) => {
       price,
       discount,
       authorName,
-      hours,
       minutes,
       learningimg,
       fileName,
@@ -743,7 +784,6 @@ app.put("/updatelearningpath/:learningPathId", middleware, async (req, res) => {
     existingLearningPath.price = price;
     existingLearningPath.discount = discount;
     existingLearningPath.authorName = authorName;
-    existingLearningPath.hours = hours;
     existingLearningPath.minutes = minutes;
     existingLearningPath.learningimg = learningimg;
     existingLearningPath.fileName = fileName;
@@ -763,7 +803,22 @@ app.put("/updatelearningpath/:learningPathId", middleware, async (req, res) => {
       .json({ msg: "Internal Server Error", status: "failed" });
   }
 });
+//delete
+app.delete("/deletelearningpath/:id", middleware, async (req, res) => {
+  try {
+    const id = req.params.id; // Use req.params.id to get the instituteId
+    const deletedLearningPath = await allLearningPaths.findByIdAndRemove(id);
 
+    if (deletedLearningPath) {
+      return res.status(200).json("Learningpaths deleted successfully");
+    } else {
+      return res.status(404).json("Learningpaths Folder not found");
+    }
+  } catch (e) {
+    console.error(e.message, "deletelearningpath");
+    return res.status(500).json(e.message);
+  }
+});
 // Post Topics
 
 app.post("/addTopic/:learningPathId", middleware, async (req, res) => {
@@ -1260,3 +1315,4 @@ app.use('/v1',  require('./Routes/MCQRoutes'));
 app.use("/v2", require('./Routes/SubjectsRoutes')) 
 app.use('/v2',paragMCQRouter)
 app.use('/v4',require('./Routes/CodeingBasic'))
+app.use('/U1',require('./Routes/assessement'));

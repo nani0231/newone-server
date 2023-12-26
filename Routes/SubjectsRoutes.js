@@ -16,7 +16,7 @@ router.post('/subject', async (req, res) => {
     }
   });
   // Get all subjects
-  http://localhost:4010/v2/subjects
+  // http://localhost:4010/v2/subjects
 router.get('/subjects', async (req, res) => {
     try {
       const subjects = await Subject.find();

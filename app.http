@@ -198,11 +198,54 @@ Content-Type: application/json
 GET http://localhost:4010/DisplayAllVideos
 ###
 GET http://localhost:4010/foldersVideoData/React-Js
+###
+ GET http://localhost:4010/v2/subjects
+###
+GET http://localhost:4010/v4/getbasic
+###
+POST http://localhost:4010/addlearningpath
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiNjUyZDE1NGRlNWNkYmUzZTg5OTEyMGY0IiwiaWF0IjoxNzAyODkwNDI3LCJleHAiOjE3Mzg4OTA0Mjd9.F8zeKKmULpZfBtBZUDeAH6SCloJcz1Y7X4UIz34k79U
 
+{
 
+    "learningPathTitle":"uma",
+  "relevantSkillTags":"ffffffff",
+  "coverLetter":"ffs",
+  "difficultyLevel":"trrrrrrrrrrr",
+  "subscription":"ttttttttttt",
+  "price":"trrrrrrrrrrrr",
+  "discount":"trrrrrrrrrr",
+  "AboutLearnPath":"rttttttttt",
+  "authorName":"trtrrrrrrrrrrrr",
+  "learningimg":"rtttttttttt",
+  "fileName":"ttttttttt",
+  "requirements":"ttttttttttttt"
+  
+}
+###
+GET http://localhost:4010/v4/getbasic
+###
+GET http://localhost:4010/v1/getMCQs/657ae56007e4c0be034337e7/657ae5a507e4c0be03433806
+###
+GET http://localhost:4010/U1/allassessment
+###
+GET http://localhost:4010/v4/getbasic/658a75aef473d32fde648726/658a75f7f473d32fde648739/658a7fdef473d32fde648a2d
+###
 
-
-//siva
+PUT http://localhost:4010/v4/658a75aef473d32fde648726/chapters/658a75f7f473d32fde648739/codingbasic/658a9281f473d32fde648ca1
+Content-Type: application/json
+ 
+ {
+      
+    "Subjects" : "react",
+    "Chapters" : "react hooks",
+    "Title" : "MCV",
+    "Programminglanguage" : "MCV",
+    "Description" : "mcvdata",
+    "Constraints" : "mcvdata"
+        
+ }
 
 
 
