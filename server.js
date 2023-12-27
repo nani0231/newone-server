@@ -1,21 +1,23 @@
 const express = require("express");
 const mongoose = require("mongoose");
-const cors = require("cors");
 const userData = require("./Model/userData");
+const cors = require("cors");
 const jwt = require("jsonwebtoken");
-const middleware = require("./Middlware");
+const middleware = require("./middleware/jwtAuth");
 const AddInstituteData = require("./Model/AddInstituteData");
 const AddUsersData = require("./Model/StudentsData");
 const AddUserByBatch = require("./Model/ByBatch");
 const ByList = require("./Model/ByList");
 const AddvideoData = require("./Model/LearnPath/Addvideo");
 const videoFile = require("./Model/LearnPath/AddVideoFile");
-// const allLearningPaths = require("./Model/LearnPath/");
+const allLearningPaths = require("./Model/LearnPath/AlllearningPaths");
 const paragMCQRouter = require('./Routes/ParagRoutes');
+const AddVideoFile = require("./Model/LearnPath/AddVideoFile");
+const app = express();
+app.use(express.json());
+app.use(cors());
 
 // const bodyParser = require("body-parser");
-
-const app = express();
 const port = 4010;
 
 const mogoURL =
@@ -481,43 +483,30 @@ app.get("/InstituteData123/:InstituteName", async (req, res) => {
 
 //Learn Path Data
 
-app.post("/AddVideoPath", middleware, async (req, res) => {
+app.post("/AddVideoPath",middleware , async (req, res) => {
   try {
-    // Find the last document with the lowest Sno (ascending order)
-    const lastDocument = await AddvideoData.findOne({}, null, {
-      sort: { Sno: -1 },
-    });
-
-    let newSno = 1; // Default ID if the collection is empty
-    if (lastDocument) {
-      newSno = lastDocument.Sno + 1; // Calculate the new ID
-    }
-
     // Check if the VideofolderName already exists
     const existingVideo = await AddvideoData.findOne({
       VideofolderName: req.body.VideofolderName,
     });
 
     if (!existingVideo) {
-      const AddVideo = {
-        Sno: newSno, // Use the newly calculated ID
-        VideofolderName: req.body.VideofolderName,
-      };
+      const AddVideo = new AddvideoData(req.body)
+    
+      await AddVideo.save();
 
-      const AddVideoDetails = await AddvideoData.create(AddVideo);
-
-      console.log(AddVideoDetails);
+      console.log(AddVideo);
       res.status(200).send("Video path added successfully");
     } else {
       res.status(400).json("Video path with the same name already exists");
     }
-  } catch (e) {
+  } catch (e) { 
     console.error(e.message, "AddVideoPath");
     return res.status(500).json(e.message);
   }
 });
 
-app.get("/allAddVideosData", async (req, res) => {
+app.get("/allAddVideosData",middleware , async (req, res) => {
   try {
     const allVideos = await AddvideoData.find({});
     return res.json(allVideos);
@@ -527,10 +516,10 @@ app.get("/allAddVideosData", async (req, res) => {
   }
 });
 
-app.put("/UpdateVideosDetails/:id", middleware, async (req, res) => {
+app.put("/UpdateVideosDetails/:selectedvideopathId",middleware , async (req, res) => {
   try {
-    const { id } = req.params;
-    const video = await AddvideoData.findByIdAndUpdate(id, req.body);
+    const { selectedvideopathId } = req.params;
+    const video = await AddvideoData.findByIdAndUpdate(selectedvideopathId, req.body);
 
     if (!video) {
       return res.status(404).json("Video Not Found");
@@ -559,7 +548,7 @@ app.get("/DisplayIndividualVideo/:id", async (req, res) => {
   }
 });
 
-app.delete("/deleteVideo/:id", middleware, async (req, res) => {
+app.delete("/deleteVideo/:id",middleware , async (req, res) => {
   try {
     const id = req.params.id; // Use req.params.id to get the instituteId
     const deletedVideo = await AddvideoData.findByIdAndRemove(id);
@@ -575,54 +564,100 @@ app.delete("/deleteVideo/:id", middleware, async (req, res) => {
   }
 });
 
-app.post("/AddVideoFilesData", middleware, async (req, res) => {
+//create videofile
+app.post("/AddVideoFilesData/:videopathId",middleware , async (req, res) => {
   try {
-    // Find the last document with the lowest Sno (ascending order)
-    const lastDocument = await videoFile.findOne({}, null, {
-      sort: { Sno: -1 },
-    });
+    const videopathId = req.params.videopathId
+    const {VideofolderName,VideoTitleName,SourceName,Video1} = req.body
 
-    let newSno = 1; // Default ID if the collection is empty
-    if (lastDocument) {
-      newSno = lastDocument.Sno + 1; // Calculate the new ID
-    }
-
-    // Check if the VideofolderName already exists
-    const existingVideo = await videoFile.findOne({
-      Video1: req.body.Video1,
-    });
+    const existingVideo = await AddvideoData.findById(videopathId);
 
     if (!existingVideo) {
-      const AddVideo = {
-        Sno: newSno,
-        VideofolderName: req.body.VideofolderName,
-        VideoTitleName: req.body.VideoTitleName,
-        SourceName: req.body.SourceName,
-        Video1: req.body.Video1,
-      };
-
-      const AddVideoDetails = await videoFile.create(AddVideo);
-
-      console.log(AddVideoDetails);
-      res.status(200).send("Video added successfully");
-    } else {
-      res.status(400).json("Video path with the same Link already exists");
+      return res.status(404).json({ msg: 'VideoPath not found', status: 'failed' });
     }
-  } catch (e) {
-    console.error(e.message, "AddVideoFilesData");
-    return res.status(500).json(e.message);
+    const isVideoTitleName = existingVideo.videoFile.some(
+      (each) => each.VideoTitleName === VideoTitleName
+    );
+    if (isVideoTitleName) {
+      return res.status(400).json({
+        msg: 'VideoTitle with the same name already exists',
+        status: 'failed',
+      });
+    }
+      const AddVideo = {
+        VideofolderName,
+        VideoTitleName,
+        SourceName,
+        Video1,
+      };
+      existingVideo.videoFile.push(AddVideo);
+    await existingVideo.save();
+
+    return res.json({ msg: 'VideoFile added successfully', status: 'success' });
+  } catch (error) {
+    console.error(error.message);
+    return res.status(500).json({ msg: 'Internal Server Error', status: 'failed' });
+  }
+});
+//delete videofiles
+app.delete("/deleteVideofiles/:videopathId/:videofileId",middleware , async (req, res) => {
+  try {
+    const videopathId = req.params.videopathId;
+    const videofileId = req.params.videofileId;
+    const existingVideopath = await AddvideoData.findById(videopathId);
+    if (!existingVideopath) {
+      return res.status(404).json({ msg: 'Videopath not found', status: 'failed' });
+    }
+    const VideofileIndex = existingVideopath.videoFile.findIndex(
+      (file) => file._id.toString() === videofileId
+    );
+    if (VideofileIndex === -1) {
+      return res.status(404).json({ msg: 'Videofile not found', status: 'failed' });
+    }
+
+    existingVideopath.videoFile.splice(VideofileIndex, 1);
+    await existingVideopath.save();
+    return res.json({ msg: 'VideoFile deleted successfully', status: 'success' });
+  } catch (error) {
+    console.error(error.message);
+    return res.status(500).json({ msg: 'Internal Server Error', status: 'failed' });
+  }
+});
+   
+
+   
+//get videofiles with videopathid
+app.get("/DisplayAllVideos/:videopathId",middleware , async (req, res) => {
+  try {
+    const videopathId = req.params.videopathId;
+    const existingVideoPath = await AddvideoData.findById(videopathId);
+    if (!existingVideoPath) {
+      return res.status(404).json({ msg: 'VideoPath not found', status: 'failed' });
+    }
+
+    const allVideos = existingVideoPath
+    return res.json({allVideos,status :'success'});
+  } catch (error) {
+    console.error(error.message, "DisplayAllVideos");
+    return res.status(500).json({msg:"Internal Server Error",status: 'failed'});
+  }
+});
+//get allvideofiles
+app.get("/getAllVideoFiles", async (req, res) => {
+  try {
+    // Retrieve all documents in the AddvideoData collection
+    const allVideos = await AddvideoData.find();
+
+    // Extract and combine all videoFile arrays from the documents
+    const allVideoFiles = allVideos.reduce((acc, video) => acc.concat(video.videoFile), []);
+
+    return res.json({ videoFiles: allVideoFiles, status: 'success' });
+  } catch (error) {
+    console.error(error.message);
+    return res.status(500).json({ msg: 'Internal Server Error', status: 'failed' });
   }
 });
 
-app.get("/DisplayAllVideos", async (req, res) => {
-  try {
-    const allVideos = await videoFile.find({});
-    return res.json(allVideos);
-  } catch (error) {
-    console.error(error, message, "DisplayAllVideos");
-    return res.status(500).json("Internal Server Error");
-  }
-});
 
 app.get("/foldersVideoData/:VideofolderName", async (req, res) => {
   try {
@@ -642,8 +677,38 @@ app.get("/foldersVideoData/:VideofolderName", async (req, res) => {
     return res.status(500).json(e.message);
   }
 });
-// Learn-Path
-app.post("/addlearningpath", middleware, async (req, res) => {
+//Update videofiles
+app.put("/UpdateVideofileDetails/:selectedvideopathId/:selectedVideofileId",middleware , async (req, res) => {
+  try {
+    const selectedvideopathId = req.params.selectedvideopathId;
+      const selectedVideofileId = req.params.selectedVideofileId;
+      const VideoTitleName= req.body.VideoTitle;
+      const Video1= req.body.videofile;
+      
+      const existingVideofile = await AddvideoData.findById(selectedvideopathId);
+    
+      if (!existingVideofile) {
+        return res.status(404).json({ msg: 'Videopath not found', status: 'failed' });
+      }
+      const videofileToUpdate = existingVideofile.videoFile.id(selectedVideofileId);
+
+      if (!videofileToUpdate) {
+        return res.status(404).json({ msg: 'Videofile not found', status: 'failed' });
+      }
+
+      videofileToUpdate.VideoTitleName = VideoTitleName;
+      videofileToUpdate.Video1 = Video1;
+      
+      await existingVideofile.save();
+      return res.json({ msg: 'Videofile updated successfully', status: 'success', updatedVideofile: videofileToUpdate });
+    } catch (error) {
+      console.error(error.message);
+      return res.status(500).json({ msg: 'Internal Server Error', status: 'failed' });
+    }
+  });
+    
+// Create LearningPath
+app.post("/addlearningpath",middleware, async (req, res) => {
   console.log(req.body);
   try {
     const {
@@ -657,7 +722,6 @@ app.post("/addlearningpath", middleware, async (req, res) => {
       AboutLearnPath,
       authorName,
       hours,
-      minutes,
       learningimg,
       fileName,
       requirements,
@@ -668,6 +732,7 @@ app.post("/addlearningpath", middleware, async (req, res) => {
     if (isLearningPathExist) {
       return res.send({ msg: "Path Already Registered", status: "failed" });
     }
+    const minutes = new Date();
     let newLearningPath = new allLearningPaths({
       learningPathTitle,
       relevantSkillTags,
@@ -684,7 +749,7 @@ app.post("/addlearningpath", middleware, async (req, res) => {
       fileName,
       requirements,
     });
-    newLearningPath.save(); //saving mongodb collection
+    await newLearningPath.save(); //saving mongodb collection
     return res.send({ msg: "Path Created Successfully", status: "success" });
   } catch (e) {
     console.error(e.message, "addlearningpath");
@@ -692,7 +757,8 @@ app.post("/addlearningpath", middleware, async (req, res) => {
   }
 });
 
-app.get("/alllearningpathsDetails", async (req, res) => {
+//get alllearning paths
+app.get("/alllearningpathsDetails",middleware, async (req, res) => {
   try {
     const allUsersDetails = await allLearningPaths.find();
     res.status(200).send(allUsersDetails);
@@ -704,7 +770,7 @@ app.get("/alllearningpathsDetails", async (req, res) => {
 
 //updatelearningpath
 
-app.put("/updatelearningpath/:learningPathId", middleware, async (req, res) => {
+app.put("/updatelearningpath/:learningPathId",middleware, async (req, res) => {
   try {
     const learningPathId = req.params.learningPathId;
     const {
@@ -764,9 +830,31 @@ app.put("/updatelearningpath/:learningPathId", middleware, async (req, res) => {
   }
 });
 
-// Post Topics
+//delete selectedlearningpath
+app.delete("/onselectedLearningPath/:_id",middleware, async (req, res) => {
+  try {
+    const _id = req.params._id; // Fix: Extract _id from req.params
+    const deletedLearningPath = await allLearningPaths.findByIdAndDelete(
+      _id,
+      req.body
+    );
 
-app.post("/addTopic/:learningPathId", middleware, async (req, res) => {
+    console.log(deletedLearningPath);
+
+    if (!deletedLearningPath) {
+      return res.status(404).json("Not Found!");
+    }
+
+    return res.status(200).json("Deleted Successfully");
+  } catch (error) {
+    console.error(error, "/onselectedLearningPath/:_id");
+    return res.status(500).json("Internal Server Error");
+  }
+});
+
+// create Topics
+
+app.post("/addTopic/:learningPathId",middleware, async (req, res) => {
   try {
     const learningPathId = req.params.learningPathId;
     const { topicName, description, publish } = req.body;
@@ -816,31 +904,32 @@ app.post("/addTopic/:learningPathId", middleware, async (req, res) => {
   }
 });
 
-app.get("/getTopic/:id", async (req, res) => {
+//get topics
+app.get("/getTopic/:learningPathId",middleware, async (req, res) => {
   try {
-    const id = req.params.id;
+    const learningPathId = req.params.learningPathId;
 
     // Find the topic by ID
-    const topic = await allLearningPaths.findById(id);
+    const learningPath = await allLearningPaths.findById(learningPathId);
 
-    if (!topic) {
-      return res.status(404).json({ msg: "Topic not found", status: "failed" });
+    if (!learningPath) {
+      return res.status(404).json({ msg: "learningPath not found", status: "failed" });
     }
+    const topicsdata = learningPath.topics;
 
     // If the topic is found, send it in the response
-    return res.send(topic);
+    return res.send({topicsdata, status:'success'});
   } catch (e) {
-    console.error(e.message, "getTopic");
+    console.error(e.message);
     return res
       .status(500)
       .json({ msg: "Internal Server Error", status: "failed" });
   }
 });
 
+//update topic
 app.put(
-  "/updateTopic/:learningPathId/:topicId",
-  middleware,
-
+  "/updateTopic/:learningPathId/:topicId",middleware,
   async (req, res) => {
     try {
       const learningPathId = req.params.learningPathId;
@@ -859,20 +948,16 @@ app.put(
       }
 
       // Find the index of the topic within the "topics" array
-      const topicIndex = existingLearningPath.topics.findIndex(
-        (t) => t._id.toString() === topicId
-      );
+      const topictoUpdate = existingLearningPath.topics.id(topicId)
 
-      if (topicIndex === -1) {
-        return res
-          .status(404)
-          .json({ msg: "Topic not found", status: "failed" });
+      if (!topictoUpdate) {
+        return res.status(404).json({ msg: 'Topic not found', status: 'failed' });
       }
 
       // Update the properties of the existing topic
-      existingLearningPath.topics[topicIndex].topicName = topicName;
-      existingLearningPath.topics[topicIndex].description = description;
-      existingLearningPath.topics[topicIndex].publish = publish;
+      topictoUpdate.topicName = topicName;
+      topictoUpdate.description = description;
+      topictoUpdate.publish = publish;
 
       // Save the updated learning path document
       await existingLearningPath.save();
@@ -887,261 +972,9 @@ app.put(
   }
 );
 
-//  Add Content Data
-
-app.post(
-  "/addContentOfTopicsinlearningpath/:learningPathId",
-  middleware,
-  async (req, res) => {
-    try {
-      const { _id, topicName, contentTitle, contentdes, contentimg, publish } =
-        req.body;
-      // const topicId = req.params.topicId;
-
-      // Find the learning path by ID
-      const learningPath = await allLearningPaths.findById(_id);
-
-      if (!learningPath) {
-        return res
-          .status(404)
-          .json({ msg: "Learning path not found", status: "failed" });
-      }
-
-      // Find the topic within the learning path by ID
-      const topic = learningPath.topics.find(
-        (t) => t.topicName.toString() === topicName
-      );
-
-      if (!topic) {
-        return res
-          .status(404)
-          .json({ msg: "Topic not found", status: "failed" });
-      }
-
-      // Add the new content to the "content" array in the topic
-      topic.content.push({
-        _id: req.body._id,
-        contentTitle,
-        contentdes,
-        contentimg,
-        publish,
-      });
-
-      // Save the updated learning path document
-      await learningPath.save();
-
-      return res
-        .status(200)
-        .json({ msg: "Content added successfully", status: "success" });
-    } catch (e) {
-      console.error(e.message, "addContentOfTopicsinlearningpath");
-      return res
-        .status(500)
-        .json({ msg: "Internal Server Error", status: "failed" });
-    }
-  }
-);
-app.get(
-  "/getTopic/:learningPathId/:topicId",
-
-  async (req, res) => {
-    try {
-      const learningPathId = req.params.learningPathId;
-      const topicId = req.params.topicId;
-
-      // Find the existing learning path by ID
-      const existingLearningPath = await allLearningPaths.findById(
-        learningPathId
-      );
-
-      if (!existingLearningPath) {
-        return res
-          .status(404)
-          .json({ msg: "Learning path not found", status: "failed" });
-      }
-
-      // Find the topic within the "topics" array
-      const topic = existingLearningPath.topics.find(
-        (t) => t._id.toString() === topicId
-      );
-
-      if (!topic) {
-        return res
-          .status(404)
-          .json({ msg: "Topic not found", status: "failed" });
-      }
-
-      // Return the information about the topic
-      return res.json({
-        topicName: topic.topicName,
-        description: topic.description,
-        publish: topic.publish,
-        status: "success",
-      });
-    } catch (e) {
-      console.error(e.message, "getTopic");
-      return res
-        .status(500)
-        .json({ msg: "Internal Server Error", status: "failed" });
-    }
-  }
-);
-
-app.get("/getContentPath/:id", async (req, res) => {
-  try {
-    const id = req.params.id;
-
-    // Find the learning path by ID
-    const learningPath = await allLearningPaths.findById(id);
-
-    if (!learningPath) {
-      return res
-        .status(404)
-        .json({ msg: "Learning path not found", status: "failed" });
-    }
-
-    // Return the learning path details, including topics and content
-    return res.status(200).json(learningPath);
-  } catch (e) {
-    console.error(e.message, "getContentPath");
-    return res
-      .status(500)
-      .json({ msg: "Internal Server Error", status: "failed" });
-  }
-});
-
-//updatecontentintopicoflearningpath
-app.put(
-  "/updateContent/:learningPathId/:topicId/:contentId",
-  middleware,
-
-  async (req, res) => {
-    try {
-      const learningPathId = req.params.learningPathId;
-      const topicId = req.params.topicId;
-      const contentId = req.params.contentId;
-      const { contentTitle, contentdes, contentimg, publish } = req.body;
-
-      // Find the existing learning path by ID
-      const existingLearningPath = await allLearningPaths.findById(
-        learningPathId
-      );
-
-      if (!existingLearningPath) {
-        return res
-          .status(404)
-          .json({ msg: "Learning path not found", status: "failed" });
-      }
-
-      // Find the topic within the learning path by ID
-      const topic = existingLearningPath.topics.find(
-        (t) => t._id.toString() === topicId
-      );
-
-      if (!topic) {
-        return res
-          .status(404)
-          .json({ msg: "Topic not found", status: "failed" });
-      }
-
-      // Find the index of the content item within the "content" array
-      const contentIndex = topic.content.findIndex(
-        (c) => c._id.toString() === contentId
-      );
-
-      if (contentIndex === -1) {
-        return res
-          .status(404)
-          .json({ msg: "Content not found", status: "failed" });
-      }
-
-      // Update the properties of the existing content
-      topic.content[contentIndex].contentTitle = contentTitle;
-      topic.content[contentIndex].contentdes = contentdes;
-      topic.content[contentIndex].contentimg = contentimg;
-      topic.content[contentIndex].publish = publish;
-
-      // Save the updated learning path document
-      await existingLearningPath.save();
-
-      return res.json({
-        msg: "Content updated successfully",
-        status: "success",
-      });
-    } catch (e) {
-      console.error(e.message, "updateContent");
-      return res
-        .status(500)
-        .json({ msg: "Internal Server Error", status: "failed" });
-    }
-  }
-);
-app.get(
-  "/onselectedContentinTopicinLearningPath/:learningPathId/:topicId",
-
-  async (req, res) => {
-    try {
-      const { learningPathId, topicId } = req.params;
-
-      // Find the learning path by ID
-      const learningPath = await LearningPath.findById(learningPathId);
-
-      if (!learningPath) {
-        return res
-          .status(404)
-          .json({ msg: "Learning path not found", status: "failed" });
-      }
-
-      // Find the topic within the learning path by ID
-      const topic = learningPath.topics.find(
-        (t) => t._id.toString() === topicId
-      );
-
-      if (!topic) {
-        return res
-          .status(404)
-          .json({ msg: "Topic not found", status: "failed" });
-      }
-
-      // Return all content items in the specified topic
-      return res.status(200).json(topic.content);
-    } catch (e) {
-      console.error(e.message, "get content");
-      return res
-        .status(500)
-        .json({ msg: "Internal Server Error", status: "failed" });
-
-      // siva
-      // siva
-    }
-  }
-);
-
-app.delete("/onselectedLearningPath/:_id", middleware, async (req, res) => {
-  try {
-    const _id = req.params._id; // Fix: Extract _id from req.params
-    const deletedLearningPath = await allLearningPaths.findByIdAndDelete(
-      _id,
-      req.body
-    );
-
-    console.log(deletedLearningPath);
-
-    if (!deletedLearningPath) {
-      return res.status(404).json("Not Found!");
-    }
-
-    return res.status(200).json("Deleted Successfully");
-  } catch (error) {
-    console.error(error, "/onselectedLearningPath/:_id");
-    return res.status(500).json("Internal Server Error");
-  }
-});
-
-// //deleteTopicinLearningPath
+//deleteTopicinLearningPath
 app.delete(
-  "/onselectedTopicinLearningPath/:learningPathId/:topicId",
-  middleware,
+  "/onselectedTopicinLearningPath/:learningPathId/:topicId",middleware,
   async (req, res) => {
     try {
       const learningPathId = req.params.learningPathId;
@@ -1179,8 +1012,7 @@ app.delete(
       });
     } catch (e) {
       console.error(
-        e.message,
-        "/onselectedTopicinLearningPath/:learningPathId/:topicId"
+        e.message
       );
       return res
         .status(500)
@@ -1189,9 +1021,191 @@ app.delete(
   }
 );
 
+//Create Content Data
+app.post(
+  "/addContentOfTopicsinlearningpath/:learningPathId/:topicId",middleware,
+  async (req, res) => {
+    try {
+    const learningPathId = req.params.learningPathId;
+    const topicId = req.params.topicId;
+      const { contentTitle, contentdes, contentimg, publish } =
+        req.body;
+      // const topicId = req.params.topicId;
+
+      // Find the learning path by ID
+      const learningPath = await allLearningPaths.findById(learningPathId);
+
+      if (!learningPath) {
+        return res
+          .status(404)
+          .json({ msg: "Learning path not found", status: "failed" });
+      }
+
+      // Find the topic within the learning path by ID
+      const topic = learningPath.topics.id(topicId);
+
+      if (!topic) {
+        return res
+          .status(404)
+          .json({ msg: "Topic not found", status: "failed" });
+      }
+
+      // Add the new content to the "content" array in the topic
+      topic.content.push({
+        contentTitle,
+        contentdes,
+        contentimg,
+        publish,
+      });
+
+      // Save the updated learning path document
+      await learningPath.save();
+
+      return res
+        .status(200)
+        .json({ msg: "Content added successfully", status: "success" });
+    } catch (e) {
+      console.error(e.message, "addContentOfTopicsinlearningpath");
+      return res
+        .status(500)
+        .json({ msg: "Internal Server Error", status: "failed" });
+    }
+  }
+);
+
+//get contentpaths
+app.get("/getContentPaths/:learningPathId/:topicId",middleware, async (req, res) => {
+  try {
+    const {learningPathId,topicId} = req.params;
+
+    // Find the learning path by ID
+    const learningPath = await allLearningPaths.findById(learningPathId);
+
+    if (!learningPath) {
+      return res
+        .status(404)
+        .json({ msg: "Learning path not found", status: "failed" });
+    }
+    const topic = learningPath.topics.id(topicId);
+
+    if (!topic) {
+      return res.status(404).json({ msg: 'topic not found', status: 'failed' });
+    }
+    const contents = topic.content;
+
+    // Return the learning path details, including topics and content
+    return res.status(200).json(contents);
+  } catch (e) {
+    console.error(e.message);
+    return res
+      .status(500)
+      .json({ msg: "Internal Server Error", status: "failed" });
+  }
+});
+
+//updatecontentintopicoflearningpath
+app.put(
+  "/updateContent/:learningPathId/:topicId/:contentId",middleware,
+  async (req, res) => {
+    try {
+      const learningPathId = req.params.learningPathId;
+      const topicId = req.params.topicId;
+      const contentId = req.params.contentId;
+      const { contentTitle, contentdes, contentimg, publish } = req.body;
+
+      // Find the existing learning path by ID
+      const existingLearningPath = await allLearningPaths.findById(
+        learningPathId
+      );
+
+      if (!existingLearningPath) {
+        return res
+          .status(404)
+          .json({ msg: "Learning path not found", status: "failed" });
+      }
+
+      // Find the topic within the learning path by ID
+      const topic = existingLearningPath.topics.id(topicId)
+
+      if (!topic) {
+        return res
+          .status(404)
+          .json({ msg: "Topic not found", status: "failed" });
+      }
+
+      // Find the index of the content item within the "content" array
+      const contenttoUpdate= topic.content.id(contentId)
+
+      
+    if (!contenttoUpdate) {
+      return res.status(404).json({ msg: 'MCQ not found', status: 'failed' });
+    }
+
+      // Update the properties of the existing content
+      contenttoUpdate.contentTitle = contentTitle;
+      contenttoUpdate.contentdes = contentdes;
+      contenttoUpdate.contentimg = contentimg;
+      contenttoUpdate.publish = publish;
+
+      // Save the updated learning path document
+      await existingLearningPath.save();
+
+      return res.json({
+        msg: "Content updated successfully",
+        status: "success",
+      });
+    } catch (e) {
+      console.error(e.message, "updateContent");
+      return res
+        .status(500)
+        .json({ msg: "Internal Server Error", status: "failed" });
+    }
+  }
+);
+
+//getSpecificcontents with learningpathid,topic id
+app.get(
+  "/onselectedContentinTopicinLearningPath/:learningPathId/:topicId/:contentId",middleware,
+  async (req, res) => {
+    try {
+      const { learningPathId, topicId,contentId } = req.params;
+
+      // Find the learning path by ID
+      const learningPath = await allLearningPaths.findById(learningPathId);
+
+      if (!learningPath) {
+        return res
+          .status(404)
+          .json({ msg: "Learning path not found", status: "failed" });
+      }
+
+      // Find the topic within the learning path by ID
+      const topic = learningPath.topics.id(topicId)
+
+      if (!topic) {
+        return res
+          .status(404)
+          .json({ msg: "Topic not found", status: "failed" });
+      }
+      const content = topic.content.id(contentId);
+
+      if (!content) {
+        return res.status(404).json({ msg: 'content not found', status: 'failed' });
+      }
+      // Return all content items in the specified topic
+      return res.status(200).json({content, status: 'success'});
+    } catch (e) {
+      console.error(e.message, "get content");
+      return res
+        .status(500)
+        .json({ msg: "Internal Server Error", status: "failed" });
+    }
+  }
+);
+
+//delete selectedcontent
 app.delete(
-  "/onselectedContentinTopicinLearningPath/:learningPathId/:topicId/:contentId",
-  middleware,
+  "/onselectedContentinTopicinLearningPath/:learningPathId/:topicId/:contentId",middleware,
   async (req, res) => {
     try {
       const learningPathId = req.params.learningPathId;
@@ -1208,10 +1222,7 @@ app.delete(
       }
 
       // Find the topic within the learning path by ID
-      const topic = learningPath.topics.find(
-        (t) => t._id.toString() === topicId
-      );
-
+      const topic = learningPath.topics.id(topicId)
       if (!topic) {
         return res
           .status(404)
@@ -1219,18 +1230,7 @@ app.delete(
       }
 
       // Find the index of the content item within the "content" array
-      const contentIndex = topic.content.findIndex(
-        (c) => c._id.toString() === contentId
-      );
-
-      if (contentIndex === -1) {
-        return res
-          .status(404)
-          .json({ msg: "Content not found", status: "failed" });
-      }
-
-      // Remove the content item from the "content" array
-      topic.content.splice(contentIndex, 1);
+      topic.content.pull({ _id: contentId });
 
       // Save the updated learning path document
       await learningPath.save();
@@ -1239,10 +1239,7 @@ app.delete(
         .status(200)
         .json({ msg: "Content deleted successfully", status: "success" });
     } catch (e) {
-      console.error(
-        e.message,
-        "/onselectedContentinTopicinLearningPath/:learningPathId/:topicId/:contentId"
-      );
+      console.error(e.message);
       return res
         .status(500)
         .json({ msg: "Internal Server Error", status: "failed" });
@@ -1253,7 +1250,6 @@ app.delete(
 app.listen(port, () => {
   console.log(`Server running at ${port}`);
 });
-
 
 app.use("/v1", require('./Routes/ChapterRoutes')) //api routes
 app.use('/v1',  require('./Routes/MCQRoutes'));

@@ -1,10 +1,11 @@
 const express = require("express");
 const Subject= require("../Model/Subjects")
 const router =  express.Router()
+const Middlware = require("../middleware/jwtAuth");
 
 // Create a new chapter (POST)
 //http://localhost:4010/v1/addchapter/65718fc0ac242c99efb6ea4b
-router.post('/addchapter/:subjectId', async (req, res) => {
+router.post('/addchapter/:subjectId',Middlware , async (req, res) => {
   try {
     const subjectId = req.params.subjectId;
     const { Name, Description, subject, ChapterTag } = req.body;
