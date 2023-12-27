@@ -483,7 +483,7 @@ app.get("/InstituteData123/:InstituteName", async (req, res) => {
 
 //Learn Path Data
 
-app.post("/AddVideoPath", async (req, res) => {
+app.post("/AddVideoPath",middleware , async (req, res) => {
   try {
     // Check if the VideofolderName already exists
     const existingVideo = await AddvideoData.findOne({
@@ -500,13 +500,13 @@ app.post("/AddVideoPath", async (req, res) => {
     } else {
       res.status(400).json("Video path with the same name already exists");
     }
-  } catch (e) {
+  } catch (e) { 
     console.error(e.message, "AddVideoPath");
     return res.status(500).json(e.message);
   }
 });
 
-app.get("/allAddVideosData", async (req, res) => {
+app.get("/allAddVideosData",middleware , async (req, res) => {
   try {
     const allVideos = await AddvideoData.find({});
     return res.json(allVideos);
@@ -516,7 +516,7 @@ app.get("/allAddVideosData", async (req, res) => {
   }
 });
 
-app.put("/UpdateVideosDetails/:selectedvideopathId", async (req, res) => {
+app.put("/UpdateVideosDetails/:selectedvideopathId",middleware , async (req, res) => {
   try {
     const { selectedvideopathId } = req.params;
     const video = await AddvideoData.findByIdAndUpdate(selectedvideopathId, req.body);
@@ -548,7 +548,7 @@ app.get("/DisplayIndividualVideo/:id", async (req, res) => {
   }
 });
 
-app.delete("/deleteVideo/:id", async (req, res) => {
+app.delete("/deleteVideo/:id",middleware , async (req, res) => {
   try {
     const id = req.params.id; // Use req.params.id to get the instituteId
     const deletedVideo = await AddvideoData.findByIdAndRemove(id);
@@ -565,7 +565,7 @@ app.delete("/deleteVideo/:id", async (req, res) => {
 });
 
 //create videofile
-app.post("/AddVideoFilesData/:videopathId", async (req, res) => {
+app.post("/AddVideoFilesData/:videopathId",middleware , async (req, res) => {
   try {
     const videopathId = req.params.videopathId
     const {VideofolderName,VideoTitleName,SourceName,Video1} = req.body
@@ -600,7 +600,7 @@ app.post("/AddVideoFilesData/:videopathId", async (req, res) => {
   }
 });
 //delete videofiles
-app.delete("/deleteVideofiles/:videopathId/:videofileId", async (req, res) => {
+app.delete("/deleteVideofiles/:videopathId/:videofileId",middleware , async (req, res) => {
   try {
     const videopathId = req.params.videopathId;
     const videofileId = req.params.videofileId;
@@ -627,7 +627,7 @@ app.delete("/deleteVideofiles/:videopathId/:videofileId", async (req, res) => {
 
    
 //get videofiles with videopathid
-app.get("/DisplayAllVideos/:videopathId", async (req, res) => {
+app.get("/DisplayAllVideos/:videopathId",middleware , async (req, res) => {
   try {
     const videopathId = req.params.videopathId;
     const existingVideoPath = await AddvideoData.findById(videopathId);
@@ -678,7 +678,7 @@ app.get("/foldersVideoData/:VideofolderName", async (req, res) => {
   }
 });
 //Update videofiles
-app.put("/UpdateVideofileDetails/:selectedvideopathId/:selectedVideofileId", async (req, res) => {
+app.put("/UpdateVideofileDetails/:selectedvideopathId/:selectedVideofileId",middleware , async (req, res) => {
   try {
     const selectedvideopathId = req.params.selectedvideopathId;
       const selectedVideofileId = req.params.selectedVideofileId;

@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Subject = require('../Model/Subjects');
-const Middlware = require("../Middlware");
+const Middlware = require("../middleware/jwtAuth");
 
 
 //http://localhost:4010/v1/addMCQ/6571ad89cf0acc567c548296/6571ae96cf0acc567c54829c

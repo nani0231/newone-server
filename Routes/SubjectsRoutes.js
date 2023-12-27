@@ -1,6 +1,6 @@
 const express = require("express");
 const Subject = require('../Model/Subjects');
-const Middlware = require("../Middlware");
+const Middlware = require("../middleware/jwtAuth");
 const router =  express.Router()
 // Create a subject
 //http://localhost:4010/v2/subject

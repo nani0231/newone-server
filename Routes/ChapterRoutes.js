@@ -1,7 +1,7 @@
 const express = require("express");
 const Subject= require("../Model/Subjects")
 const router =  express.Router()
-const Middlware = require("../Middlware");
+const Middlware = require("../middleware/jwtAuth");
 
 // Create a new chapter (POST)
 //http://localhost:4010/v1/addchapter/65718fc0ac242c99efb6ea4b
