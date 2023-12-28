@@ -12,6 +12,8 @@ const AddvideoData = require("./Model/LearnPath/Addvideo");
 const videoFile = require("./Model/LearnPath/AddVideoFile");
 // const allLearningPaths = require("./Model/LearnPath/");
 const paragMCQRouter = require('./Routes/ParagRoutes');
+const Categories = require("./Model/categories");
+const Topic = require("./Model/topic");
 
 // const bodyParser = require("body-parser");
 
