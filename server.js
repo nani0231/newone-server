@@ -707,8 +707,8 @@ app.put("/UpdateVideofileDetails/:selectedvideopathId/:selectedVideofileId",midd
     }
   });
     
-// Create LearningPath
-app.post("/addlearningpath",middleware, async (req, res) => {
+// Learn-Path
+app.post("/addlearningpath", async (req, res) => {
   console.log(req.body);
   try {
     const {
@@ -722,6 +722,7 @@ app.post("/addlearningpath",middleware, async (req, res) => {
       AboutLearnPath,
       authorName,
       hours,
+      minutes,
       learningimg,
       fileName,
       requirements,
@@ -732,7 +733,8 @@ app.post("/addlearningpath",middleware, async (req, res) => {
     if (isLearningPathExist) {
       return res.send({ msg: "Path Already Registered", status: "failed" });
     }
-    const minutes = new Date();
+    const CurrentTime = new Date();
+
     let newLearningPath = new allLearningPaths({
       learningPathTitle,
       relevantSkillTags,
@@ -748,8 +750,9 @@ app.post("/addlearningpath",middleware, async (req, res) => {
       learningimg,
       fileName,
       requirements,
+      CurrentTime,
     });
-    await newLearningPath.save(); //saving mongodb collection
+    newLearningPath.save(); //saving mongodb collection
     return res.send({ msg: "Path Created Successfully", status: "success" });
   } catch (e) {
     console.error(e.message, "addlearningpath");
@@ -757,8 +760,7 @@ app.post("/addlearningpath",middleware, async (req, res) => {
   }
 });
 
-//get alllearning paths
-app.get("/alllearningpathsDetails",middleware, async (req, res) => {
+app.get("/alllearningpathsDetails", async (req, res) => {
   try {
     const allUsersDetails = await allLearningPaths.find();
     res.status(200).send(allUsersDetails);
@@ -770,7 +772,7 @@ app.get("/alllearningpathsDetails",middleware, async (req, res) => {
 
 //updatelearningpath
 
-app.put("/updatelearningpath/:learningPathId",middleware, async (req, res) => {
+app.put("/updatelearningpath/:learningPathId", async (req, res) => {
   try {
     const learningPathId = req.params.learningPathId;
     const {
@@ -781,6 +783,7 @@ app.put("/updatelearningpath/:learningPathId",middleware, async (req, res) => {
       subscription,
       price,
       discount,
+      AboutLearnPath,
       authorName,
       hours,
       minutes,
@@ -808,6 +811,7 @@ app.put("/updatelearningpath/:learningPathId",middleware, async (req, res) => {
     existingLearningPath.subscription = subscription;
     existingLearningPath.price = price;
     existingLearningPath.discount = discount;
+    existingLearningPath.AboutLearnPath = AboutLearnPath;
     existingLearningPath.authorName = authorName;
     existingLearningPath.hours = hours;
     existingLearningPath.minutes = minutes;
@@ -830,34 +834,12 @@ app.put("/updatelearningpath/:learningPathId",middleware, async (req, res) => {
   }
 });
 
-//delete selectedlearningpath
-app.delete("/onselectedLearningPath/:_id",middleware, async (req, res) => {
-  try {
-    const _id = req.params._id; // Fix: Extract _id from req.params
-    const deletedLearningPath = await allLearningPaths.findByIdAndDelete(
-      _id,
-      req.body
-    );
+// Post Topics
 
-    console.log(deletedLearningPath);
-
-    if (!deletedLearningPath) {
-      return res.status(404).json("Not Found!");
-    }
-
-    return res.status(200).json("Deleted Successfully");
-  } catch (error) {
-    console.error(error, "/onselectedLearningPath/:_id");
-    return res.status(500).json("Internal Server Error");
-  }
-});
-
-// create Topics
-
-app.post("/addTopic/:learningPathId",middleware, async (req, res) => {
+app.post("/addTopic/:learningPathId", async (req, res) => {
   try {
     const learningPathId = req.params.learningPathId;
-    const { topicName, description, publish } = req.body;
+    const { topicName, description, publish, TopicTime } = req.body;
 
     // Find the existing learning path by ID
     const existingLearningPath = await allLearningPaths.findById(
@@ -887,7 +869,9 @@ app.post("/addTopic/:learningPathId",middleware, async (req, res) => {
       topicName,
       description,
       publish,
+      TopicTime: new Date(), // Assign the current date to TopicTime
     };
+    console.log("topic", TopicTime);
 
     // Add the new topic to the "topics" array in the learning path
     existingLearningPath.topics.push(newTopic);
@@ -904,32 +888,76 @@ app.post("/addTopic/:learningPathId",middleware, async (req, res) => {
   }
 });
 
-//get topics
-app.get("/getTopic/:learningPathId",middleware, async (req, res) => {
+app.get("/getTopic/:id", async (req, res) => {
   try {
-    const learningPathId = req.params.learningPathId;
+    const id = req.params.id;
 
     // Find the topic by ID
-    const learningPath = await allLearningPaths.findById(learningPathId);
+    const topic = await allLearningPaths.findById(id);
 
-    if (!learningPath) {
-      return res.status(404).json({ msg: "learningPath not found", status: "failed" });
+    if (!topic) {
+      return res.status(404).json({ msg: "Topic not found", status: "failed" });
     }
-    const topicsdata = learningPath.topics;
 
     // If the topic is found, send it in the response
-    return res.send({topicsdata, status:'success'});
+    return res.send(topic);
   } catch (e) {
-    console.error(e.message);
+    console.error(e.message, "getTopic");
     return res
       .status(500)
       .json({ msg: "Internal Server Error", status: "failed" });
   }
 });
 
-//update topic
+app.get(
+  "/getTopic/:learningPathId/:topicId",
+
+  async (req, res) => {
+    try {
+      const learningPathId = req.params.learningPathId;
+      const topicId = req.params.topicId;
+
+      // Find the existing learning path by ID
+      const existingLearningPath = await allLearningPaths.findById(
+        learningPathId
+      );
+
+      if (!existingLearningPath) {
+        return res
+          .status(404)
+          .json({ msg: "Learning path not found", status: "failed" });
+      }
+
+      // Find the topic within the "topics" array
+      const topic = existingLearningPath.topics.find(
+        (t) => t._id.toString() === topicId
+      );
+
+      if (!topic) {
+        return res
+          .status(404)
+          .json({ msg: "Topic not found", status: "failed" });
+      }
+
+      // Return the information about the topic
+      return res.json({
+        topicName: topic.topicName,
+        description: topic.description,
+        publish: topic.publish,
+        status: "success",
+      });
+    } catch (e) {
+      console.error(e.message, "getTopic");
+      return res
+        .status(500)
+        .json({ msg: "Internal Server Error", status: "failed" });
+    }
+  }
+);
+
 app.put(
-  "/updateTopic/:learningPathId/:topicId",middleware,
+  "/updateTopic/:learningPathId/:topicId",
+
   async (req, res) => {
     try {
       const learningPathId = req.params.learningPathId;
@@ -948,16 +976,20 @@ app.put(
       }
 
       // Find the index of the topic within the "topics" array
-      const topictoUpdate = existingLearningPath.topics.id(topicId)
+      const topicIndex = existingLearningPath.topics.findIndex(
+        (t) => t._id.toString() === topicId
+      );
 
-      if (!topictoUpdate) {
-        return res.status(404).json({ msg: 'Topic not found', status: 'failed' });
+      if (topicIndex === -1) {
+        return res
+          .status(404)
+          .json({ msg: "Topic not found", status: "failed" });
       }
 
       // Update the properties of the existing topic
-      topictoUpdate.topicName = topicName;
-      topictoUpdate.description = description;
-      topictoUpdate.publish = publish;
+      existingLearningPath.topics[topicIndex].topicName = topicName;
+      existingLearningPath.topics[topicIndex].description = description;
+      existingLearningPath.topics[topicIndex].publish = publish;
 
       // Save the updated learning path document
       await existingLearningPath.save();
@@ -972,9 +1004,850 @@ app.put(
   }
 );
 
-//deleteTopicinLearningPath
+//  Add Content Data
+
+//
+
+// app.post(
+//   "/addContentOfTopicsinlearningpath/:learningPathId",
+//   async (req, res) => {
+//     try {
+//       const {
+//         _id,
+//         topicName,
+//         contentTitle,
+//         contentdes,
+//         contentimg,
+//         publish,
+//         contentTime,
+//       } = req.body;
+
+//       // Find the learning path by ID
+//       const learningPath = await allLearningPaths.findById(_id);
+
+//       if (!learningPath) {
+//         return res
+//           .status(404)
+//           .json({ msg: "Learning path not found", status: "failed" });
+//       }
+
+//       // Find the topic within the learning path by name
+//       const topic = learningPath.topics.find(
+//         (t) => t.topicName.toString() === topicName
+//       );
+
+//       if (!topic) {
+//         return res
+//           .status(404)
+//           .json({ msg: "Topic not found", status: "failed" });
+//       }
+
+//       // Check if contentTitle already exists in the topic
+//       const existingContent = topic.content.find(
+//         (c) => c.contentTitle === contentTitle
+//       );
+
+//       if (existingContent) {
+//         return res.status(400).json({
+//           msg: "Content with the same title already exists",
+//           status: "failed",
+//         });
+//       }
+
+//       // Add the new content to the "content" array in the topic
+//       topic.content.push({
+//         _id: req.body._id,
+//         contentTitle,
+//         contentdes,
+//         contentimg,
+//         publish,
+//         contentTime: new Data(),
+//       });
+//       console.log(contentTime);
+
+//       // Save the updated learning path document
+//       await learningPath.save();
+
+//       return res
+//         .status(200)
+//         .json({ msg: "Content added successfully", status: "success" });
+//     } catch (e) {
+//       console.error(e.message, "addContentOfTopicsinlearningpath");
+//       return res
+//         .status(500)
+//         .json({ msg: "Internal Server Error", status: "failed" });
+//     }
+//   }
+// );
+
+app.post(
+  "/addContentOfTopicsinlearningpath/:learningPathId",
+  async (req, res) => {
+    try {
+      const { learningPathId } = req.params;
+      const {
+        topicName,
+        contentTitle,
+        contentdes,
+        contentimg,
+        publish,
+        contentTime,
+      } = req.body;
+
+      // Find the learning path by ID
+      const learningPath = await allLearningPaths.findById(learningPathId);
+
+      if (!learningPath) {
+        return res
+          .status(404)
+          .json({ msg: "Learning path not found", status: "failed" });
+      }
+
+      // Find the topic within the learning path by name
+      const topic = learningPath.topics.find(
+        (t) => t.topicName.toString() === topicName
+      );
+
+      if (!topic) {
+        return res
+          .status(404)
+          .json({ msg: "Topic not found", status: "failed" });
+      }
+
+      // Check if contentTitle already exists in the topic
+      const existingContent = topic.content.find(
+        (c) => c.contentTitle === contentTitle
+      );
+
+      if (existingContent) {
+        return res.status(400).json({
+          msg: "Content with the same title already exists",
+          status: "failed",
+        });
+      }
+
+      // Add the new content to the "content" array in the topic
+      topic.content.push({
+        _id: req.body._id,
+        contentTitle,
+        contentdes,
+        contentimg,
+        publish,
+        contentTime: new Date(), // Use new Date() to store the current time
+      });
+      console.log(contentTime);
+      // Save the updated learning path document
+      await learningPath.save();
+
+      return res
+        .status(200)
+        .json({ msg: "Content added successfully", status: "success" });
+    } catch (e) {
+      console.error(e.message, "addContentOfTopicsinlearningpath");
+      return res
+        .status(500)
+        .json({ msg: "Internal Server Error", status: "failed" });
+    }
+  }
+);
+
+app.post(
+  "/addContentOfTopicsinlearningpath/:learningPathId/:topicId",
+
+  async (req, res) => {
+    try {
+      const learningPathId = req.params.learningPathId;
+      const topicId = req.params.topicId;
+      const {
+        topicContentname,
+        contentTitle,
+        contentdes,
+        contentimg,
+        publish,
+      } = req.body;
+      // const topicId = req.params.topicId;
+
+      // Find the learning path by ID
+      const learningPath = await allLearningPaths.findById(learningPathId);
+
+      if (!learningPath) {
+        return res
+          .status(404)
+          .json({ msg: "Learning path not found", status: "failed" });
+      }
+
+      // Find the topic within the learning path by ID
+      const topic = learningPath.topics.id(topicId);
+
+      if (!topic) {
+        return res
+          .status(404)
+          .json({ msg: "Topic not found", status: "failed" });
+      }
+
+      // Add the new content to the "content" array in the topic
+      topic.content.push({
+        topicContentname,
+        contentTitle,
+        contentdes,
+        contentimg,
+        publish,
+      });
+
+      // Save the updated learning path document
+      await learningPath.save();
+
+      return res
+        .status(200)
+        .json({ msg: "Content added successfully", status: "success" });
+    } catch (e) {
+      console.error(e.message, "addContentOfTopicsinlearningpath");
+      return res
+        .status(500)
+        .json({ msg: "Internal Server Error", status: "failed" });
+    }
+  }
+);
+app.post(
+  "/addContentOfTopicsinlearningpath/:learningPathId/:topicId",
+
+  async (req, res) => {
+    try {
+      const learningPathId = req.params.learningPathId;
+      const topicId = req.params.topicId;
+      const {
+        topicContentname,
+        contentTitle,
+        contentdes,
+        contentimg,
+        publish,
+      } = req.body;
+
+      // Find the learning path by ID
+      const learningPath = await allLearningPaths.findById(learningPathId);
+
+      if (!learningPath) {
+        return res
+          .status(404)
+          .json({ msg: "Learning path not found", status: "failed" });
+      }
+
+      // Find the topic within the learning path by ID
+      const topic = learningPath.topics.id(topicId);
+
+      if (!topic) {
+        return res
+          .status(404)
+          .json({ msg: "Topic not found", status: "failed" });
+      }
+
+      // Add the new content to the "content" array in the topic
+      const newContent = {
+        topicContentname,
+        contentTitle,
+        contentdes,
+        contentimg,
+        publish,
+      };
+
+      topic.content.push(newContent);
+
+      // Save the updated learning path document
+      await learningPath.save();
+
+      return res.status(200).json({
+        msg: "Content added successfully",
+        status: "success",
+        learningPathId: learningPath._id,
+        topicId: topic._id,
+        contentId: newContent._id, // Assuming you have a unique identifier for content
+      });
+    } catch (e) {
+      console.error(e.message, "addContentOfTopicsinlearningpath");
+      return res
+        .status(500)
+        .json({ msg: "Internal Server Error", status: "failed" });
+    }
+  }
+);
+
+app.get("/getContentPaths/:learningPathId/:topicId", async (req, res) => {
+  try {
+    const { learningPathId, topicId } = req.params;
+
+    // Find the learning path by ID
+    const learningPath = await allLearningPaths.findById(learningPathId);
+
+    if (!learningPath) {
+      return res
+        .status(404)
+        .json({ msg: "Learning path not found", status: "failed" });
+    }
+    const topic = learningPath.topics.id(topicId);
+
+    if (!topic) {
+      return res.status(404).json({ msg: "topic not found", status: "failed" });
+    }
+    const contents = topic.content;
+
+    // Return the learning path details, including topics and content
+    return res.status(200).json(contents);
+  } catch (e) {
+    console.error(e.message);
+    return res
+      .status(500)
+      .json({ msg: "Internal Server Error", status: "failed" });
+  }
+});
+
+// app.get(
+//   "/getAllContents/:learningPathId/:topicId/:contentId",
+//   async (req, res) => {
+//     try {
+//       const { learningPathId, topicId, contentId } = req.params;
+
+//       // Find the learning path by ID
+//       const learningPath = await allLearningPaths.findById(learningPathId);
+
+//       if (!learningPath) {
+//         return res
+//           .status(404)
+//           .json({ msg: "Learning path not found", status: "failed" });
+//       }
+
+//       // Find the topic within the learning path by ID
+//       const topic = learningPath.topics.id(topicId);
+
+//       if (!topic) {
+//         return res
+//           .status(404)
+//           .json({ msg: "Topic not found", status: "failed" });
+//       }
+
+//       // Find the content within the topic by ID
+//       const content = topic.content.id(contentId);
+
+//       if (!content) {
+//         return res
+//           .status(404)
+//           .json({ msg: "Content not found", status: "failed" });
+//       }
+
+//       // Retrieve all contents data for the given learning path, topic, and content
+//       const allContentsData = topic.content.map((contentItem) => {
+//         // Modify the content data as needed
+//         return {
+//           id: contentItem.id,
+//           topicContentname: contentItem.topicContentname,
+//           contentTitle: contentItem.contentTitle,
+//           contentdes: contentItem.contentdes,
+//           contentimg: contentItem.contentimg,
+//           publish: contentItem.publish,
+//           // Add more properties as needed
+//         };
+//       });
+
+app.get(
+  "/getAllContents/:learningPathId/:topicId/:contentId",
+  async (req, res) => {
+    try {
+      const { learningPathId, topicId, contentId } = req.params;
+
+      // Find the learning path by ID
+      const learningPath = await allLearningPaths.findById(learningPathId);
+
+      if (!learningPath) {
+        return res
+          .status(404)
+          .json({ msg: "Learning path not found", status: "failed" });
+      }
+
+      // Find the topic within the learning path by ID
+      const topic = learningPath.topics.id(topicId);
+
+      if (!topic) {
+        return res
+          .status(404)
+          .json({ msg: "Topic not found", status: "failed" });
+      }
+
+      // Find the content within the topic by ID
+      const content = topic.content.id(contentId);
+
+      if (!content) {
+        return res
+          .status(404)
+          .json({ msg: "Content not found", status: "failed" });
+      }
+
+      // Retrieve all contents data for the given learning path, topic, and content
+      const allContentsData = topic.content.map((contentItem) => {
+        // Modify the content data as needed
+        // Modify the content data as needed
+        return {
+          id: contentItem.id,
+          contentTitle: contentItem.contentTitle,
+          contentdes: contentItem.contentdes,
+          contentimg: contentItem.contentimg,
+          publish: contentItem.publish,
+          contentTime: contentItem.contentTime,
+          // Add more properties as needed
+        };
+      });
+
+      //server
+
+      // Return the modified content data
+      return res
+        .status(200)
+        .json({ contents: allContentsData, status: "success" });
+    } catch (e) {
+      console.error(e.message, "get all contents");
+      return res
+        .status(500)
+        .json({ msg: "Internal Server Error", status: "failed" });
+    }
+  }
+);
+
+// app.get(
+//   "/getAllContents/:learningPathId/:topicId/:topicContentname",
+//   async (req, res) => {
+//     try {
+//       const { learningPathId, topicId, topicContentname } = req.params;
+
+//       // Find the learning path by ID
+//       const learningPath = await allLearningPaths.findById(learningPathId);
+
+//       if (!learningPath) {
+//         return res
+//           .status(404)
+//           .json({ msg: "Learning path not found", status: "failed" });
+//       }
+
+//       // Find the topic within the learning path by ID
+//       const topic = learningPath.topics.id(topicId);
+
+//       if (!topic) {
+//         return res
+//           .status(404)
+//           .json({ msg: "Topic not found", status: "failed" });
+//       }
+
+//       // Filter contents based on the provided topicContentname
+//       const matchingContents = topic.content.filter(
+//         (contentItem) => contentItem.topicContentname === topicContentname
+//       );
+
+//       if (matchingContents.length === 0) {
+//         return res
+//           .status(404)
+//           .json({ msg: "Content not found", status: "failed" });
+//       }
+
+//       // Return the details of all matching contents
+//       const allContentsData = matchingContents.map((content) => ({
+//         id: content.id,
+//         topicContentname: content.topicContentname,
+//         contentTitle: content.contentTitle,
+//         contentdes: content.contentdes,
+//         contentimg: content.contentimg,
+//         publish: content.publish,
+//         // Add more properties as needed
+//       }));
+
+//       // Return the content details
+//       return res
+//         .status(200)
+//         .json({ contents: allContentsData, status: "success" });
+//     } catch (e) {
+//       console.error(e.message, "get all contents data");
+//       return res
+//         .status(500)
+//         .json({ msg: "Internal Server Error", status: "failed" });
+//     }
+//   }
+// );
+
+//       // Return the modified content data
+//       return res
+//         .status(200)
+//         .json({ contents: allContentsData, status: "success" });
+//     } catch (e) {
+//       console.error(e.message, "get all contents");
+//       return res
+//         .status(500)
+//         .json({ msg: "Internal Server Error", status: "failed" });
+//     }
+//   }
+// );
+
+app.get("/getContentPath/:id", async (req, res) => {
+  try {
+    const id = req.params.id;
+
+    // Find the learning path by ID
+    const learningPath = await allLearningPaths.findById(id);
+
+    if (!learningPath) {
+      return res
+        .status(404)
+        .json({ msg: "Learning path not found", status: "failed" });
+    }
+
+    // Return the learning path details, including topics and content
+    return res.status(200).json(learningPath);
+  } catch (e) {
+    console.error(e.message, "getContentPath");
+    return res
+      .status(500)
+      .json({ msg: "Internal Server Error", status: "failed" });
+  }
+});
+
+//updatecontentintopicoflearningpath
+// app.put(
+//   "/updateContent/:learningPathId/:topicId/:contentId",
+
+//   async (req, res) => {
+//     try {
+//       const learningPathId = req.params.learningPathId;
+//       const topicId = req.params.topicId;
+//       const contentId = req.params.contentId;
+//       const { contentTitle, contentdes, contentimg, publish } = req.body;
+
+//       // Find the existing learning path by ID
+//       const existingLearningPath = await allLearningPaths.findById(
+//         learningPathId
+//       );
+
+//       if (!existingLearningPath) {
+//         return res
+//           .status(404)
+//           .json({ msg: "Learning path not found", status: "failed" });
+//       }
+
+//       // Find the topic within the learning path by ID
+//       const topic = existingLearningPath.topics.find(
+//         (t) => t._id.toString() === topicId
+//       );
+
+//       if (!topic) {
+//         return res
+//           .status(404)
+//           .json({ msg: "Topic not found", status: "failed" });
+//       }
+
+//       // Find the index of the content item within the "content" array
+//       const contentIndex = topic.content.findIndex(
+//         (c) => c._id.toString() === contentId
+//       );
+
+//       if (contentIndex === -1) {
+//         return res
+//           .status(404)
+//           .json({ msg: "Content not found", status: "failed" });
+//       }
+
+//       // Update the properties of the existing content
+//       topic.content[contentIndex].contentTitle = contentTitle;
+//       topic.content[contentIndex].contentdes = contentdes;
+//       topic.content[contentIndex].contentimg = contentimg;
+//       topic.content[contentIndex].publish = publish;
+
+//       // Save the updated learning path document
+//       await existingLearningPath.save();
+
+//       return res.json({
+//         msg: "Content updated successfully",
+//         status: "success",
+//       });
+//     } catch (e) {
+//       console.error(e.message, "updateContent");
+//       return res
+//         .status(500)
+//         .json({ msg: "Internal Server Error", status: "failed" });
+//     }
+//   }
+// );
+
+app.put(
+  "/updateContent/:learningPathId/:topicId/:contentTitle",
+
+  async (req, res) => {
+    try {
+      const learningPathId = req.params.learningPathId;
+      const topicId = req.params.topicId;
+      const contentTitleParam = req.params.contentTitle;
+      const { contentTitle, contentdes, contentimg, publish } = req.body;
+
+      // Find the existing learning path by ID
+      const existingLearningPath = await allLearningPaths.findById(
+        learningPathId
+      );
+
+      if (!existingLearningPath) {
+        return res
+          .status(404)
+          .json({ msg: "Learning path not found", status: "failed" });
+      }
+
+      // Find the topic within the learning path by ID
+      const topic = existingLearningPath.topics.find(
+        (t) => t._id.toString() === topicId
+      );
+
+      if (!topic) {
+        return res
+          .status(404)
+          .json({ msg: "Topic not found", status: "failed" });
+      }
+
+      // Check if the new content title already exists in the topic
+      const contentTitleExists = topic.content.some(
+        (c) =>
+          c.contentTitle === contentTitle &&
+          c.contentTitle !== contentTitleParam
+      );
+
+      if (contentTitleExists) {
+        return res
+          .status(400)
+          .json({ msg: "Content title already exists", status: "failed" });
+      }
+
+      // Find the content item within the "content" array by contentTitle
+      const contentItem = topic.content.find(
+        (c) => c.contentTitle === contentTitleParam
+      );
+
+      if (!contentItem) {
+        return res
+          .status(404)
+          .json({ msg: "Content not found", status: "failed" });
+      }
+
+      // Update the properties of the existing content
+      contentItem.contentTitle = contentTitle;
+      contentItem.contentdes = contentdes;
+      contentItem.contentimg = contentimg;
+      contentItem.publish = publish;
+
+      // Save the updated learning path document
+      await existingLearningPath.save();
+
+      return res.json({
+        msg: "Content updated successfully",
+        status: "success",
+      });
+    } catch (e) {
+      console.error(e.message, "updateContent");
+      return res
+        .status(500)
+        .json({ msg: "Internal Server Error", status: "failed" });
+    }
+  }
+);
+
+app.get(
+  "/onselectedContentinTopicinLearningPath/:learningPathId/:topicId",
+
+  async (req, res) => {
+    try {
+      const { learningPathId, topicId } = req.params;
+
+      // Find the learning path by ID
+      const learningPath = await allLearningPaths.findById(learningPathId);
+
+      if (!learningPath) {
+        return res
+          .status(404)
+          .json({ msg: "Learning path not found", status: "failed" });
+      }
+
+      // Find the topic within the learning path by ID
+      const topic = learningPath.topics.find(
+        (t) => t._id.toString() === topicId
+      );
+
+      if (!topic) {
+        return res
+          .status(404)
+          .json({ msg: "Topic not found", status: "failed" });
+      }
+
+      // Return all content items in the specified topic
+      return res.status(200).json(topic.content);
+    } catch (e) {
+      console.error(e.message, "get content");
+      return res
+        .status(500)
+        .json({ msg: "Internal Server Error", status: "failed" });
+
+      // siva
+      // siva
+    }
+  }
+);
+
+// app.get(
+//   "/getSinglecontentData/:learningPathId/:topicId/:contentTitle",
+//   async (req, res) => {
+//     try {
+//       const { learningPathId, topicId, contentTitle } = req.params;
+
+//       // Find the learning path by ID
+//       const learningPath = await allLearningPaths.findById(learningPathId);
+
+//       if (!learningPath) {
+//         return res
+//           .status(404)
+//           .json({ msg: "Learning path not found", status: "failed" });
+//       }
+
+//       // Find the topic within the learning path by ID
+//       const topic = learningPath.topics.find(
+//         (t) => t._id.toString() === topicId
+//       );
+
+//       if (!topic) {
+//         return res
+//           .status(404)
+//           .json({ msg: "Topic not found", status: "failed" });
+//       }
+
+//       // Return all content items in the specified topic
+//       return res.status(200).json(topic.content);
+//     } catch (e) {
+//       console.error(e.message, "get content");
+//       return res
+//         .status(500)
+//         .json({ msg: "Internal Server Error", status: "failed" });
+//     }
+//   }
+// );
+
+app.get(
+  "/getSingledataContents/:learningPathId/:topicId/:contentTitle",
+  async (req, res) => {
+    try {
+      const { learningPathId, topicId, contentTitle } = req.params;
+
+      // Find the learning path by ID
+      const learningPath = await allLearningPaths.findById(learningPathId);
+
+      if (!learningPath) {
+        return res
+          .status(404)
+          .json({ msg: "Learning path not found", status: "failed" });
+      }
+
+      // Find the topic within the learning path by ID
+      const topic = learningPath.topics.id(topicId);
+
+      if (!topic) {
+        return res
+          .status(404)
+          .json({ msg: "Topic not found", status: "failed" });
+      }
+
+      // Find the content within the topic by contentTitle
+      const content = topic.content.find(
+        (contentItem) => contentItem.contentTitle === contentTitle
+      );
+
+      if (!content) {
+        return res
+          .status(404)
+          .json({ msg: "Content not found", status: "failed" });
+      }
+
+      // Modify the content data as needed
+      const contentData = {
+        id: content.id,
+        contentTitle: content.contentTitle,
+        contentdes: content.contentdes,
+        contentimg: content.contentimg,
+        publish: content.publish,
+        contentTime: content.contentTime,
+        // Add more properties as needed
+      };
+
+      // Return the modified content data
+      return res.status(200).json({ contentData });
+    } catch (e) {
+      console.error(e.message, "get content by title");
+      return res
+        .status(500)
+        .json({ msg: "Internal Server Error", status: "failed" });
+    }
+  }
+);
+
+// app.get(
+//   "/onselectedContentinTopicinLearningPath/:learningPathId/:topicId/:contentId",middleware,
+//   async (req, res) => {
+//     try {
+//       const { learningPathId, topicId,contentId } = req.params;
+
+//       // Find the learning path by ID
+//       const learningPath = await allLearningPaths.findById(learningPathId);
+
+//       if (!learningPath) {
+//         return res
+//           .status(404)
+//           .json({ msg: "Learning path not found", status: "failed" });
+//       }
+
+//       // Find the topic within the learning path by ID
+//       const topic = learningPath.topics.id(topicId)
+
+//       if (!topic) {
+//         return res
+//           .status(404)
+//           .json({ msg: "Topic not found", status: "failed" });
+//       }
+//       const content = topic.content.id(contentId);
+
+//       if (!content) {
+//         return res.status(404).json({ msg: 'content not found', status: 'failed' });
+//       }
+//       // Return all content items in the specified topic
+//       return res.status(200).json({Content, status: 'success'});
+//     } catch (e) {
+//       console.error(e.message, "get content");
+//       return res
+//         .status(500)
+//         .json({ msg: "Internal Server Error", status: "failed" });
+//     }
+//   }
+// );
+
+app.delete("/onselectedLearningPath/:_id", async (req, res) => {
+  try {
+    const _id = req.params._id; // Fix: Extract _id from req.params
+    const deletedLearningPath = await allLearningPaths.findByIdAndDelete(
+      _id,
+      req.body
+    );
+
+    console.log(deletedLearningPath);
+
+    if (!deletedLearningPath) {
+      return res.status(404).json("Not Found!");
+    }
+
+    return res.status(200).json("Deleted Successfully");
+  } catch (error) {
+    console.error(error, "/onselectedLearningPath/:_id");
+    return res.status(500).json("Internal Server Error");
+  }
+});
+
+// //deleteTopicinLearningPath
 app.delete(
-  "/onselectedTopicinLearningPath/:learningPathId/:topicId",middleware,
+  "/onselectedTopicinLearningPath/:learningPathId/:topicId",
+
   async (req, res) => {
     try {
       const learningPathId = req.params.learningPathId;
@@ -1012,7 +1885,8 @@ app.delete(
       });
     } catch (e) {
       console.error(
-        e.message
+        e.message,
+        "/onselectedTopicinLearningPath/:learningPathId/:topicId"
       );
       return res
         .status(500)
@@ -1021,196 +1895,74 @@ app.delete(
   }
 );
 
-//Create Content Data
-app.post(
-  "/addContentOfTopicsinlearningpath/:learningPathId/:topicId",middleware,
-  async (req, res) => {
-    try {
-    const learningPathId = req.params.learningPathId;
-    const topicId = req.params.topicId;
-      const { contentTitle, contentdes, contentimg, publish } =
-        req.body;
-      // const topicId = req.params.topicId;
+// app.delete(
+//   "/onselectedContentinTopicinLearningPath/:learningPathId/:topicId/:contentId",
 
-      // Find the learning path by ID
-      const learningPath = await allLearningPaths.findById(learningPathId);
+//   async (req, res) => {
+//     try {
+//       const learningPathId = req.params.learningPathId;
+//       const topicId = req.params.topicId;
+//       const contentId = req.params.contentId;
 
-      if (!learningPath) {
-        return res
-          .status(404)
-          .json({ msg: "Learning path not found", status: "failed" });
-      }
+//       // Find the learning path by ID
+//       const learningPath = await allLearningPaths.findById(learningPathId);
 
-      // Find the topic within the learning path by ID
-      const topic = learningPath.topics.id(topicId);
+//       if (!learningPath) {
+//         return res
+//           .status(404)
+//           .json({ msg: "Learning path not found", status: "failed" });
+//       }
 
-      if (!topic) {
-        return res
-          .status(404)
-          .json({ msg: "Topic not found", status: "failed" });
-      }
+//       // Find the topic within the learning path by ID
+//       const topic = learningPath.topics.find(
+//         (t) => t._id.toString() === topicId
+//       );
 
-      // Add the new content to the "content" array in the topic
-      topic.content.push({
-        contentTitle,
-        contentdes,
-        contentimg,
-        publish,
-      });
+//       if (!topic) {
+//         return res
+//           .status(404)
+//           .json({ msg: "Topic not found", status: "failed" });
+//       }
 
-      // Save the updated learning path document
-      await learningPath.save();
+//       // Find the index of the content item within the "content" array
+//       const contentIndex = topic.content.findIndex(
+//         (c) => c._id.toString() === contentId
+//       );
 
-      return res
-        .status(200)
-        .json({ msg: "Content added successfully", status: "success" });
-    } catch (e) {
-      console.error(e.message, "addContentOfTopicsinlearningpath");
-      return res
-        .status(500)
-        .json({ msg: "Internal Server Error", status: "failed" });
-    }
-  }
-);
+//       if (contentIndex === -1) {
+//         return res
+//           .status(404)
+//           .json({ msg: "Content not found", status: "failed" });
+//       }
 
-//get contentpaths
-app.get("/getContentPaths/:learningPathId/:topicId",middleware, async (req, res) => {
-  try {
-    const {learningPathId,topicId} = req.params;
+//       // Remove the content item from the "content" array
+//       topic.content.splice(contentIndex, 1);
 
-    // Find the learning path by ID
-    const learningPath = await allLearningPaths.findById(learningPathId);
+//       // Save the updated learning path document
+//       await learningPath.save();
 
-    if (!learningPath) {
-      return res
-        .status(404)
-        .json({ msg: "Learning path not found", status: "failed" });
-    }
-    const topic = learningPath.topics.id(topicId);
+//       return res
+//         .status(200)
+//         .json({ msg: "Content deleted successfully", status: "success" });
+//     } catch (e) {
+//       console.error(
+//         e.message,
+//         "/onselectedContentinTopicinLearningPath/:learningPathId/:topicId/:contentId"
+//       );
+//       return res
+//         .status(500)
+//         .json({ msg: "Internal Server Error", status: "failed" });
+//     }
+//   }
+// );
 
-    if (!topic) {
-      return res.status(404).json({ msg: 'topic not found', status: 'failed' });
-    }
-    const contents = topic.content;
-
-    // Return the learning path details, including topics and content
-    return res.status(200).json(contents);
-  } catch (e) {
-    console.error(e.message);
-    return res
-      .status(500)
-      .json({ msg: "Internal Server Error", status: "failed" });
-  }
-});
-
-//updatecontentintopicoflearningpath
-app.put(
-  "/updateContent/:learningPathId/:topicId/:contentId",middleware,
-  async (req, res) => {
-    try {
-      const learningPathId = req.params.learningPathId;
-      const topicId = req.params.topicId;
-      const contentId = req.params.contentId;
-      const { contentTitle, contentdes, contentimg, publish } = req.body;
-
-      // Find the existing learning path by ID
-      const existingLearningPath = await allLearningPaths.findById(
-        learningPathId
-      );
-
-      if (!existingLearningPath) {
-        return res
-          .status(404)
-          .json({ msg: "Learning path not found", status: "failed" });
-      }
-
-      // Find the topic within the learning path by ID
-      const topic = existingLearningPath.topics.id(topicId)
-
-      if (!topic) {
-        return res
-          .status(404)
-          .json({ msg: "Topic not found", status: "failed" });
-      }
-
-      // Find the index of the content item within the "content" array
-      const contenttoUpdate= topic.content.id(contentId)
-
-      
-    if (!contenttoUpdate) {
-      return res.status(404).json({ msg: 'MCQ not found', status: 'failed' });
-    }
-
-      // Update the properties of the existing content
-      contenttoUpdate.contentTitle = contentTitle;
-      contenttoUpdate.contentdes = contentdes;
-      contenttoUpdate.contentimg = contentimg;
-      contenttoUpdate.publish = publish;
-
-      // Save the updated learning path document
-      await existingLearningPath.save();
-
-      return res.json({
-        msg: "Content updated successfully",
-        status: "success",
-      });
-    } catch (e) {
-      console.error(e.message, "updateContent");
-      return res
-        .status(500)
-        .json({ msg: "Internal Server Error", status: "failed" });
-    }
-  }
-);
-
-//getSpecificcontents with learningpathid,topic id
-app.get(
-  "/onselectedContentinTopicinLearningPath/:learningPathId/:topicId/:contentId",middleware,
-  async (req, res) => {
-    try {
-      const { learningPathId, topicId,contentId } = req.params;
-
-      // Find the learning path by ID
-      const learningPath = await allLearningPaths.findById(learningPathId);
-
-      if (!learningPath) {
-        return res
-          .status(404)
-          .json({ msg: "Learning path not found", status: "failed" });
-      }
-
-      // Find the topic within the learning path by ID
-      const topic = learningPath.topics.id(topicId)
-
-      if (!topic) {
-        return res
-          .status(404)
-          .json({ msg: "Topic not found", status: "failed" });
-      }
-      const content = topic.content.id(contentId);
-
-      if (!content) {
-        return res.status(404).json({ msg: 'content not found', status: 'failed' });
-      }
-      // Return all content items in the specified topic
-      return res.status(200).json({content, status: 'success'});
-    } catch (e) {
-      console.error(e.message, "get content");
-      return res
-        .status(500)
-        .json({ msg: "Internal Server Error", status: "failed" });
-    }
-  }
-);
-
-//delete selectedcontent
 app.delete(
-  "/onselectedContentinTopicinLearningPath/:learningPathId/:topicId/:contentId",middleware,
+  "/onselectedContentinTopicinLearningPath/:learningPathId/:topicId/:contentTitle",
   async (req, res) => {
     try {
       const learningPathId = req.params.learningPathId;
       const topicId = req.params.topicId;
-      const contentId = req.params.contentId;
+      const contentTitle = req.params.contentTitle;
 
       // Find the learning path by ID
       const learningPath = await allLearningPaths.findById(learningPathId);
@@ -1222,7 +1974,10 @@ app.delete(
       }
 
       // Find the topic within the learning path by ID
-      const topic = learningPath.topics.id(topicId)
+      const topic = learningPath.topics.find(
+        (t) => t._id.toString() === topicId
+      );
+
       if (!topic) {
         return res
           .status(404)
@@ -1230,7 +1985,18 @@ app.delete(
       }
 
       // Find the index of the content item within the "content" array
-      topic.content.pull({ _id: contentId });
+      const contentIndex = topic.content.findIndex(
+        (c) => c.contentTitle === contentTitle
+      );
+
+      if (contentIndex === -1) {
+        return res
+          .status(404)
+          .json({ msg: "Content not found", status: "failed" });
+      }
+
+      // Remove the content item from the "content" array
+      topic.content.splice(contentIndex, 1);
 
       // Save the updated learning path document
       await learningPath.save();
@@ -1239,7 +2005,10 @@ app.delete(
         .status(200)
         .json({ msg: "Content deleted successfully", status: "success" });
     } catch (e) {
-      console.error(e.message);
+      console.error(
+        e.message,
+        "/onselectedContentinTopicinLearningPath/:learningPathId/:topicId/:contentTitle"
+      );
       return res
         .status(500)
         .json({ msg: "Internal Server Error", status: "failed" });
@@ -1247,6 +2016,65 @@ app.delete(
   }
 );
 
+app.get(
+  "/onselectedContentinTopicinLearningPath/:learningPathId/:topicId/:contentTitle",
+  async (req, res) => {
+    try {
+      const learningPathId = req.params.learningPathId;
+      const topicId = req.params.topicId;
+      const contentTitle = req.params.contentTitle;
+
+      // Find the learning path by ID
+      const learningPath = await allLearningPaths.findById(learningPathId);
+
+      if (!learningPath) {
+        return res
+          .status(404)
+          .json({ msg: "Learning path not found", status: "failed" });
+      }
+
+      // Find the topic within the learning path by ID
+      const topic = learningPath.topics.find(
+        (t) => t._id.toString() === topicId
+      );
+
+      if (!topic) {
+        return res
+          .status(404)
+          .json({ msg: "Topic not found", status: "failed" });
+      }
+
+      // Find the index of the content item within the "content" array
+      const contentIndex = topic.content.findIndex(
+        (c) => c.contentTitle === contentTitle
+      );
+
+      if (contentIndex === -1) {
+        return res
+          .status(404)
+          .json({ msg: "Content not found", status: "failed" });
+      }
+
+      // Remove the content item from the "content" array
+      // topic.content.splice(contentIndex, 1);
+
+      // Save the updated learning path document
+      await learningPath.save();
+
+      return res
+        .status(200)
+        .json({ msg: "Contens Get successfully", status: "success" });
+    } catch (e) {
+      console.error(
+        e.message,
+        "/onselectedContentinTopicinLearningPath/:learningPathId/:topicId/:contentTitle"
+      );
+      return res
+        .status(500)
+        .json({ msg: "Internal Server Error", status: "failed" });
+    }
+  }
+);
 app.listen(port, () => {
   console.log(`Server running at ${port}`);
 });
