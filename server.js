@@ -12,6 +12,10 @@ const ByList = require("./Model/ByList");
 const AddvideoData = require("./Model/LearnPath/Addvideo");
 const videoFile = require("./Model/LearnPath/AddVideoFile");
 const paragMCQRouter = require('./Routes/ParagRoutes');
+
+const Category = require("./Model/categories")
+
+
 // const bodyParser = require("body-parser");
 
 const app = express();
@@ -143,7 +147,294 @@ app.post("/AddInstitute", async (req, res) => {
     return res.status(500).json(e.message);
   }
 });
+// app.post('/institutes', async (req, res) => {
+//   try {
+//     const newInstitute = new AddInstituteData(req.body);
+//     await newInstitute.save();
+//     res.status(201).json(newInstitute);
+//   } catch (error) {
+//     res.status(400).json({ error: error.message });
+//   }
+// });
 
+
+// app.post("/institutes", async (req, res) => {
+//   try {
+//     const newInstitute = await AddInstituteData.create(req.body);
+//     res.status(201).json(newInstitute);
+//   } catch (error) {
+//     res.status(500).json({ error: error.message });
+//   }
+// });
+
+// POST a new institute
+// app.post("/institutes", async (req, res) => {
+//   try {
+//     const newInstitute = new AddInstituteData(req.body);
+//     await newInstitute.save();
+//     res.json({ msg: "Institute created successfully", institute: newInstitute });
+//   } catch (error) {
+//     console.error(error.message);
+//     res.status(500).send("Internal Server Error");
+//   }
+// });
+
+// app.post("/addinstitute", async (req, res) => {
+//   console.log(req.body);
+//   try {
+//     const {
+//       InstituteName,
+//       HeadName,
+//       PrimaryEmail,
+//       PrimaryContactNumber,
+//       SecondaryEmail,
+//       SecondaryContactNumber,
+//       Address,
+//       City,
+//       InstituteCode,
+//       InstituteType,
+//       AxiosPlans,
+//       Password,
+//     } = req.body;
+//     const isLearningPathExist = await allLearningPaths.findOne({
+//       learningPathTitle: learningPathTitle,
+//     });
+//     if (isLearningPathExist) {
+//       return res.send({ msg: "Path Already Registered", status: "failed" });
+//     }
+//     const CurrentTime = new Date();
+
+//     let newLearningPath = new allLearningPaths({
+//       InstituteName,
+//       HeadName,
+//       PrimaryEmail,
+//       PrimaryContactNumber,
+//       SecondaryEmail,
+//       SecondaryContactNumber,
+//       Address,
+//       City,
+//       InstituteCode,
+//       InstituteType,
+//       AxiosPlans,
+//       Password,
+//     });
+//     newLearningPath.save(); //saving mongodb collection
+//     return res.send({ msg: "Path Created Successfully", status: "success" });
+//   } catch (e) {
+//     console.error(e.message, "addlearningpath");
+//     res.status(500).send("Internal Server Error");
+//   }
+// });
+
+// app.post("/addinstitute", async (req, res) => {
+//   console.log(req.body);
+//   try {
+//     const {
+//       InstituteName,
+//       HeadName,
+//       PrimaryEmail,
+//       PrimaryContactNumber,
+//       SecondaryEmail,
+//       SecondaryContactNumber,
+//       Address,
+//       City,
+//       InstituteCode,
+//       InstituteType,
+//       AxiosPlans,
+//       Password,
+//       // InstituteBatchYear,
+//     } = req.body;
+
+//     // Check if the institute already exists
+//     const isExistingInstitute = await AddInstituteData.findOne({
+//       InstituteName: InstituteName,
+//     });
+
+//     if (isExistingInstitute) {
+//       return res.send({ msg: "Institute Already Registered", status: "failed" });
+//     }
+
+//     // Create a new institute instance
+//     const newInstitute = new AddInstituteData({
+//       InstituteName,
+//       HeadName,
+//       PrimaryEmail,
+//       PrimaryContactNumber,
+//       SecondaryEmail,
+//       SecondaryContactNumber,
+//       Address,
+//       City,
+//       InstituteCode,
+//       InstituteType,
+//       AxiosPlans,
+//       Password,
+//       // InstituteBatchYear,
+//     });
+
+//     // Save the new institute to the database
+//     await newInstitute.save();
+
+//     // Send a success response
+//     return res.send({ msg: "Institute Created Successfully", status: "success" });
+//   } catch (e) {
+//     console.error(e.message, "addinstitute");
+//     res.status(500).send("Internal Server Error");
+//   }
+// });
+
+
+
+
+// app.post("/institutes", async (req, res) => {
+//   console.log(req.body);
+//   try {
+//     const {
+//       InstituteName,
+//       HeadName,
+//       PrimaryEmail,
+//       PrimaryContactNumber,
+//       SecondaryEmail,
+//       SecondaryContactNumber,
+//       Address,
+//       City,
+//       InstituteCode,
+//       InstituteType,
+//       AxiosPlans,
+//       Password,
+//     } = req.body;
+
+//     // Check if the institute already exists
+//     const isExistingInstitute = await AddInstituteData.findOne({
+//       InstituteName: InstituteName,
+//     });
+
+//     if (isExistingInstitute) {
+//       return res.send({
+//         msg: "Institute Already Registered",
+//         status: "failed",
+//       });
+//     }
+//     const snoValue = new mongoose.Types.ObjectId().toString();
+//     // Create a new institute instance
+//     const newInstitute = new AddInstituteData({
+//       Sno: snoValue,
+//       InstituteName,
+//       HeadName,
+//       PrimaryEmail,
+//       PrimaryContactNumber,
+//       SecondaryEmail,
+//       SecondaryContactNumber,
+//       Address,
+//       City,
+//       InstituteCode,
+//       InstituteType,
+//       AxiosPlans,
+//       Password,
+//     });
+
+//     // Save the new institute to the database
+//     await newInstitute.save();
+
+//     // Send a success response
+//     return res.send({
+//       msg: "Institute Created Successfully",
+//       status: "success",
+//     });
+//   } catch (e) {
+//     if (e.code === 11000 && e.keyPattern && e.keyPattern.Sno) {
+//       // Duplicate key error for Sno field
+//       return res.send({
+//         msg: "Duplicate Sno value",
+//         status: "failed",
+//       });
+//     }
+//     console.error(e.message, "addinstitute");
+//     res.status(500).send("Internal Server Error");
+//   }
+// });
+
+
+// app.post("/addinstitute/batchyear", async (req, res) => {
+//   try {
+//     const { instituteId, batchYear } = req.body;
+
+//     // Find the institute by ID
+//     const institute = await AddInstituteData.findOne({ _id: instituteId });
+
+//     if (!institute) {
+//       return res.status(404).json({ msg: "Institute not found", status: "failed" });
+//     }
+
+//     // Add new batch year
+//     institute.InstituteBatchYear.push({ BatchYear: batchYear });
+
+//     // Save the changes
+//     await institute.save();
+
+//     res.status(201).json({ msg: "Batch Year added successfully", status: "success" });
+//   } catch (error) {
+//     console.error(error.message, "addBatchYear");
+//     res.status(500).send("Internal Server Error");
+//   }
+// });
+
+
+
+
+
+// app.get("/institutes", async (req, res) => {
+//   try {
+//     const institutes = await AddInstituteData.find();
+//     res.json(institutes);
+//   } catch (error) {
+//     res.status(500).json({ error: error.message });
+//   }
+// });
+
+// // Get a specific institute by ID
+// app.get("/institutes/:id", async (req, res) => {
+//   try {
+//     const institute = await AddInstituteData.findById(req.params.id);
+//     if (!institute) {
+//       return res.status(404).json({ error: "Institute not found" });
+//     }
+//     res.json(institute);
+//   } catch (error) {
+//     res.status(500).json({ error: error.message });
+//   }
+// });
+
+// // Update a specific institute by ID
+// app.put("/institutes/:id", async (req, res) => {
+//   try {
+//     const updatedInstitute = await AddInstituteData.findByIdAndUpdate(
+//       req.params.id,
+//       req.body,
+//       { new: true }
+//     );
+//     if (!updatedInstitute) {
+//       return res.status(404).json({ error: "Institute not found" });
+//     }
+//     res.json(updatedInstitute);
+//   } catch (error) {
+//     res.status(500).json({ error: error.message });
+//   }
+// });
+
+// // Delete a specific institute by ID
+// app.delete("/institutes/:id", async (req, res) => {
+//   try {
+//     const deletedInstitute = await AddInstituteData.findByIdAndRemove(
+//       req.params.id
+//     );
+//     if (!deletedInstitute) {
+//       return res.status(404).json({ error: "Institute not found" });
+//     }
+//     res.json(deletedInstitute);
+//   } catch (error) {
+//     res.status(500).json({ error: error.message });
+//   }
+// });
 //update
 
 app.put("/UpdateInstitute/:id", middleware, async (req, res) => {
@@ -332,7 +623,7 @@ app.get("/individualUser/:id", async (req, res) => {
   }
 });
 
-app.post("/ByBatchData", middleware, async (req, res) => {
+app.post("/ByBatchData", async (req, res) => {
   try {
     // Find the last document with the lowest Sno (ascending order)
     const lastDocument = await AddUserByBatch.findOne({}, null, {
@@ -390,7 +681,7 @@ app.post("/ByListData", middleware, async (req, res) => {
 
 app.put("/ByBatchData/:InstituteType", middleware, async (req, res) => {
   try {
-    const InstituteType = req.params.InstituteType;
+    const InstituteType = req.params.InstituteType;  
     console.log(InstituteType);
 
     // Check if the provided InstituteType exists
@@ -1248,5 +1539,6 @@ app.use('/v1',  require('./Routes/MCQRoutes'));
 app.use("/v2", require('./Routes/SubjectsRoutes')) 
 app.use('/v2',paragMCQRouter)
 app.use('/v4',require('./Routes/CodeingBasic'))
+app.use('/v5', require('./Routes/CategoriesRoutes')) 
 
 // Kumar
