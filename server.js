@@ -12,6 +12,7 @@ const AddvideoData = require("./Model/LearnPath/Addvideo");
 const videoFile = require("./Model/LearnPath/AddVideoFile");
 const allLearningPaths = require("./Model/LearnPath/AlllearningPaths");
 const paragMCQRouter = require('./Routes/ParagRoutes');
+
 const AddVideoFile = require("./Model/LearnPath/AddVideoFile");
 const app = express();
 app.use(express.json());
