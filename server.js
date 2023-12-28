@@ -18,7 +18,7 @@ const Topic = require("./Model/topic");
 // const bodyParser = require("body-parser");
 
 const app = express();
-const port = 4010;
+const port = 1412;
 
 const mogoURL =
   // "mongodb+srv://badasiva22:Siva991276@cluster0.iis7lrd.mongodb.net/perfex-stack-project?retryWrites=true&w=majority";
