@@ -246,7 +246,19 @@ Content-Type: application/json
     "Constraints" : "mcvdata"
         
  }
+###
+POST http://localhost:4010/U2/Blogs
+Content-Type: application/json
 
+{
+
+    "Title" : "react",
+    "Tags" : "react hooks",
+    "Author" : "MCV",
+    "Description" : "MCV",
+    "Image" : "mcvdata"
+   
+}
 
 
 

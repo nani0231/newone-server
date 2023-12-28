@@ -1316,3 +1316,4 @@ app.use("/v2", require('./Routes/SubjectsRoutes'))
 app.use('/v2',paragMCQRouter)
 app.use('/v4',require('./Routes/CodeingBasic'))
 app.use('/U1',require('./Routes/assessement'));
+app.use('/U2',require('./Routes/blogs'));
