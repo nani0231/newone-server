@@ -1259,7 +1259,7 @@ app.post("/categories", async (req, res) => {
 	try {
 		const newCategory = new Categories(req.body);
 		const savedCategory = await newCategory.save();
-		res.status(201).json(savedCategory);
+		res.status(200).json(savedCategory);
 	} catch (error) {
 		res.status(500).json({ error: error.message });
 	}
@@ -1332,7 +1332,7 @@ app.post("/topic", async (req, res) => {
 	try {
 		const newCategory = new Topic(req.body);
 		const savedCategory = await newCategory.save();
-		res.status(201).json(savedCategory);
+		res.status(200).json(savedCategory);
 	} catch (error) {
 		res.status(500).json({ error: error.message });
 	}
