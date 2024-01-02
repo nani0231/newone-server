@@ -13,7 +13,7 @@ const videoFile = require("./Model/LearnPath/AddVideoFile");
 // const allLearningPaths = require("./Model/LearnPath/");
 const paragMCQRouter = require('./Routes/ParagRoutes');
 
-// const bodyParser = require("body-parser");
+
 
 const app = express();
 const port = 4010;
