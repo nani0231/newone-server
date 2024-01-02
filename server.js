@@ -11,7 +11,7 @@ const ByList = require("./Model/ByList");
 const AddvideoData = require("./Model/LearnPath/Addvideo");
 const videoFile = require("./Model/LearnPath/AddVideoFile");
 // const allLearningPaths = require("./Model/LearnPath/");
-const paragMCQRouter = require('./Routes/ParagRoutes');
+const paragMCQRouter = require("./Routes/ParagRoutes");
 
 // const bodyParser = require("body-parser");
 
@@ -20,8 +20,9 @@ const port = 4010;
 
 const mogoURL =
   "mongodb+srv://badasiva22:Siva991276@cluster0.iis7lrd.mongodb.net/perfex-stack-project?retryWrites=true&w=majority";
-  // "mongodb+srv://saiprakash2115:m1Yb7ZlsB0nVVGbY@cluster0.r19eo2o.mongodb.net/skillhub2?retryWrites=true&w=majority"
-  
+// "mongodb+srv://saiprakash2115:m1Yb7ZlsB0nVVGbY@cluster0.r19eo2o.mongodb.net/skillhub2?retryWrites=true&w=majority"
+// "mongodb+srv://keshavram19:Maheshkeshav19@cluster0.lbtfyh5.mongodb.net/?retryWrites=true&w=majority"
+
 app.use(express.json());
 app.use(cors({ origin: "*" }));
 // app.use(bodyParser.json());
@@ -1254,9 +1255,9 @@ app.listen(port, () => {
   console.log(`Server running at ${port}`);
 });
 
-
-app.use("/v1", require('./Routes/ChapterRoutes')) //api routes
-app.use('/v1',  require('./Routes/MCQRoutes'));
-app.use("/v2", require('./Routes/SubjectsRoutes')) 
-app.use('/v2',paragMCQRouter)
-app.use('/v4',require('./Routes/CodeingBasic'))
+app.use("/v1", require("./Routes/ChapterRoutes")); //api routes
+app.use("/v1", require("./Routes/MCQRoutes"));
+app.use("/v2", require("./Routes/SubjectsRoutes"));
+app.use("/v2", paragMCQRouter);
+app.use("/v4", require("./Routes/CodeingBasic"));
+app.use('/v6', require('./Routes/practiceTestRoutes'))

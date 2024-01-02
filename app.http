@@ -155,65 +155,51 @@ Content-Type: application/json
 GET http://localhost:4010/InstituteData123/Corporate-Office
 
 
-//Learn Path Data 
-###
-POST http://localhost:4010/AddVideoPath
-Content-Type: application/json
 
-{
-     
-    "VideofolderName": "Mechanical"
-    
-}
+// LearningPath Videos Section
+
+
+// To Post Video Folder 
 ###
-GET http://localhost:4010/allAddVideosData
-###
-PUT http://localhost:4010/UpdateVideosDetails/655c3eaa8080305e35b2acca
-Content-Type: application/json
- 
- {
-    "VideofolderName": "Codding"
-    
- }
+POST http://localhost:4010/v5/videoFolder
+
 
 ###
-GET http://localhost:4010/DisplayIndividualVideo/655c36a4442a34cc532789f8
+GET http://localhost:4010/v5/allVideoFolders
+//To get All Video Folders
+
 ###
-DELETE http://localhost:4010/deleteVideo/655c3eaa8080305e35b2acca
+PUT http://localhost:4010/v5/videoFolder/65800bb9b4d7dc5e3b7cdb8e
+// To Update Individual Video Folder With Video Folder ID
+
 ###
+DELETE http://localhost:4010/v5/deleteVideoFolder/65800bb9b4d7dc5e3b7cdb8e
+// To Delete Individual Video Folder With Video Folder ID
 
 
 
-POST http://localhost:4010/AddVideoFilesData
-Content-Type: application/json
- 
- {
-
-      "VideofolderName": "React-Js",
-    "VideoTitleName": "ReactJs Intro",
-    "SourceName": "youtube",
-    "Video1": "https://youtu.be/Y6aYx_KKM7A?si=_bNMhMJhjB-UTOcr"
-}
+//adding Videos to the video folder
 ###
-GET http://localhost:4010/DisplayAllVideos
+POST http://localhost:4010/v5/addVideo/65800bb9b4d7dc5e3b7cdb8e
+//http://localhost:4010/v5/addVideo/:videoFolderId
+
+
+
+//Getting all Videos from the Single Video Folder
 ###
-GET http://localhost:4010/foldersVideoData/React-Js
+GET http://localhost:4010/v5/getVideos/65800bb9b4d7dc5e3b7cdb8e
+//http://localhost:4010/v5/getVideos/:videoFolderId
+
+//Updating video in the video folder
+###
+PUT http://localhost:4010/v5/updateVideo/65800bb9b4d7dc5e3b7cdb8e/65803620c006a61ee1591a50
+//http://localhost:4010/v5/updateVideo/:videoFolderId/:videosId"
 
 
-
-
-//siva
-
-
-
-
-
-
-
-
-
-
-
+//Deleting video in the video folder
+###
+DELETE http://localhost:4010/v5/deleteVideo/65800bb9b4d7dc5e3b7cdb8e/658044b76b3de0d84b9e6b58
+//"http://localhost:4010/v5//deleteVideo/:videoFolderId/:videosId"
 
 
  
