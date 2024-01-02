@@ -1,9 +1,10 @@
 const express = require("express");
-const Subject= require("../Model/Subjects")
+const Subject= require("../Model/Subject")
 const router =  express.Router()
+const middleware = require("../middleware/jwtAuth")
 // routes/paragMCQ.js create
 //http://localhost:4010/v2/addparaMcq/6571ad89cf0acc567c548296/6571ae96cf0acc567c54829c
-router.post('/addparaMcq/:subjectId/:chapterId/', async (req, res) => {
+router.post('/addparaMcq/:subjectId/:chapterId/',middleware , async (req, res) => {
     try {
       const subjectId = req.params.subjectId;
       const chapterId = req.params.chapterId;
@@ -167,7 +168,11 @@ router.get('/getparamcq/:subjectId/:chapterId/paragMCQ', async (req, res) => {
     }
   });
 
-  // individualParagMCQID
+
+
+// individualParagMCQID
+ 
+
  // http://localhost:4010/v2/getParagMCQById/657ae6c6482b3a688302a5fd/657ae786482b3a688302bb1a/657af517c5f4d27fdcc2f456
  router.get('/getParagMCQById/:subjectId/:chapterId/:paragMCQId', async (req, res) => {
   try {
@@ -203,5 +208,8 @@ router.get('/getparamcq/:subjectId/:chapterId/paragMCQ', async (req, res) => {
   }
 });
 
+
+
+  //kuumar
 
   module.exports = router;
