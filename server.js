@@ -1324,8 +1324,6 @@ app.delete("/categories/:id", async (req, res) => {
 
 // Category
 
-
-
 // Topic
 
 app.post("/topic", async (req, res) => {
