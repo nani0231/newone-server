@@ -487,7 +487,7 @@ app.get("/InstituteData123/:InstituteName", async (req, res) => {
 app.post("/AddVideoPath",middleware , async (req, res) => {
   try {
     // Check if the VideofolderName already exists
-    const existingVideo = await AddvideoData.findOne({
+    const existingVideo = await AddvideoData.findOne({  
       VideofolderName: req.body.VideofolderName,
     });
 
