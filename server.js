@@ -12,6 +12,19 @@ const AddvideoData = require("./Model/LearnPath/Addvideo");
 const videoFile = require("./Model/LearnPath/AddVideoFile");
 const allLearningPaths = require("./Model/LearnPath/AlllearningPaths");
 const paragMCQRouter = require('./Routes/ParagRoutes');
+ 
+
+=======
+ 
+const Categories = require("./Model/categories");
+const Topic = require("./Model/topic");
+
+// const bodyParser = require("body-parser");
+
+const app = express();
+const port = 1412;
+=======
+ 
 const AddVideoFile = require("./Model/LearnPath/AddVideoFile");
 const app = express();
 app.use(express.json());
@@ -19,10 +32,11 @@ app.use(cors());
 
 // const bodyParser = require("body-parser");
 const port = 4010;
+ 
 
 const mogoURL =
-  "mongodb+srv://badasiva22:Siva991276@cluster0.iis7lrd.mongodb.net/perfex-stack-project?retryWrites=true&w=majority";
-  // "mongodb+srv://saiprakash2115:m1Yb7ZlsB0nVVGbY@cluster0.r19eo2o.mongodb.net/skillhub2?retryWrites=true&w=majority"
+  // "mongodb+srv://badasiva22:Siva991276@cluster0.iis7lrd.mongodb.net/perfex-stack-project?retryWrites=true&w=majority";
+  "mongodb+srv://pathlavathkishan77495:kishan789@cluster14.lafg4t1.mongodb.net/empDetails?retryWrites=true&w=majority"
   
 app.use(express.json());
 app.use(cors({ origin: "*" }));
@@ -486,7 +500,7 @@ app.get("/InstituteData123/:InstituteName", async (req, res) => {
 app.post("/AddVideoPath",middleware , async (req, res) => {
   try {
     // Check if the VideofolderName already exists
-    const existingVideo = await AddvideoData.findOne({
+    const existingVideo = await AddvideoData.findOne({  
       VideofolderName: req.body.VideofolderName,
     });
 
@@ -1627,6 +1641,149 @@ app.delete(
   }
 );
 
+ 
+
+// Category
+
+app.post("/categories", async (req, res) => {
+	try {
+		const newCategory = new Categories(req.body);
+		const savedCategory = await newCategory.save();
+		res.status(200).json(savedCategory);
+	} catch (error) {
+		res.status(500).json({ error: error.message });
+	}
+});
+
+app.put("/categories/:id", async (req, res) => {
+	try {
+		const updatedCategory = await Categories.findByIdAndUpdate(
+			req.params.id,
+			req.body,
+			{ new: true }
+		);
+
+		if (!updatedCategory) {
+			return res.status(404).json({ error: "Category not found" });
+		}
+
+		res.json(updatedCategory);
+	} catch (error) {
+		res.status(500).json({ error: error.message });
+	}
+});
+
+app.get("/categories", async (req, res) => {
+	try {
+		const allCategories = await Categories.find();
+		res.json(allCategories);
+	} catch (error) {
+		res.status(500).json({ error: error.message });
+	}
+});
+
+app.get("/categories/:_id", async (req, res) => {
+    const Id = req.params._id;
+
+    try {
+        const category = await Categories.findById(Id);
+
+        if (!category) {
+            return res.status(404).json({ message: "Category not found" });
+        }
+
+        res.json(category);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+app.delete("/categories/:id", async (req, res) => {
+	try {
+		const deletedCategory = await Categories.findByIdAndDelete(req.params.id);
+
+		if (!deletedCategory) {
+			return res.status(404).json({ error: "Category not found" });
+		}
+
+		res.json({ message: "Category deleted successfully" });
+	} catch (error) {
+		res.status(500).json({ error: error.message });
+	}
+});
+
+// Category
+
+// Topic
+
+app.post("/topic", async (req, res) => {
+	try {
+		const newCategory = new Topic(req.body);
+		const savedCategory = await newCategory.save();
+		res.status(200).json(savedCategory);
+	} catch (error) {
+		res.status(500).json({ error: error.message });
+	}
+});
+
+app.put("/topic/:id", async (req, res) => {
+	try {
+		const updatedCategory = await Topic.findByIdAndUpdate(
+			req.params.id,
+			req.body,
+			{ new: true }
+		);
+
+		if (!updatedCategory) {
+			return res.status(404).json({ error: "Category not found" });
+		}
+
+		res.json(updatedCategory);
+	} catch (error) {
+		res.status(500).json({ error: error.message });
+	}
+});
+
+app.get("/topic", async (req, res) => {
+	try {
+		const allCategories = await Topic.find();
+		res.json(allCategories);
+	} catch (error) {
+		res.status(500).json({ error: error.message });
+	}
+});
+
+app.get("/topic/:_id", async (req, res) => {
+    const topicId = req.params._id;
+
+    try {
+        const topic = await Topic.findById(topicId);
+
+        if (!topic) {
+            return res.status(404).json({ message: "Topic not found" });
+        }
+
+        res.json(topic);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+app.delete("/topic/:id", async (req, res) => {
+	try {
+		const deletedCategory = await Topic.findByIdAndDelete(req.params.id);
+
+		if (!deletedCategory) {
+			return res.status(404).json({ error: "Category not found" });
+		}
+
+		res.json({ message: "Category deleted successfully" });
+	} catch (error) {
+		res.status(500).json({ error: error.message });
+	}
+});
+
+=======
 app.get(
   "/onselectedContentinTopicinLearningPath/:learningPathId/:topicId/:contentTitle",
   async (req, res) => {
@@ -1712,6 +1869,7 @@ app.post("/AccessGiven/:InstituteId", async (req, res) => {
 });
 
 
+ 
 app.listen(port, () => {
   console.log(`Server running at ${port}`);
 });
