@@ -21,7 +21,6 @@ Content-Type: application/json
 }
 
 ###
-# uma
 POST http://localhost:4010/AddInstitute
 Content-Type: application/json
 
