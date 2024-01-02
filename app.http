@@ -1,222 +1,5 @@
-# GET http://localhost:4010/
-# ###
-# POST http://localhost:4010/UserRegister
-# Content-Type: application/json
 
-# {
-#     "UserEmail": "siva@gmail.com", 
-#     "UserPassword": "Siva@123"
-# }
-
-
-
-# ###
-# POST http://localhost:4010/Userlogin
-# Content-Type: application/json
-
-
-# {
-#       "UserEmail":"siva@gmail.com",
-#        "UserPassword":"Siva@123"
-# }
-
-# ###
-# POST http://localhost:4010/AddInstitute
-# Content-Type: application/json
-
-# {
-     
-#     "InstituteName": "College",
-#     "HeadName": "Management",
-#     "PrimaryEmail": "college@gmail.com",
-#     "PrimaryContactNumber": "9541257878",
-#     "SecondaryEmail": "college@gmail.com",
-#     "SecondaryContactNumber": "8547854785",
-#     "BatchYear": "2018",
-#     "SelectBatch": "Y-Batch",
-#     "Address": "Vijayawada",
-#     "City": "Vijayawada",
-#     "InstituteCode": "8547",
-#     "InstituteType": "College",
-#     "AxiosPlans": "LMS",
-#     "Password": "college@1234"
-# }
-# ###
-# GET http://localhost:4010/allAddInstitutes
-
-# ###
-# PUT http://localhost:4010/UpdateInstitute/654b2e12dc639a0f228d0af9
-# Content-Type: application/json
- 
-#  {
-#     "InstituteName": "Ramya",
-#     "HeadName": "HR",
-#     "PrimaryEmail": "ramya@gmail.com",
-#     "PrimaryContactNumber": "9658745874",
-#     "SecondaryEmail": "ramya@gmail.com",
-#     "SecondaryContactNumber": "9658748547",
-#     "BatchYear": "2015",
-#     "SelectBatch": "U-Batch",
-#     "Address": "Vijayavada",
-#     "City": "Vijayavada",
-#     "InstituteCode": "1276",
-#     "InstituteType": "Training Institute",
-#     "AxiosPlans": "Mock Interview",
-#     "Password": "Ramya@1234"
-#  }
- 
-# ###
-# DELETE http://localhost:4010/deleteInstitute/652f7fe1e5bbc63a72e0c434
-
-# ###
-# GET http://localhost:4010/individualInstitute/654231e2988003b306627265
-# ###
-# GET http://localhost:4010/individualInstituteNames/Corporate-Office
-# ###
-# POST http://localhost:4010/AddUsers
-# Content-Type: application/json
-
-# { 
-#     "Regdid": "854DR7458",
-#     "FirstName": "Sai",
-#     "LastName": "Kumar",
-#     "userEmail": "saikol@gmail.com",
-#     "userNumber": "9632587412",
-#     "BatchYear": "2011",
-#     "SelectBatch": "S-Batch",
-#     "InstituteType": "Siva-krishna",
-#     "AxiosPlans": "9 Months",
-#     "Password": "Sai@gmail.com",
-    
-#     "ExpiryDate": "21-11-2024"
-# }
-# ###
-# POST http://localhost:4010/UserDetailslogin
-# Content-Type: application/json
-
-
-# {
-#       "userEmail":"Kalyan@gmail.com",
-#        "Password":"Charan@1234"
-# }
-# ###
-# GET http://localhost:4010/allUsersData
-# ###
-# GET http://localhost:4010/individualUser/65423234988003b30662726d
-
-# ###
-# POST http://localhost:4010/ByBatchData
-# Content-Type: application/json
-
-# { 
-    
-#     "BatchYear": "2015",
-#     "SelectBatch": "U-Batch",
-#     "InstituteType": "Ramya",
-#     "AxiosPlans": "3 Months"
-  
-# }
-# ###
-# POST http://localhost:4010/ByListData
-# Content-Type: application/json
-
-# { 
-    
-#     "aboveData": "mail",
-#     "institutionpara": "a combining form meaning “guard against,” occurring in loanwords from French, or, via French, from Italian: parachute; parasol.",
-#     "InstituteType": "Ramya",
-#     "AxiosPlans": "9 Months"
-  
-# }
-# ###
-# PUT http://localhost:4010/ByBatchData/Corporate-Office
-# Content-Type: application/json
-
-# {
-
-#       "BatchYear": "9654",
-#     "SelectBatch": "P-Batch",
-#     "AxiosPlans": "888888 Months"
-
-# }
-
-# ###
-# PUT http://localhost:4010/ByListData/Corporate-Office
-# Content-Type: application/json
-
-# {
-
-#       "aboveData": "Siva",
-#     "institutionpara": "siva koteswara rao",
-#     "AxiosPlans": "99 Months"
-# }
-# ###
- 
-# GET http://localhost:4010/InstituteData123/Corporate-Office
-
-
-# //Learn Path Data 
-# ###
-# POST http://localhost:4010/AddVideoPath
-# Content-Type: application/json
-
-# {
-     
-#     "VideofolderName": "Mechanical"
-    
-# }
-# ###
-# GET http://localhost:4010/allAddVideosData
-# ###
-# PUT http://localhost:4010/UpdateVideosDetails/655c3eaa8080305e35b2acca
-# Content-Type: application/json
- 
-#  {
-#     "VideofolderName": "Codding"
-    
-#  }
-
-# ###
-# GET http://localhost:4010/DisplayIndividualVideo/655c36a4442a34cc532789f8
-# ###
-# DELETE http://localhost:4010/deleteVideo/655c3eaa8080305e35b2acca
-# ###
-
-
-
-# POST http://localhost:4010/AddVideoFilesData
-# Content-Type: application/json
- 
-#  {
-
-#       "VideofolderName": "React-Js",
-#     "VideoTitleName": "ReactJs Intro",
-#     "SourceName": "youtube",
-#     "Video1": "https://youtu.be/Y6aYx_KKM7A?si=_bNMhMJhjB-UTOcr"
-# }
-# ###
-# GET http://localhost:4010/DisplayAllVideos
-# ###
-# GET http://localhost:4010/foldersVideoData/React-Js
-
-
-
-
-# //siva
-
-
-
-
-
-
-
-
-
-
-
-
-
- GET http://localhost:4010/
+GET http://localhost:4010/
 ###
 POST http://localhost:4010/UserRegister
 Content-Type: application/json
@@ -241,7 +24,6 @@ Content-Type: application/json
 ###
 POST http://localhost:4010/AddInstitute
 Content-Type: application/json
-token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiNjUyZDE1NGRlNWNkYmUzZTg5OTEyMGY0IiwiaWF0IjoxNzAxOTI0MTk5LCJleHAiOjE3Mzc5MjQxOTl9.semyUk4s9aloSeCln9TsnthOfDgi_3wXvMxPGf1zsvU"
 
 {
      
@@ -262,13 +44,10 @@ token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiNjUyZDE1NGRlNWNkYmUzZT
 }
 ###
 GET http://localhost:4010/allAddInstitutes
-token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiNjUyZDE1NGRlNWNkYmUzZTg5OTEyMGY0IiwiaWF0IjoxNzAxOTI0MTk5LCJleHAiOjE3Mzc5MjQxOTl9.semyUk4s9aloSeCln9TsnthOfDgi_3wXvMxPGf1zsvU"
- 
 
 ###
 PUT http://localhost:4010/UpdateInstitute/654b2e12dc639a0f228d0af9
 Content-Type: application/json
-token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiNjUyZDE1NGRlNWNkYmUzZTg5OTEyMGY0IiwiaWF0IjoxNzAxOTI0MTk5LCJleHAiOjE3Mzc5MjQxOTl9.semyUk4s9aloSeCln9TsnthOfDgi_3wXvMxPGf1zsvU"
  
  {
     "InstituteName": "Ramya",
@@ -286,20 +65,17 @@ token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiNjUyZDE1NGRlNWNkYmUzZT
     "AxiosPlans": "Mock Interview",
     "Password": "Ramya@1234"
  }
+ 
 ###
 DELETE http://localhost:4010/deleteInstitute/652f7fe1e5bbc63a72e0c434
-token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiNjUyZDE1NGRlNWNkYmUzZTg5OTEyMGY0IiwiaWF0IjoxNzAxOTI0MTk5LCJleHAiOjE3Mzc5MjQxOTl9.semyUk4s9aloSeCln9TsnthOfDgi_3wXvMxPGf1zsvU"
 
 ###
 GET http://localhost:4010/individualInstitute/654231e2988003b306627265
-token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiNjUyZDE1NGRlNWNkYmUzZTg5OTEyMGY0IiwiaWF0IjoxNzAxOTI0MTk5LCJleHAiOjE3Mzc5MjQxOTl9.semyUk4s9aloSeCln9TsnthOfDgi_3wXvMxPGf1zsvU"
 ###
 GET http://localhost:4010/individualInstituteNames/Corporate-Office
-token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiNjUyZDE1NGRlNWNkYmUzZTg5OTEyMGY0IiwiaWF0IjoxNzAxOTI0MTk5LCJleHAiOjE3Mzc5MjQxOTl9.semyUk4s9aloSeCln9TsnthOfDgi_3wXvMxPGf1zsvU"
 ###
 POST http://localhost:4010/AddUsers
 Content-Type: application/json
-token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiNjUyZDE1NGRlNWNkYmUzZTg5OTEyMGY0IiwiaWF0IjoxNzAxOTI0MTk5LCJleHAiOjE3Mzc5MjQxOTl9.semyUk4s9aloSeCln9TsnthOfDgi_3wXvMxPGf1zsvU"
 
 { 
     "Regdid": "854DR7458",
@@ -326,15 +102,12 @@ Content-Type: application/json
 }
 ###
 GET http://localhost:4010/allUsersData
-token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiNjUyZDE1NGRlNWNkYmUzZTg5OTEyMGY0IiwiaWF0IjoxNzAxOTI0MTk5LCJleHAiOjE3Mzc5MjQxOTl9.semyUk4s9aloSeCln9TsnthOfDgi_3wXvMxPGf1zsvU"
 ###
 GET http://localhost:4010/individualUser/65423234988003b30662726d
-token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiNjUyZDE1NGRlNWNkYmUzZTg5OTEyMGY0IiwiaWF0IjoxNzAxOTI0MTk5LCJleHAiOjE3Mzc5MjQxOTl9.semyUk4s9aloSeCln9TsnthOfDgi_3wXvMxPGf1zsvU"
 
 ###
 POST http://localhost:4010/ByBatchData
 Content-Type: application/json
-token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiNjUyZDE1NGRlNWNkYmUzZTg5OTEyMGY0IiwiaWF0IjoxNzAxOTI0MTk5LCJleHAiOjE3Mzc5MjQxOTl9.semyUk4s9aloSeCln9TsnthOfDgi_3wXvMxPGf1zsvU"
 
 { 
     
@@ -347,7 +120,6 @@ token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiNjUyZDE1NGRlNWNkYmUzZT
 ###
 POST http://localhost:4010/ByListData
 Content-Type: application/json
-token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiNjUyZDE1NGRlNWNkYmUzZTg5OTEyMGY0IiwiaWF0IjoxNzAxOTI0MTk5LCJleHAiOjE3Mzc5MjQxOTl9.semyUk4s9aloSeCln9TsnthOfDgi_3wXvMxPGf1zsvU"
 
 { 
     
@@ -360,7 +132,6 @@ token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiNjUyZDE1NGRlNWNkYmUzZT
 ###
 PUT http://localhost:4010/ByBatchData/Corporate-Office
 Content-Type: application/json
-token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiNjUyZDE1NGRlNWNkYmUzZTg5OTEyMGY0IiwiaWF0IjoxNzAxOTI0MTk5LCJleHAiOjE3Mzc5MjQxOTl9.semyUk4s9aloSeCln9TsnthOfDgi_3wXvMxPGf1zsvU"
 
 {
 
@@ -373,7 +144,6 @@ token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiNjUyZDE1NGRlNWNkYmUzZT
 ###
 PUT http://localhost:4010/ByListData/Corporate-Office
 Content-Type: application/json
-token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiNjUyZDE1NGRlNWNkYmUzZTg5OTEyMGY0IiwiaWF0IjoxNzAxOTI0MTk5LCJleHAiOjE3Mzc5MjQxOTl9.semyUk4s9aloSeCln9TsnthOfDgi_3wXvMxPGf1zsvU"
 
 {
 
@@ -384,279 +154,6 @@ token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiNjUyZDE1NGRlNWNkYmUzZT
 ###
  
 GET http://localhost:4010/InstituteData123/Corporate-Office
-token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiNjUyZDE1NGRlNWNkYmUzZTg5OTEyMGY0IiwiaWF0IjoxNzAxOTI0MTk5LCJleHAiOjE3Mzc5MjQxOTl9.semyUk4s9aloSeCln9TsnthOfDgi_3wXvMxPGf1zsvU"
-
-
-//Learn Path Data 
-###
-POST http://localhost:4010/AddVideoPath
-Content-Type: application/json
-token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiNjUyZDE1NGRlNWNkYmUzZTg5OTEyMGY0IiwiaWF0IjoxNzAxOTI0MTk5LCJleHAiOjE3Mzc5MjQxOTl9.semyUk4s9aloSeCln9TsnthOfDgi_3wXvMxPGf1zsvU"
-
-{
-     
-    "VideofolderName": "Mechanical"
-    
-}
-###
-GET http://localhost:4010/allAddVideosData
-token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiNjUyZDE1NGRlNWNkYmUzZTg5OTEyMGY0IiwiaWF0IjoxNzAxOTI0MTk5LCJleHAiOjE3Mzc5MjQxOTl9.semyUk4s9aloSeCln9TsnthOfDgi_3wXvMxPGf1zsvU"
-###
-PUT http://localhost:4010/UpdateVideosDetails/655c3eaa8080305e35b2acca
-Content-Type: application/json
-token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiNjUyZDE1NGRlNWNkYmUzZTg5OTEyMGY0IiwiaWF0IjoxNzAxOTI0MTk5LCJleHAiOjE3Mzc5MjQxOTl9.semyUk4s9aloSeCln9TsnthOfDgi_3wXvMxPGf1zsvU"
- 
- {
-    "VideofolderName": "Codding"
-    
- }
-
-###
-GET http://localhost:4010/DisplayIndividualVideo/655c36a4442a34cc532789f8
-token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiNjUyZDE1NGRlNWNkYmUzZTg5OTEyMGY0IiwiaWF0IjoxNzAxOTI0MTk5LCJleHAiOjE3Mzc5MjQxOTl9.semyUk4s9aloSeCln9TsnthOfDgi_3wXvMxPGf1zsvU"
-###
-DELETE http://localhost:4010/deleteVideo/655c3eaa8080305e35b2acca
-token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiNjUyZDE1NGRlNWNkYmUzZTg5OTEyMGY0IiwiaWF0IjoxNzAxOTI0MTk5LCJleHAiOjE3Mzc5MjQxOTl9.semyUk4s9aloSeCln9TsnthOfDgi_3wXvMxPGf1zsvU"
-###
-
-
-
-POST http://localhost:4010/AddVideoFilesData
-Content-Type: application/json
-token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiNjUyZDE1NGRlNWNkYmUzZTg5OTEyMGY0IiwiaWF0IjoxNzAxOTI0MTk5LCJleHAiOjE3Mzc5MjQxOTl9.semyUk4s9aloSeCln9TsnthOfDgi_3wXvMxPGf1zsvU"
- 
- {
-
-      "VideofolderName": "React-Js",
-    "VideoTitleName": "ReactJs Intro",
-    "SourceName": "youtube",
-    "Video1": "https://youtu.be/Y6aYx_KKM7A?si=_bNMhMJhjB-UTOcr"
-}
-###
-GET http://localhost:4010/DisplayAllVideos
-token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiNjUyZDE1NGRlNWNkYmUzZTg5OTEyMGY0IiwiaWF0IjoxNzAxOTI0MTk5LCJleHAiOjE3Mzc5MjQxOTl9.semyUk4s9aloSeCln9TsnthOfDgi_3wXvMxPGf1zsvU"
-###
-GET http://localhost:4010/foldersVideoData/React-Js
-token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiNjUyZDE1NGRlNWNkYmUzZTg5OTEyMGY0IiwiaWF0IjoxNzAxOTI0MTk5LCJleHAiOjE3Mzc5MjQxOTl9.semyUk4s9aloSeCln9TsnthOfDgi_3wXvMxPGf1zsvU"
-
-# Learn-Path
-###
-
-POST http://localhost:4010/addlearningpath
-Content-Type: application/json
-token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiNjUyZDE1NGRlNWNkYmUzZTg5OTEyMGY0IiwiaWF0IjoxNzAxOTI0MTk5LCJleHAiOjE3Mzc5MjQxOTl9.semyUk4s9aloSeCln9TsnthOfDgi_3wXvMxPGf1zsvU"
- 
- 
-
-{
-    "learningPathTitle":"Node_JS",
-    "relevantSkillTags": "Web Development",
-    "coverLetter":"React Introduction",
-    "difficultyLevel":"Easy",
-    "subscription":"Free",
-    "price":"0",
-    "discount":"10000",
-    "AboutLearnPath":"ReactJs Intro",
-    "authorName": "Prakash",
-    "hours":"0",
-    "minutes":"30",
-    "learningimg":"https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.freecodecamp.org%2Fnews%2Freact-js-for-beginners-props-state-explained%2F&psig=AOvVaw1veEzxuEouaxuVoIWycseZ&ust=1700582301207000&source=images&cd=vfe&ved=0CBIQjRxqFwoTCODxiPL40oIDFQAAAAAdAAAAABAE",
-    "fileName":"ReactJs Introduction",
-    "requirements":"laptop need nodeJs installation"
-    
-}
-###
-GET http://localhost:4010/alllearningpathsDetails
-token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiNjUyZDE1NGRlNWNkYmUzZTg5OTEyMGY0IiwiaWF0IjoxNzAxOTI0MTk5LCJleHAiOjE3Mzc5MjQxOTl9.semyUk4s9aloSeCln9TsnthOfDgi_3wXvMxPGf1zsvU"
-
-# Update Data
-###
-PUT  http://localhost:4010/updatelearningpath/6564784671dfaa7aad2d1eb9
-Content-Type: application/json
-token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiNjUyZDE1NGRlNWNkYmUzZTg5OTEyMGY0IiwiaWF0IjoxNzAxOTI0MTk5LCJleHAiOjE3Mzc5MjQxOTl9.semyUk4s9aloSeCln9TsnthOfDgi_3wXvMxPGf1zsvU"
- 
-
-{
-    "learningPathTitle":"ReactJs",
-    "relevantSkillTags": "Web Development",
-    "coverLetter":"React Introduction",
-    "difficultyLevel":"Easy",
-    "subscription":"Free",
-    "price":"0",
-    "discount":"0",
-    "AboutLearnPath":"ReactJs Intro",
-    "authorName": "Prakash",
-    "hours":"0",
-    "minutes":"30",
-    "learningimg":"https://res.cloudinary.com/dzvqo0oeu/image/upload/v1701064850/image_ywmakw.jpg",
-    "fileName":"ReactJs Introduction",
-    "requirements":"laptop need nodeJs installation"
-    
-}
-###
-POST  http://localhost:4010/addTopic/65854c33ee6991a6cdb9e520
-Content-Type: application/json
-token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiNjUyZDE1NGRlNWNkYmUzZTg5OTEyMGY0IiwiaWF0IjoxNzAxOTI0MTk5LCJleHAiOjE3Mzc5MjQxOTl9.semyUk4s9aloSeCln9TsnthOfDgi_3wXvMxPGf1zsvU"
-
-
-{
-   "_id" :"65854c33ee6991a6cdb9e520",
-   "topicName":"Ad1234",
-   "description":"Reactjs introduction part",
-   "publish":"now"
-}
-###
-GET http://localhost:4010/getTopic/65854c33ee6991a6cdb9e520
-token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiNjUyZDE1NGRlNWNkYmUzZTg5OTEyMGY0IiwiaWF0IjoxNzAxOTI0MTk5LCJleHAiOjE3Mzc5MjQxOTl9.semyUk4s9aloSeCln9TsnthOfDgi_3wXvMxPGf1zsvU"
-
-###
-GET http://localhost:4010/getTopic/65854c33ee6991a6cdb9e520/6585537b282c98a60430de8e
-token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiNjUyZDE1NGRlNWNkYmUzZTg5OTEyMGY0IiwiaWF0IjoxNzAxOTI0MTk5LCJleHAiOjE3Mzc5MjQxOTl9.semyUk4s9aloSeCln9TsnthOfDgi_3wXvMxPGf1zsvU"
-###
-PUT http://localhost:4010/updateTopic/6564784671dfaa7aad2d1eb9/6565b4755572b4e4029ea26b
-Content-Type: application/json
-token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiNjUyZDE1NGRlNWNkYmUzZTg5OTEyMGY0IiwiaWF0IjoxNzAxOTI0MTk5LCJleHAiOjE3Mzc5MjQxOTl9.semyUk4s9aloSeCln9TsnthOfDgi_3wXvMxPGf1zsvU"
- 
-{
-   "_id" :"6564784671dfaa7aad2d1eb9",
-   "topicName":"Node",
-   "description":"Nodejs introduction part",
-   "publish":"now"
-}
-###
-# POST http://localhost:4010/addContentOfTopicsinlearningpath/6581857c1b8d3d9f581dc5fd/658185911b8d3d9f581dc645
-# Content-Type: application/json
-# token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiNjUyZDE1NGRlNWNkYmUzZTg5OTEyMGY0IiwiaWF0IjoxNzAxOTI0MTk5LCJleHAiOjE3Mzc5MjQxOTl9.semyUk4s9aloSeCln9TsnthOfDgi_3wXvMxPGf1zsvU"
-
-
-# {
-   
-   
-#     "topicContentname":"React-code1",
-#     "contentTitle" :"spring-boot",
-#     "contentdes" : " spring-boot",
-#     "contentimg" : "https://res.cloudinary.com/dzvqo0oeu/image/upload/v1701064850/image_ywmakw.jpg",
-#     "publish" : "now"
-# }
-###
-GET http://localhost:4010/getContentPath/65816c043d536de8caf737b4
-token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiNjUyZDE1NGRlNWNkYmUzZTg5OTEyMGY0IiwiaWF0IjoxNzAxOTI0MTk5LCJleHAiOjE3Mzc5MjQxOTl9.semyUk4s9aloSeCln9TsnthOfDgi_3wXvMxPGf1zsvU"
-###
-PUT http://localhost:4010/updateContent/658281dc081cb8b87f4422ba/658281f0081cb8b87f442301/React
-Content-Type: application/json
-token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiNjUyZDE1NGRlNWNkYmUzZTg5OTEyMGY0IiwiaWF0IjoxNzAxOTI0MTk5LCJleHAiOjE3Mzc5MjQxOTl9.semyUk4s9aloSeCln9TsnthOfDgi_3wXvMxPGf1zsvU"
-
-
-{
-    "contentTitle" :"React-code",
-    "contentdes" : "React Installation part description",
-    "contentimg" : "https://res.cloudinary.com/dzvqo0oeu/image/upload/v1701064850/image_ywmakw.jpg",
-    "publish" : "No"
-}
-
-###
-GET http://localhost:4010/onselectedContentinTopicinLearningPath/6564784671dfaa7aad2d1eb9/6565b4df5572b4e4029ea287
-token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiNjUyZDE1NGRlNWNkYmUzZTg5OTEyMGY0IiwiaWF0IjoxNzAxOTI0MTk5LCJleHAiOjE3Mzc5MjQxOTl9.semyUk4s9aloSeCln9TsnthOfDgi_3wXvMxPGf1zsvU"
-###
-DELETE http://localhost:4010/onselectedLearningPath/656576b265db3ec8aa743c70
-token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiNjUyZDE1NGRlNWNkYmUzZTg5OTEyMGY0IiwiaWF0IjoxNzAxOTI0MTk5LCJleHAiOjE3Mzc5MjQxOTl9.semyUk4s9aloSeCln9TsnthOfDgi_3wXvMxPGf1zsvU"
-###
-
-
-###
-DELETE http://localhost:4010/onselectedContentinTopicinLearningPath/658281dc081cb8b87f4422ba/658281f0081cb8b87f442301/intro
-token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiNjUyZDE1NGRlNWNkYmUzZTg5OTEyMGY0IiwiaWF0IjoxNzAxOTI0MTk5LCJleHAiOjE3Mzc5MjQxOTl9.semyUk4s9aloSeCln9TsnthOfDgi_3wXvMxPGf1zsvU"
-
-
-
-# updatecode
-###
-GET  http://localhost:4010/getSingledataContents/65854c33ee6991a6cdb9e520/6585537b282c98a60430de8e/NodeJs
-token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiNjUyZDE1NGRlNWNkYmUzZTg5OTEyMGY0IiwiaWF0IjoxNzAxOTI0MTk5LCJleHAiOjE3Mzc5MjQxOTl9.semyUk4s9aloSeCln9TsnthOfDgi_3wXvMxPGf1zsvU"
-
-###
-DELETE http://localhost:4010/onselectedTopicinLearningPath/6564784671dfaa7aad2d1eb9/6565b4755572b4e4029ea26b
-token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiNjUyZDE1NGRlNWNkYmUzZTg5OTEyMGY0IiwiaWF0IjoxNzAxOTI0MTk5LCJleHAiOjE3Mzc5MjQxOTl9.semyUk4s9aloSeCln9TsnthOfDgi_3wXvMxPGf1zsvU"
-
-
-### 
-post http://localhost:4010/v2/subjects
-Content-Type: application/json
-token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiNjUyZDE1NGRlNWNkYmUzZTg5OTEyMGY0IiwiaWF0IjoxNzAyNDQ3OTg5LCJleHAiOjE3Mzg0NDc5ODl9.04ltF3XvLFzqT2XLQGxuj8qnEIPKQIma-gPbkUafCSg"
-
-{
-    "name" : "mocking",
-    "Description" : "mock",
-    "subjectTag" : "mock-test"
-}
-
-
-
-
-###
-get http://localhost:4010/v1/subjects
-###
-post http://localhost:4010/v1/subjects
-Content-Type: application/json
-token:"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiNjUyZDE0ZWNlNWNkYmUzZTg5OTEyMGYwIiwiaWF0IjoxNzAyNDQ0NTI4LCJleHAiOjE3Mzg0NDQ1Mjh9.sCZomdprYESoQuKjLpO9kOWJi-980dHOnS5-cfhLEew"
-
-{
-   "name":"AWSEC2",
-"Description":"cloud",
-"subjectTag":"coloud"
-}
-
-###
-GET http://localhost:4010/v4/getbasic
-###
-# POST http://localhost:4010/addContentOfTopicsinlearningpath/656965408f195ff691c66127/6569c074baf70e3fc694ccbc
-# Content-Type: application/json
-# token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiNjUyZDE0ZWNlNWNkYmUzZTg5OTEyMGYwIiwiaWF0IjoxNzAyNDQ0NTI4LCJleHAiOjE3Mzg0NDQ1Mjh9.sCZomdprYESoQuKjLpO9kOWJi-980dHOnS5-cfhLEew"
-
-
-# {
-#     "topicContentname" : "Aws",
-#  "contentTitle" :"Aws",
-#     "contentdes" : "Aws",
-#     "contentimg" : "https://res.cloudinary.com/dzvqo0oeu/image/upload/v1701064850/image_ywmakw.jpg",
-#     "publish" : "No"
-
-# }
-
-###
-GET http://localhost:4010/getAllContents/65854c33ee6991a6cdb9e520/6585537b282c98a60430de8e/65854c33ee6991a6cdb9e520
-
-###
-GET http://localhost:4010/getContentPaths/6581857c1b8d3d9f581dc5fd/658185911b8d3d9f581dc645
-
-
-
-###
-POST http://localhost:4010/addContentOfTopicsinlearningpath/65854c33ee6991a6cdb9e520
-Content-Type: application/json
-token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiNjUyZDE1NGRlNWNkYmUzZTg5OTEyMGY0IiwiaWF0IjoxNzAxOTI0MTk5LCJleHAiOjE3Mzc5MjQxOTl9.semyUk4s9aloSeCln9TsnthOfDgi_3wXvMxPGf1zsvU"
-
-
-{
-    "_id":"65854c33ee6991a6cdb9e520",
-    "topicName":"React123",
-    "contentTitle" :"Advancejava123",
-    "contentdes" : " Installation part description",
-    "contentimg" : "https://res.cloudinary.com/dzvqo0oeu/image/upload/v1701064850/image_ywmakw.jpg",
-    "publish" : "No"
-}
-###
-PUT  http://localhost:4010/v4/658a75aef473d32fde648726/chapters/658a75f7f473d32fde648739/codingbasic/658a9281f473d32fde648ca1
-Content-Type: application/json
-
-{
-     "Subjects":"react",
-        "Chapters":"react hooks",
-        "Title":"python",
-        "Programminglanguage":"python",
-        "Description":"dd",
-        "Constraints":"ddd"
-}
 
 
 
@@ -671,9 +168,5 @@ Content-Type: application/json
 
 
  
- 
- 
 
-
- 
 

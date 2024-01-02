@@ -1,5 +1,5 @@
 const express = require("express");
-const Subject= require("../Model/Subjects")
+const Subject= require("../Model/Subject")
 const router =  express.Router()
 const Middlware = require("../middleware/jwtAuth");
 
@@ -47,10 +47,11 @@ router.post('/addchapter/:subjectId',Middlware , async (req, res) => {
 
     return res.json({ msg: 'Chapter added successfully', status: 'success' });
   } catch (error) {
-    console.error(error.message);
+    console.error(error.message,'postchapter');
     return res.status(500).json({ msg: 'Internal Server Error', status: 'failed' });
   }
 });
+// server
 
     // Read  get all chapters 
     //http://localhost:4010/v1/getChapters/65718fc0ac242c99efb6ea4b
@@ -70,7 +71,7 @@ router.post('/addchapter/:subjectId',Middlware , async (req, res) => {
     
         return res.json({ chapters, status: 'success' });
       } catch (error) {
-        console.error(error.message);
+        console.error(error.message,"getchapterid");
         return res.status(500).json({ msg: 'Internal Server Error', status: 'failed' });
       }
     });
@@ -111,7 +112,7 @@ router.post('/addchapter/:subjectId',Middlware , async (req, res) => {
   
       return res.json({ msg: 'Chapter updated successfully', status: 'success', updatedChapter: chapterToUpdate });
     } catch (error) {
-      console.error(error.message);
+      console.error(error.message,"updatechapter");
       return res.status(500).json({ msg: 'Internal Server Error', status: 'failed' });
     }
   });
@@ -147,7 +148,7 @@ router.post('/addchapter/:subjectId',Middlware , async (req, res) => {
   
       return res.json({ msg: 'Chapter deleted successfully', status: 'success' });
     } catch (error) {
-      console.error(error.message);
+      console.error(error.message,'deletechapter');
       return res.status(500).json({ msg: 'Internal Server Error', status: 'failed' });
     }
   });
