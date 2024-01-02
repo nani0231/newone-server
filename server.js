@@ -33,7 +33,7 @@ const Topic = require("./Model/topic");
 const Category = require("./Model/categories")
 
 
-// const bodyParser = require("body-parser");
+
 
 
 // const port = 1412;
