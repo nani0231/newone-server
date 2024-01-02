@@ -1,0 +1,172 @@
+
+GET http://localhost:4010/
+###
+POST http://localhost:4010/UserRegister
+Content-Type: application/json
+
+{
+    "UserEmail": "siva@gmail.com", 
+    "UserPassword": "Siva@123"
+}
+
+
+
+###
+POST http://localhost:4010/Userlogin
+Content-Type: application/json
+
+
+{
+      "UserEmail":"siva@gmail.com",
+       "UserPassword":"Siva@123"
+}
+
+###
+POST http://localhost:4010/AddInstitute
+Content-Type: application/json
+
+{
+     
+    "InstituteName": "College",
+    "HeadName": "Management",
+    "PrimaryEmail": "college@gmail.com",
+    "PrimaryContactNumber": "9541257878",
+    "SecondaryEmail": "college@gmail.com",
+    "SecondaryContactNumber": "8547854785",
+    "BatchYear": "2018",
+    "SelectBatch": "Y-Batch",
+    "Address": "Vijayawada",
+    "City": "Vijayawada",
+    "InstituteCode": "8547",
+    "InstituteType": "College",
+    "AxiosPlans": "LMS",
+    "Password": "college@1234"
+}
+###
+GET http://localhost:4010/allAddInstitutes
+
+###
+PUT http://localhost:4010/UpdateInstitute/654b2e12dc639a0f228d0af9
+Content-Type: application/json
+ 
+ {
+    "InstituteName": "Ramya",
+    "HeadName": "HR",
+    "PrimaryEmail": "ramya@gmail.com",
+    "PrimaryContactNumber": "9658745874",
+    "SecondaryEmail": "ramya@gmail.com",
+    "SecondaryContactNumber": "9658748547",
+    "BatchYear": "2015",
+    "SelectBatch": "U-Batch",
+    "Address": "Vijayavada",
+    "City": "Vijayavada",
+    "InstituteCode": "1276",
+    "InstituteType": "Training Institute",
+    "AxiosPlans": "Mock Interview",
+    "Password": "Ramya@1234"
+ }
+ 
+###
+DELETE http://localhost:4010/deleteInstitute/652f7fe1e5bbc63a72e0c434
+
+###
+GET http://localhost:4010/individualInstitute/654231e2988003b306627265
+###
+GET http://localhost:4010/individualInstituteNames/Corporate-Office
+###
+POST http://localhost:4010/AddUsers
+Content-Type: application/json
+
+{ 
+    "Regdid": "854DR7458",
+    "FirstName": "Sai",
+    "LastName": "Kumar",
+    "userEmail": "saikol@gmail.com",
+    "userNumber": "9632587412",
+    "BatchYear": "2011",
+    "SelectBatch": "S-Batch",
+    "InstituteType": "Siva-krishna",
+    "AxiosPlans": "9 Months",
+    "Password": "Sai@gmail.com",
+    
+    "ExpiryDate": "21-11-2024"
+}
+###
+POST http://localhost:4010/UserDetailslogin
+Content-Type: application/json
+
+
+{
+      "userEmail":"Kalyan@gmail.com",
+       "Password":"Charan@1234"
+}
+###
+GET http://localhost:4010/allUsersData
+###
+GET http://localhost:4010/individualUser/65423234988003b30662726d
+
+###
+POST http://localhost:4010/ByBatchData
+Content-Type: application/json
+
+{ 
+    
+    "BatchYear": "2015",
+    "SelectBatch": "U-Batch",
+    "InstituteType": "Ramya",
+    "AxiosPlans": "3 Months"
+  
+}
+###
+POST http://localhost:4010/ByListData
+Content-Type: application/json
+
+{ 
+    
+    "aboveData": "mail",
+    "institutionpara": "a combining form meaning “guard against,” occurring in loanwords from French, or, via French, from Italian: parachute; parasol.",
+    "InstituteType": "Ramya",
+    "AxiosPlans": "9 Months"
+  
+}
+###
+PUT http://localhost:4010/ByBatchData/Corporate-Office
+Content-Type: application/json
+
+{
+
+      "BatchYear": "9654",
+    "SelectBatch": "P-Batch",
+    "AxiosPlans": "888888 Months"
+
+}
+
+###
+PUT http://localhost:4010/ByListData/Corporate-Office
+Content-Type: application/json
+
+{
+
+      "aboveData": "Siva",
+    "institutionpara": "siva koteswara rao",
+    "AxiosPlans": "99 Months"
+}
+###
+ 
+GET http://localhost:4010/InstituteData123/Corporate-Office
+
+
+
+
+
+
+
+
+ 
+ 
+ 
+
+
+ 
+
+

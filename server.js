@@ -1660,7 +1660,7 @@ app.get("/getContentPath/:id", async (req, res) => {
     }
 
     // Return the learning path details, including topics and content
-    return res.status(200).json(learningPath);
+    return res.status(200).json(learningPath)
   } catch (e) {
     console.error(e.message, "getContentPath");
     return res
@@ -2214,6 +2214,15 @@ app.listen(port, () => {
   console.log(`Server running at ${port}`);
 });
 
+
+
+
+
+
+
+app.use('/v6', require('./Routes/practiceTestRoutes'))
+
+
 //kumar
 
 
@@ -2227,4 +2236,5 @@ app.use('/v2',paragMCQRouter)
 app.use('/v4',require('./Routes/CodeingBasic'))
 app.use('/U1',require('./Routes/assessement'));
 app.use('/U2',require('./Routes/blogs'));
+
 
