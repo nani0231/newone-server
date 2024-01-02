@@ -13,6 +13,9 @@ const videoFile = require("./Model/LearnPath/AddVideoFile");
 const allLearningPaths = require("./Model/LearnPath/AlllearningPaths");
 const paragMCQRouter = require('./Routes/ParagRoutes');
  
+
+=======
+ 
 const Categories = require("./Model/categories");
 const Topic = require("./Model/topic");
 
@@ -21,6 +24,7 @@ const Topic = require("./Model/topic");
 const app = express();
 const port = 1412;
 =======
+ 
 const AddVideoFile = require("./Model/LearnPath/AddVideoFile");
 const app = express();
 app.use(express.json());
@@ -496,7 +500,7 @@ app.get("/InstituteData123/:InstituteName", async (req, res) => {
 app.post("/AddVideoPath",middleware , async (req, res) => {
   try {
     // Check if the VideofolderName already exists
-    const existingVideo = await AddvideoData.findOne({
+    const existingVideo = await AddvideoData.findOne({  
       VideofolderName: req.body.VideofolderName,
     });
 
