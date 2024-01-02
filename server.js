@@ -1,10 +1,9 @@
 const express = require("express");
 const mongoose = require("mongoose");
-<<<<<<< HEAD
+
 const cors = require("cors");
 const Subject =require('./Model/Subject')
-=======
->>>>>>> 902ffd8af805a9f78941d8b426c94bac1ef00f41
+
 const userData = require("./Model/userData");
 const cors = require("cors");
 const jwt = require("jsonwebtoken");
@@ -15,15 +14,14 @@ const AddUserByBatch = require("./Model/ByBatch");
 const ByList = require("./Model/ByList");
 const AddvideoData = require("./Model/LearnPath/Addvideo");
 const videoFile = require("./Model/LearnPath/AddVideoFile");
-<<<<<<< HEAD
-=======
+
 
 // const allLearningPaths = require("./Model/LearnPath/");
 const paragMCQRouter = require("./Routes/ParagRoutes");
 
 const allLearningPaths = require("./Model/LearnPath/AlllearningPaths");
->>>>>>> 902ffd8af805a9f78941d8b426c94bac1ef00f41
-const paragMCQRouter = require('./Routes/ParagRoutes');
+
+
  
 
 
@@ -37,8 +35,8 @@ const Category = require("./Model/categories")
 
 // const bodyParser = require("body-parser");
 
-const app = express();
-const port = 1412;
+
+// const port = 1412;
 
  
 const AddVideoFile = require("./Model/LearnPath/AddVideoFile");
@@ -1934,14 +1932,14 @@ app.delete(
         .status(200)
         .json({ msg: "Content deleted successfully", status: "success" });
     } catch (e) {
-<<<<<<< HEAD
+
       console.error(e.message, "/onselectedContentinTopicinLearningPat");
-=======
+
       console.error(
         e.message,
         "/onselectedContentinTopicinLearningPath/:learningPathId/:topicId/:contentTitle"
       );
->>>>>>> 902ffd8af805a9f78941d8b426c94bac1ef00f41
+
       return res
         .status(500)
         .json({ msg: "Internal Server Error", status: "failed" });
@@ -2091,7 +2089,6 @@ app.delete("/topic/:id", async (req, res) => {
 	}
 });
 
-=======
 app.get(
   "/onselectedContentinTopicinLearningPath/:learningPathId/:topicId/:contentTitle",
   async (req, res) => {
@@ -2181,28 +2178,20 @@ app.post("/AccessGiven/:InstituteId", async (req, res) => {
 app.listen(port, () => {
   console.log(`Server running at ${port}`);
 });
-<<<<<<< HEAD
+
 //kumar
-=======
 
 
-app.use("/v1", require("./Routes/ChapterRoutes")); //api routes
-app.use("/v1", require("./Routes/MCQRoutes"));
-app.use("/v2", require("./Routes/SubjectsRoutes"));
-app.use("/v2", paragMCQRouter);
-app.use("/v4", require("./Routes/CodeingBasic"));
-app.use('/v6', require('./Routes/practiceTestRoutes'))
 
->>>>>>> 902ffd8af805a9f78941d8b426c94bac1ef00f41
+
+
 app.use("/v1", require('./Routes/ChapterRoutes')) //api routes
 app.use('/v1',  require('./Routes/MCQRoutes'));
 app.use("/v2", require('./Routes/SubjectsRoutes')) 
 app.use('/v2',paragMCQRouter)
 app.use('/v4',require('./Routes/CodeingBasic'))
-<<<<<<< HEAD
+
 app.use('/v5', require('./Routes/CategoriesRoutes')) 
 
 // Kumar
-=======
 
->>>>>>> 902ffd8af805a9f78941d8b426c94bac1ef00f41
