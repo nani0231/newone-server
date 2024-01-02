@@ -437,7 +437,7 @@ app.post("/AddInstitute", async (req, res) => {
 // });
 //update
 
-app.put("/UpdateInstitute/:id", middleware, async (req, res) => {
+app.put("/UpdateInstitute/:id", async (req, res) => {
   try {
     const { id } = req.params;
     const user = await AddInstituteData.findByIdAndUpdate(id, req.body);
