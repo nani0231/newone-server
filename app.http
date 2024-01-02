@@ -387,6 +387,15 @@ GET http://localhost:4010/InstituteData123/Corporate-Office
 token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiNjUyZDE1NGRlNWNkYmUzZTg5OTEyMGY0IiwiaWF0IjoxNzAxOTI0MTk5LCJleHAiOjE3Mzc5MjQxOTl9.semyUk4s9aloSeCln9TsnthOfDgi_3wXvMxPGf1zsvU"
 
 
+
+
+// LearningPath Videos Section
+
+
+// To Post Video Folder 
+###
+POST http://localhost:4010/v5/videoFolder
+
 //Learn Path Data 
 ###
 POST http://localhost:4010/AddVideoPath
@@ -510,6 +519,18 @@ GET http://localhost:4010/getTopic/65854c33ee6991a6cdb9e520
 token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiNjUyZDE1NGRlNWNkYmUzZTg5OTEyMGY0IiwiaWF0IjoxNzAxOTI0MTk5LCJleHAiOjE3Mzc5MjQxOTl9.semyUk4s9aloSeCln9TsnthOfDgi_3wXvMxPGf1zsvU"
 
 ###
+
+GET http://localhost:4010/v5/allVideoFolders
+//To get All Video Folders
+
+###
+PUT http://localhost:4010/v5/videoFolder/65800bb9b4d7dc5e3b7cdb8e
+// To Update Individual Video Folder With Video Folder ID
+
+###
+DELETE http://localhost:4010/v5/deleteVideoFolder/65800bb9b4d7dc5e3b7cdb8e
+// To Delete Individual Video Folder With Video Folder ID
+
 GET http://localhost:4010/getTopic/65854c33ee6991a6cdb9e520/6585537b282c98a60430de8e
 token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiNjUyZDE1NGRlNWNkYmUzZTg5OTEyMGY0IiwiaWF0IjoxNzAxOTI0MTk5LCJleHAiOjE3Mzc5MjQxOTl9.semyUk4s9aloSeCln9TsnthOfDgi_3wXvMxPGf1zsvU"
 ###
@@ -574,15 +595,23 @@ token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiNjUyZDE1NGRlNWNkYmUzZT
 GET  http://localhost:4010/getSingledataContents/65854c33ee6991a6cdb9e520/6585537b282c98a60430de8e/NodeJs
 token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiNjUyZDE1NGRlNWNkYmUzZTg5OTEyMGY0IiwiaWF0IjoxNzAxOTI0MTk5LCJleHAiOjE3Mzc5MjQxOTl9.semyUk4s9aloSeCln9TsnthOfDgi_3wXvMxPGf1zsvU"
 
+
 ###
 DELETE http://localhost:4010/onselectedTopicinLearningPath/6564784671dfaa7aad2d1eb9/6565b4755572b4e4029ea26b
 token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiNjUyZDE1NGRlNWNkYmUzZTg5OTEyMGY0IiwiaWF0IjoxNzAxOTI0MTk5LCJleHAiOjE3Mzc5MjQxOTl9.semyUk4s9aloSeCln9TsnthOfDgi_3wXvMxPGf1zsvU"
 
 
+
+//adding Videos to the video folder
+###
+POST http://localhost:4010/v5/addVideo/65800bb9b4d7dc5e3b7cdb8e
+//http://localhost:4010/v5/addVideo/:videoFolderId
+
 ### 
 post http://localhost:4010/v2/subjects
 Content-Type: application/json
 token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiNjUyZDE1NGRlNWNkYmUzZTg5OTEyMGY0IiwiaWF0IjoxNzAyNDQ3OTg5LCJleHAiOjE3Mzg0NDc5ODl9.04ltF3XvLFzqT2XLQGxuj8qnEIPKQIma-gPbkUafCSg"
+
 
 {
     "name" : "mocking",
@@ -591,7 +620,15 @@ token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiNjUyZDE1NGRlNWNkYmUzZT
 }
 
 
+//Getting all Videos from the Single Video Folder
+###
+GET http://localhost:4010/v5/getVideos/65800bb9b4d7dc5e3b7cdb8e
+//http://localhost:4010/v5/getVideos/:videoFolderId
 
+//Updating video in the video folder
+###
+PUT http://localhost:4010/v5/updateVideo/65800bb9b4d7dc5e3b7cdb8e/65803620c006a61ee1591a50
+//http://localhost:4010/v5/updateVideo/:videoFolderId/:videosId"
 
 ###
 get http://localhost:4010/v1/subjects
@@ -599,6 +636,12 @@ get http://localhost:4010/v1/subjects
 post http://localhost:4010/v1/subjects
 Content-Type: application/json
 token:"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiNjUyZDE0ZWNlNWNkYmUzZTg5OTEyMGYwIiwiaWF0IjoxNzAyNDQ0NTI4LCJleHAiOjE3Mzg0NDQ1Mjh9.sCZomdprYESoQuKjLpO9kOWJi-980dHOnS5-cfhLEew"
+
+
+//Deleting video in the video folder
+###
+DELETE http://localhost:4010/v5/deleteVideo/65800bb9b4d7dc5e3b7cdb8e/658044b76b3de0d84b9e6b58
+//"http://localhost:4010/v5//deleteVideo/:videoFolderId/:videosId"
 
 {
    "name":"AWSEC2",
@@ -668,6 +711,7 @@ Content-Type: application/json
  
  
  
+
 
 
  
