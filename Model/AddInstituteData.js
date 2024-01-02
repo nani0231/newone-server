@@ -62,6 +62,9 @@ const AddInstituteData = new mongoose.Schema({
     type: String,
     require: true,
   },
+  Access :{
+    type: String,
+  }
 });
 
 module.exports = mongoose.model("AddInstituteData.data", AddInstituteData);
