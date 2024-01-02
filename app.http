@@ -156,50 +156,9 @@ GET http://localhost:4010/InstituteData123/Corporate-Office
 
 
 
-// LearningPath Videos Section
-
-
-// To Post Video Folder 
-###
-POST http://localhost:4010/v5/videoFolder
-
-
-###
-GET http://localhost:4010/v5/allVideoFolders
-//To get All Video Folders
-
-###
-PUT http://localhost:4010/v5/videoFolder/65800bb9b4d7dc5e3b7cdb8e
-// To Update Individual Video Folder With Video Folder ID
-
-###
-DELETE http://localhost:4010/v5/deleteVideoFolder/65800bb9b4d7dc5e3b7cdb8e
-// To Delete Individual Video Folder With Video Folder ID
 
 
 
-//adding Videos to the video folder
-###
-POST http://localhost:4010/v5/addVideo/65800bb9b4d7dc5e3b7cdb8e
-//http://localhost:4010/v5/addVideo/:videoFolderId
-
-
-
-//Getting all Videos from the Single Video Folder
-###
-GET http://localhost:4010/v5/getVideos/65800bb9b4d7dc5e3b7cdb8e
-//http://localhost:4010/v5/getVideos/:videoFolderId
-
-//Updating video in the video folder
-###
-PUT http://localhost:4010/v5/updateVideo/65800bb9b4d7dc5e3b7cdb8e/65803620c006a61ee1591a50
-//http://localhost:4010/v5/updateVideo/:videoFolderId/:videosId"
-
-
-//Deleting video in the video folder
-###
-DELETE http://localhost:4010/v5/deleteVideo/65800bb9b4d7dc5e3b7cdb8e/658044b76b3de0d84b9e6b58
-//"http://localhost:4010/v5//deleteVideo/:videoFolderId/:videosId"
 
 
  
