@@ -19,12 +19,19 @@ const paragMCQRouter = require('./Routes/ParagRoutes');
 // const bodyParser = require("body-parser");
 
 
+const app = express();
+// const port = 1412;
+
+
 
 // const port = 1412;
 
  
+
 const AddVideoFile = require("./Model/LearnPath/AddVideoFile");
-const app = express();
+
+
+
 app.use(express.json());
 app.use(cors());
 
@@ -35,6 +42,12 @@ const port = 4010;
 const mogoURL =
 
   "mongodb+srv://badasiva22:Siva991276@cluster0.iis7lrd.mongodb.net/perfex-stack-project?retryWrites=true&w=majority";
+  // "mongodb+srv://pathlavathkishan77495:kishan789@cluster14.lafg4t1.mongodb.net/empDetails?retryWrites=true&w=majority"
+  
+
+
+  "mongodb+srv://badasiva22:Siva991276@cluster0.iis7lrd.mongodb.net/perfex-stack-project?retryWrites=true&w=majority";
+
 
 app.use(express.json());
 app.use(cors({ origin: "*" }));
@@ -2123,6 +2136,7 @@ app.delete("/topic/:id", async (req, res) => {
 		res.status(500).json({ error: error.message });
 	}
 });
+
 
 app.get(
   "/onselectedContentinTopicinLearningPath/:learningPathId/:topicId/:contentTitle",
