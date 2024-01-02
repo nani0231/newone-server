@@ -1,9 +1,10 @@
 const express = require("express");
 const Subject = require('../Model/Subjects');
+const Middlware = require("../middleware/jwtAuth");
 const router =  express.Router()
 // Create a subject
 //http://localhost:4010/v2/subject
-router.post('/subject', async (req, res) => {
+router.post('/subjects',Middlware , async (req, res) => {
     try {
       const newSubject = new Subject(req.body);
       await newSubject.save();
