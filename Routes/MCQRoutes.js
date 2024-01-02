@@ -1,11 +1,17 @@
+
 const express = require('express');
 const router = express.Router();
+<<<<<<< HEAD
 const Subject = require('../Model/Subject');
+=======
+const Subject = require('../Model/Subjects');
+const Middlware = require("../middleware/jwtAuth");
+>>>>>>> 902ffd8af805a9f78941d8b426c94bac1ef00f41
 
 
 //http://localhost:4010/v1/addMCQ/6571ad89cf0acc567c548296/6571ae96cf0acc567c54829c
 // Example URL: http://localhost:4010/v1/addMCQ/subjectId/chapterId
-router.post('/addMCQ/:subjectId/:chapterId', async (req, res) => {
+router.post('/addMCQ/:subjectId/:chapterId',Middlware , async (req, res) => {
   try {
     const subjectId = req.params.subjectId;
     const chapterId = req.params.chapterId;
