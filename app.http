@@ -156,6 +156,18 @@ Content-Type: application/json
 GET http://localhost:4010/InstituteData123/Corporate-Office
 
 
+###
+POST http://localhost:4010/v6/practiceTest
+Content-Type: application/json
+
+{
+    "category" : "react12345",
+    "topic" : "react12345",
+    "testName" : "react12345",
+    "practiceType" : "react12345",
+    "questions" : "react12345"
+}
+
 
 
 

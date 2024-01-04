@@ -1,7 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 
-const cors = require("cors");
+// const cors = require("cors");
 const Subject =require('./Model/Subject')
 
 const userData = require("./Model/userData");
@@ -14,8 +14,11 @@ const AddUserByBatch = require("./Model/ByBatch");
 const ByList = require("./Model/ByList");
 const AddvideoData = require("./Model/LearnPath/Addvideo");
 const videoFile = require("./Model/LearnPath/AddVideoFile");
-const allLearningPaths = require("./Model/LearnPath/learnpath");
+
+const allLearningPaths = require("../skillhub_server/Model/LearnPath/AlllearningPaths");
 const paragMCQRouter = require('./Routes/ParagRoutes');
+const Categories = require("../skillhub_server/Model/categories")
+const Topic = require("../skillhub_server/Model/topic")
 // const bodyParser = require("body-parser");
 
 
@@ -46,7 +49,7 @@ const mogoURL =
   
 
 
-  "mongodb+srv://badasiva22:Siva991276@cluster0.iis7lrd.mongodb.net/perfex-stack-project?retryWrites=true&w=majority";
+  // "mongodb+srv://badasiva22:Siva991276@cluster0.iis7lrd.mongodb.net/perfex-stack-project?retryWrites=true&w=majority";
 
 
 app.use(express.json());
@@ -1063,8 +1066,7 @@ app.put("/UpdateVideofileDetails/:selectedvideopathId/:selectedVideofileId",midd
 //     res.status(500).send("Internal Server Error");
 //   }
 // });
-app.post("/addlearningpath",  middleware, async (req, res) => {
-
+app.post("/addlearningpath", async (req, res) => {
   console.log(req.body);
   try {
     const {
@@ -1077,19 +1079,19 @@ app.post("/addlearningpath",  middleware, async (req, res) => {
       discount,
       AboutLearnPath,
       authorName,
+      hours,
+      minutes,
       learningimg,
       fileName,
       requirements,
     } = req.body;
-
     const isLearningPathExist = await allLearningPaths.findOne({
       learningPathTitle: learningPathTitle,
     });
-
     if (isLearningPathExist) {
       return res.send({ msg: "Path Already Registered", status: "failed" });
     }
-    const minutes = new Date();
+    const CurrentTime = new Date();
 
     let newLearningPath = new allLearningPaths({
       learningPathTitle,
@@ -1101,20 +1103,22 @@ app.post("/addlearningpath",  middleware, async (req, res) => {
       discount,
       AboutLearnPath,
       authorName,
+      hours,
       minutes,
       learningimg,
       fileName,
       requirements,
       CurrentTime,
     });
-    newLearningPath.save(); // Saving mongodb collection
+    newLearningPath.save(); //saving mongodb collection
     return res.send({ msg: "Path Created Successfully", status: "success" });
   } catch (e) {
     console.error(e.message, "addlearningpath");
     res.status(500).send("Internal Server Error");
   }
 });
-app.get("/alllearningpathsDetails",  middleware, async (req, res) => {
+
+app.get("/alllearningpathsDetails", async (req, res) => {
   try {
     const allUsersDetails = await allLearningPaths.find();
     res.status(200).send(allUsersDetails);
@@ -1126,8 +1130,7 @@ app.get("/alllearningpathsDetails",  middleware, async (req, res) => {
 
 //updatelearningpath
 
-app.put("/updatelearningpath/:learningPathId",  middleware, async (req, res) => {
-
+app.put("/updatelearningpath/:learningPathId", async (req, res) => {
   try {
     const learningPathId = req.params.learningPathId;
     const {
@@ -1140,6 +1143,7 @@ app.put("/updatelearningpath/:learningPathId",  middleware, async (req, res) => 
       discount,
       AboutLearnPath,
       authorName,
+      hours,
       minutes,
       learningimg,
       fileName,
@@ -1167,6 +1171,7 @@ app.put("/updatelearningpath/:learningPathId",  middleware, async (req, res) => 
     existingLearningPath.discount = discount;
     existingLearningPath.AboutLearnPath = AboutLearnPath;
     existingLearningPath.authorName = authorName;
+    existingLearningPath.hours = hours;
     existingLearningPath.minutes = minutes;
     existingLearningPath.learningimg = learningimg;
     existingLearningPath.fileName = fileName;
@@ -1186,22 +1191,7 @@ app.put("/updatelearningpath/:learningPathId",  middleware, async (req, res) => 
       .json({ msg: "Internal Server Error", status: "failed" });
   }
 });
-//delete
-app.delete("/deletelearningpath/:id", middleware, async (req, res) => {
-  try {
-    const id = req.params.id; // Use req.params.id to get the instituteId
-    const deletedLearningPath = await allLearningPaths.findByIdAndRemove(id);
 
-    if (deletedLearningPath) {
-      return res.status(200).json("Learningpaths deleted successfully");
-    } else {
-      return res.status(404).json("Learningpaths Folder not found");
-    }
-  } catch (e) {
-    console.error(e.message, "deletelearningpath");
-    return res.status(500).json(e.message);
-  }
-});
 // Post Topics
 
 app.post("/addTopic/:learningPathId", async (req, res) => {
@@ -1371,8 +1361,6 @@ app.put(
     }
   }
 );
-
-
 
 app.post(
   "/addContentOfTopicsinlearningpath/:learningPathId",
@@ -1594,7 +1582,6 @@ app.get("/getContentPaths/:learningPathId/:topicId", async (req, res) => {
   }
 });
 
-
 app.get(
   "/getAllContents/:learningPathId/:topicId/:contentId",
   async (req, res) => {
@@ -1658,7 +1645,6 @@ app.get(
   }
 );
 
-
 app.get("/getContentPath/:id", async (req, res) => {
   try {
     const id = req.params.id;
@@ -1673,7 +1659,7 @@ app.get("/getContentPath/:id", async (req, res) => {
     }
 
     // Return the learning path details, including topics and content
-    return res.status(200).json(learningPath)
+    return res.status(200).json(learningPath);
   } catch (e) {
     console.error(e.message, "getContentPath");
     return res
@@ -1681,8 +1667,6 @@ app.get("/getContentPath/:id", async (req, res) => {
       .json({ msg: "Internal Server Error", status: "failed" });
   }
 });
-
-
 
 app.put(
   "/updateContent/:learningPathId/:topicId/:contentTitle",
@@ -1796,12 +1780,9 @@ app.get(
       return res
         .status(500)
         .json({ msg: "Internal Server Error", status: "failed" });
-
-       
     }
   }
 );
-
 
 app.get(
   "/getSingledataContents/:learningPathId/:topicId/:contentTitle",
@@ -1859,7 +1840,6 @@ app.get(
     }
   }
 );
-
 
 app.delete("/onselectedLearningPath/:_id", async (req, res) => {
   try {
@@ -1930,7 +1910,6 @@ app.delete(
   }
 );
 
-
 app.delete(
   "/onselectedContentinTopicinLearningPath/:learningPathId/:topicId/:contentTitle",
   async (req, res) => {
@@ -1980,7 +1959,6 @@ app.delete(
         .status(200)
         .json({ msg: "Content deleted successfully", status: "success" });
     } catch (e) {
-
       console.error(e.message, "/onselectedContentinTopicinLearningPat");
 
       console.error(
@@ -1994,6 +1972,9 @@ app.delete(
     }
   }
 );
+
+
+
 
  
 
