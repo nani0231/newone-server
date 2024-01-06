@@ -1,10 +1,14 @@
 const express = require("express");
+
+const { generateFile } = require("./Model/CodeCompailer/generateFile");
+const { executeCpp } = require("./Model/CodeCompailer/executeCpp");
 const mongoose = require("mongoose");
 
 // const cors = require("cors");
-const Subject =require('./Model/Subject')
+const Subject = require("./Model/Subject");
 
 const userData = require("./Model/userData");
+
 const cors = require("cors");
 const jwt = require("jsonwebtoken");
 const middleware = require("./middleware/jwtAuth");
@@ -16,41 +20,32 @@ const AddvideoData = require("./Model/LearnPath/Addvideo");
 const videoFile = require("./Model/LearnPath/AddVideoFile");
 
 const allLearningPaths = require("../skillhub_server/Model/LearnPath/AlllearningPaths");
-const paragMCQRouter = require('./Routes/ParagRoutes');
-const Categories = require("../skillhub_server/Model/categories")
-const Topic = require("../skillhub_server/Model/topic")
+const paragMCQRouter = require("./Routes/ParagRoutes");
+const Categories = require("../skillhub_server/Model/categories");
+const Topic = require("../skillhub_server/Model/topic");
 // const bodyParser = require("body-parser");
 
-
 const app = express();
+
+app.use(cors());
 // const port = 1412;
 
-
-
 // const port = 1412;
-
- 
 
 const AddVideoFile = require("./Model/LearnPath/AddVideoFile");
 
-
-
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cors());
 
 // const bodyParser = require("body-parser");
 const port = 4010;
- 
 
 const mogoURL =
-
   "mongodb+srv://badasiva22:Siva991276@cluster0.iis7lrd.mongodb.net/perfex-stack-project?retryWrites=true&w=majority";
-  // "mongodb+srv://pathlavathkishan77495:kishan789@cluster14.lafg4t1.mongodb.net/empDetails?retryWrites=true&w=majority"
-  
+// "mongodb+srv://pathlavathkishan77495:kishan789@cluster14.lafg4t1.mongodb.net/empDetails?retryWrites=true&w=majority"
 
-
-  // "mongodb+srv://badasiva22:Siva991276@cluster0.iis7lrd.mongodb.net/perfex-stack-project?retryWrites=true&w=majority";
-
+// "mongodb+srv://badasiva22:Siva991276@cluster0.iis7lrd.mongodb.net/perfex-stack-project?retryWrites=true&w=majority";
 
 app.use(express.json());
 app.use(cors({ origin: "*" }));
@@ -108,14 +103,15 @@ app.post("/Userlogin", async (req, res) => {
     if (UserPassword !== user.UserPassword) {
       return res.status(401).json({ message: "Incorrect password" });
     }
-   
+
     const payload = {
-      id: user._id
-    }
-    let token = jwt.sign(payload, 'siva', { expiresIn: '24hr' })
-        console.log(token);
-        return res.status(200).json({ message: "User Login Success", token: token });
-  
+      id: user._id,
+    };
+    let token = jwt.sign(payload, "siva", { expiresIn: "24hr" });
+    console.log(token);
+    return res
+      .status(200)
+      .json({ message: "User Login Success", token: token });
   } catch (error) {
     console.error(error.message, "Userlogin");
     res.status(500).json({
@@ -181,7 +177,6 @@ app.post("/AddInstitute", async (req, res) => {
 //     res.status(400).json({ error: error.message });
 //   }
 // });
-
 
 // app.post("/institutes", async (req, res) => {
 //   try {
@@ -307,9 +302,6 @@ app.post("/AddInstitute", async (req, res) => {
 //   }
 // });
 
-
-
-
 // app.post("/institutes", async (req, res) => {
 //   console.log(req.body);
 //   try {
@@ -378,7 +370,6 @@ app.post("/AddInstitute", async (req, res) => {
 //   }
 // });
 
-
 // app.post("/addinstitute/batchyear", async (req, res) => {
 //   try {
 //     const { instituteId, batchYear } = req.body;
@@ -402,10 +393,6 @@ app.post("/AddInstitute", async (req, res) => {
 //     res.status(500).send("Internal Server Error");
 //   }
 // });
-
-
-
-
 
 // app.get("/institutes", async (req, res) => {
 //   try {
@@ -706,7 +693,7 @@ app.post("/ByListData", middleware, async (req, res) => {
 
 app.put("/ByBatchData/:InstituteType", middleware, async (req, res) => {
   try {
-    const InstituteType = req.params.InstituteType;  
+    const InstituteType = req.params.InstituteType;
     console.log(InstituteType);
 
     // Check if the provided InstituteType exists
@@ -793,16 +780,16 @@ app.get("/InstituteData123/:InstituteName", async (req, res) => {
 
 //Learn Path Data
 
-app.post("/AddVideoPath",middleware , async (req, res) => {
+app.post("/AddVideoPath", middleware, async (req, res) => {
   try {
     // Check if the VideofolderName already exists
-    const existingVideo = await AddvideoData.findOne({  
+    const existingVideo = await AddvideoData.findOne({
       VideofolderName: req.body.VideofolderName,
     });
 
     if (!existingVideo) {
-      const AddVideo = new AddvideoData(req.body)
-    
+      const AddVideo = new AddvideoData(req.body);
+
       await AddVideo.save();
 
       console.log(AddVideo);
@@ -810,13 +797,13 @@ app.post("/AddVideoPath",middleware , async (req, res) => {
     } else {
       res.status(400).json("Video path with the same name already exists");
     }
-  } catch (e) { 
+  } catch (e) {
     console.error(e.message, "AddVideoPath");
     return res.status(500).json(e.message);
   }
 });
 
-app.get("/allAddVideosData",middleware , async (req, res) => {
+app.get("/allAddVideosData", middleware, async (req, res) => {
   try {
     const allVideos = await AddvideoData.find({});
     return res.json(allVideos);
@@ -826,21 +813,28 @@ app.get("/allAddVideosData",middleware , async (req, res) => {
   }
 });
 
-app.put("/UpdateVideosDetails/:selectedvideopathId",middleware , async (req, res) => {
-  try {
-    const { selectedvideopathId } = req.params;
-    const video = await AddvideoData.findByIdAndUpdate(selectedvideopathId, req.body);
+app.put(
+  "/UpdateVideosDetails/:selectedvideopathId",
+  middleware,
+  async (req, res) => {
+    try {
+      const { selectedvideopathId } = req.params;
+      const video = await AddvideoData.findByIdAndUpdate(
+        selectedvideopathId,
+        req.body
+      );
 
-    if (!video) {
-      return res.status(404).json("Video Not Found");
+      if (!video) {
+        return res.status(404).json("Video Not Found");
+      }
+
+      return res.status(200).json("Video Folder updated successfully");
+    } catch (error) {
+      console.error(error.message, "UpdateVideosDetails");
+      return res.status(500).json("Internal Server Error");
     }
-
-    return res.status(200).json("Video Folder updated successfully");
-  } catch (error) {
-    console.error(error.message, "UpdateVideosDetails");
-    return res.status(500).json("Internal Server Error");
   }
-});
+);
 
 app.get("/DisplayIndividualVideo/:id", async (req, res) => {
   try {
@@ -858,7 +852,7 @@ app.get("/DisplayIndividualVideo/:id", async (req, res) => {
   }
 });
 
-app.delete("/deleteVideo/:id",middleware , async (req, res) => {
+app.delete("/deleteVideo/:id", middleware, async (req, res) => {
   try {
     const id = req.params.id; // Use req.params.id to get the instituteId
     const deletedVideo = await AddvideoData.findByIdAndRemove(id);
@@ -875,81 +869,100 @@ app.delete("/deleteVideo/:id",middleware , async (req, res) => {
 });
 
 //create videofile
-app.post("/AddVideoFilesData/:videopathId",middleware , async (req, res) => {
+app.post("/AddVideoFilesData/:videopathId", middleware, async (req, res) => {
   try {
-    const videopathId = req.params.videopathId
-    const {VideofolderName,VideoTitleName,SourceName,Video1} = req.body
+    const videopathId = req.params.videopathId;
+    const { VideofolderName, VideoTitleName, SourceName, Video1 } = req.body;
 
     const existingVideo = await AddvideoData.findById(videopathId);
 
     if (!existingVideo) {
-      return res.status(404).json({ msg: 'VideoPath not found', status: 'failed' });
+      return res
+        .status(404)
+        .json({ msg: "VideoPath not found", status: "failed" });
     }
     const isVideoTitleName = existingVideo.videoFile.some(
       (each) => each.VideoTitleName === VideoTitleName
     );
     if (isVideoTitleName) {
       return res.status(400).json({
-        msg: 'VideoTitle with the same name already exists',
-        status: 'failed',
+        msg: "VideoTitle with the same name already exists",
+        status: "failed",
       });
     }
-      const AddVideo = {
-        VideofolderName,
-        VideoTitleName,
-        SourceName,
-        Video1,
-      };
-      existingVideo.videoFile.push(AddVideo);
+    const AddVideo = {
+      VideofolderName,
+      VideoTitleName,
+      SourceName,
+      Video1,
+    };
+    existingVideo.videoFile.push(AddVideo);
     await existingVideo.save();
 
-    return res.json({ msg: 'VideoFile added successfully', status: 'success' });
+    return res.json({ msg: "VideoFile added successfully", status: "success" });
   } catch (error) {
     console.error(error.message);
-    return res.status(500).json({ msg: 'Internal Server Error', status: 'failed' });
+    return res
+      .status(500)
+      .json({ msg: "Internal Server Error", status: "failed" });
   }
 });
 //delete videofiles
-app.delete("/deleteVideofiles/:videopathId/:videofileId",middleware , async (req, res) => {
-  try {
-    const videopathId = req.params.videopathId;
-    const videofileId = req.params.videofileId;
-    const existingVideopath = await AddvideoData.findById(videopathId);
-    if (!existingVideopath) {
-      return res.status(404).json({ msg: 'Videopath not found', status: 'failed' });
-    }
-    const VideofileIndex = existingVideopath.videoFile.findIndex(
-      (file) => file._id.toString() === videofileId
-    );
-    if (VideofileIndex === -1) {
-      return res.status(404).json({ msg: 'Videofile not found', status: 'failed' });
-    }
+app.delete(
+  "/deleteVideofiles/:videopathId/:videofileId",
+  middleware,
+  async (req, res) => {
+    try {
+      const videopathId = req.params.videopathId;
+      const videofileId = req.params.videofileId;
+      const existingVideopath = await AddvideoData.findById(videopathId);
+      if (!existingVideopath) {
+        return res
+          .status(404)
+          .json({ msg: "Videopath not found", status: "failed" });
+      }
+      const VideofileIndex = existingVideopath.videoFile.findIndex(
+        (file) => file._id.toString() === videofileId
+      );
+      if (VideofileIndex === -1) {
+        return res
+          .status(404)
+          .json({ msg: "Videofile not found", status: "failed" });
+      }
 
-    existingVideopath.videoFile.splice(VideofileIndex, 1);
-    await existingVideopath.save();
-    return res.json({ msg: 'VideoFile deleted successfully', status: 'success' });
-  } catch (error) {
-    console.error(error.message);
-    return res.status(500).json({ msg: 'Internal Server Error', status: 'failed' });
+      existingVideopath.videoFile.splice(VideofileIndex, 1);
+      await existingVideopath.save();
+      return res.json({
+        msg: "VideoFile deleted successfully",
+        status: "success",
+      });
+    } catch (error) {
+      console.error(error.message);
+      return res
+        .status(500)
+        .json({ msg: "Internal Server Error", status: "failed" });
+    }
   }
-});
-   
+);
 
-   
 //get videofiles with videopathid
-app.get("/DisplayAllVideos/:videopathId",middleware , async (req, res) => {
+app.get("/DisplayAllVideos/:videopathId", middleware, async (req, res) => {
   try {
     const videopathId = req.params.videopathId;
     const existingVideoPath = await AddvideoData.findById(videopathId);
     if (!existingVideoPath) {
-      return res.status(404).json({ msg: 'VideoPath not found', status: 'failed' });
+      return res
+        .status(404)
+        .json({ msg: "VideoPath not found", status: "failed" });
     }
 
-    const allVideos = existingVideoPath
-    return res.json({allVideos,status :'success'});
+    const allVideos = existingVideoPath;
+    return res.json({ allVideos, status: "success" });
   } catch (error) {
     console.error(error.message, "DisplayAllVideos");
-    return res.status(500).json({msg:"Internal Server Error",status: 'failed'});
+    return res
+      .status(500)
+      .json({ msg: "Internal Server Error", status: "failed" });
   }
 });
 //get allvideofiles
@@ -959,15 +972,19 @@ app.get("/getAllVideoFiles", async (req, res) => {
     const allVideos = await AddvideoData.find();
 
     // Extract and combine all videoFile arrays from the documents
-    const allVideoFiles = allVideos.reduce((acc, video) => acc.concat(video.videoFile), []);
+    const allVideoFiles = allVideos.reduce(
+      (acc, video) => acc.concat(video.videoFile),
+      []
+    );
 
-    return res.json({ videoFiles: allVideoFiles, status: 'success' });
+    return res.json({ videoFiles: allVideoFiles, status: "success" });
   } catch (error) {
     console.error(error.message);
-    return res.status(500).json({ msg: 'Internal Server Error', status: 'failed' });
+    return res
+      .status(500)
+      .json({ msg: "Internal Server Error", status: "failed" });
   }
 });
-
 
 app.get("/foldersVideoData/:VideofolderName", async (req, res) => {
   try {
@@ -988,35 +1005,52 @@ app.get("/foldersVideoData/:VideofolderName", async (req, res) => {
   }
 });
 //Update videofiles
-app.put("/UpdateVideofileDetails/:selectedvideopathId/:selectedVideofileId",middleware , async (req, res) => {
-  try {
-    const selectedvideopathId = req.params.selectedvideopathId;
+app.put(
+  "/UpdateVideofileDetails/:selectedvideopathId/:selectedVideofileId",
+  middleware,
+  async (req, res) => {
+    try {
+      const selectedvideopathId = req.params.selectedvideopathId;
       const selectedVideofileId = req.params.selectedVideofileId;
-      const VideoTitleName= req.body.VideoTitle;
-      const Video1= req.body.videofile;
-      
-      const existingVideofile = await AddvideoData.findById(selectedvideopathId);
-    
+      const VideoTitleName = req.body.VideoTitle;
+      const Video1 = req.body.videofile;
+
+      const existingVideofile = await AddvideoData.findById(
+        selectedvideopathId
+      );
+
       if (!existingVideofile) {
-        return res.status(404).json({ msg: 'Videopath not found', status: 'failed' });
+        return res
+          .status(404)
+          .json({ msg: "Videopath not found", status: "failed" });
       }
-      const videofileToUpdate = existingVideofile.videoFile.id(selectedVideofileId);
+      const videofileToUpdate =
+        existingVideofile.videoFile.id(selectedVideofileId);
 
       if (!videofileToUpdate) {
-        return res.status(404).json({ msg: 'Videofile not found', status: 'failed' });
+        return res
+          .status(404)
+          .json({ msg: "Videofile not found", status: "failed" });
       }
 
       videofileToUpdate.VideoTitleName = VideoTitleName;
       videofileToUpdate.Video1 = Video1;
-      
+
       await existingVideofile.save();
-      return res.json({ msg: 'Videofile updated successfully', status: 'success', updatedVideofile: videofileToUpdate });
+      return res.json({
+        msg: "Videofile updated successfully",
+        status: "success",
+        updatedVideofile: videofileToUpdate,
+      });
     } catch (error) {
       console.error(error.message);
-      return res.status(500).json({ msg: 'Internal Server Error', status: 'failed' });
+      return res
+        .status(500)
+        .json({ msg: "Internal Server Error", status: "failed" });
     }
-  });
-    
+  }
+);
+
 // Learn-Path
 // app.post("/addlearningpath", middleware, async (req, res) => {
 //   console.log(req.body);
@@ -1973,78 +2007,73 @@ app.delete(
   }
 );
 
-
-
-
- 
-
 // Category
 
 app.post("/categories", async (req, res) => {
-	try {
-		const newCategory = new Categories(req.body);
-		const savedCategory = await newCategory.save();
-		res.status(200).json(savedCategory);
-	} catch (error) {
-		res.status(500).json({ error: error.message });
-	}
+  try {
+    const newCategory = new Categories(req.body);
+    const savedCategory = await newCategory.save();
+    res.status(200).json(savedCategory);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
 
 app.put("/categories/:id", async (req, res) => {
-	try {
-		const updatedCategory = await Categories.findByIdAndUpdate(
-			req.params.id,
-			req.body,
-			{ new: true }
-		);
+  try {
+    const updatedCategory = await Categories.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true }
+    );
 
-		if (!updatedCategory) {
-			return res.status(404).json({ error: "Category not found" });
-		}
+    if (!updatedCategory) {
+      return res.status(404).json({ error: "Category not found" });
+    }
 
-		res.json(updatedCategory);
-	} catch (error) {
-		res.status(500).json({ error: error.message });
-	}
+    res.json(updatedCategory);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
 
 app.get("/categories", async (req, res) => {
-	try {
-		const allCategories = await Categories.find();
-		res.json(allCategories);
-	} catch (error) {
-		res.status(500).json({ error: error.message });
-	}
+  try {
+    const allCategories = await Categories.find();
+    res.json(allCategories);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
 
 app.get("/categories/:_id", async (req, res) => {
-    const Id = req.params._id;
+  const Id = req.params._id;
 
-    try {
-        const category = await Categories.findById(Id);
+  try {
+    const category = await Categories.findById(Id);
 
-        if (!category) {
-            return res.status(404).json({ message: "Category not found" });
-        }
-
-        res.json(category);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
+    if (!category) {
+      return res.status(404).json({ message: "Category not found" });
     }
+
+    res.json(category);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
 
 app.delete("/categories/:id", async (req, res) => {
-	try {
-		const deletedCategory = await Categories.findByIdAndDelete(req.params.id);
+  try {
+    const deletedCategory = await Categories.findByIdAndDelete(req.params.id);
 
-		if (!deletedCategory) {
-			return res.status(404).json({ error: "Category not found" });
-		}
+    if (!deletedCategory) {
+      return res.status(404).json({ error: "Category not found" });
+    }
 
-		res.json({ message: "Category deleted successfully" });
-	} catch (error) {
-		res.status(500).json({ error: error.message });
-	}
+    res.json({ message: "Category deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
 
 // Category
@@ -2052,72 +2081,71 @@ app.delete("/categories/:id", async (req, res) => {
 // Topic
 
 app.post("/topic", async (req, res) => {
-	try {
-		const newCategory = new Topic(req.body);
-		const savedCategory = await newCategory.save();
-		res.status(200).json(savedCategory);
-	} catch (error) {
-		res.status(500).json({ error: error.message });
-	}
+  try {
+    const newCategory = new Topic(req.body);
+    const savedCategory = await newCategory.save();
+    res.status(200).json(savedCategory);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
 
 app.put("/topic/:id", async (req, res) => {
-	try {
-		const updatedCategory = await Topic.findByIdAndUpdate(
-			req.params.id,
-			req.body,
-			{ new: true }
-		);
+  try {
+    const updatedCategory = await Topic.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true }
+    );
 
-		if (!updatedCategory) {
-			return res.status(404).json({ error: "Category not found" });
-		}
+    if (!updatedCategory) {
+      return res.status(404).json({ error: "Category not found" });
+    }
 
-		res.json(updatedCategory);
-	} catch (error) {
-		res.status(500).json({ error: error.message });
-	}
+    res.json(updatedCategory);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
 
 app.get("/topic", async (req, res) => {
-	try {
-		const allCategories = await Topic.find();
-		res.json(allCategories);
-	} catch (error) {
-		res.status(500).json({ error: error.message });
-	}
+  try {
+    const allCategories = await Topic.find();
+    res.json(allCategories);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
 
 app.get("/topic/:_id", async (req, res) => {
-    const topicId = req.params._id;
+  const topicId = req.params._id;
 
-    try {
-        const topic = await Topic.findById(topicId);
+  try {
+    const topic = await Topic.findById(topicId);
 
-        if (!topic) {
-            return res.status(404).json({ message: "Topic not found" });
-        }
-
-        res.json(topic);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
+    if (!topic) {
+      return res.status(404).json({ message: "Topic not found" });
     }
+
+    res.json(topic);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
 
 app.delete("/topic/:id", async (req, res) => {
-	try {
-		const deletedCategory = await Topic.findByIdAndDelete(req.params.id);
+  try {
+    const deletedCategory = await Topic.findByIdAndDelete(req.params.id);
 
-		if (!deletedCategory) {
-			return res.status(404).json({ error: "Category not found" });
-		}
+    if (!deletedCategory) {
+      return res.status(404).json({ error: "Category not found" });
+    }
 
-		res.json({ message: "Category deleted successfully" });
-	} catch (error) {
-		res.status(500).json({ error: error.message });
-	}
+    res.json({ message: "Category deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
-
 
 app.get(
   "/onselectedContentinTopicinLearningPath/:learningPathId/:topicId/:contentTitle",
@@ -2183,12 +2211,14 @@ app.post("/AccessGiven/:InstituteId", async (req, res) => {
   try {
     const InstituteId = req.params.InstituteId;
     const Access = req.body.Access;
-    
+
     // Find the institute by ID
     const institute = await AddInstituteData.findById(InstituteId);
 
     if (!institute) {
-      return res.status(404).json({ msg: "Institute not found", status: "failed" });
+      return res
+        .status(404)
+        .json({ msg: "Institute not found", status: "failed" });
     }
 
     // Update the Access field
@@ -2203,33 +2233,70 @@ app.post("/AccessGiven/:InstituteId", async (req, res) => {
   }
 });
 
+//  ========================
 
- 
+app.post("/compile", (req, res) => {
+  //getting the required data from the request
+  let code = req.body.code;
+  let language = req.body.language;
+  let input = req.body.input;
+
+  if (language === "python") {
+    language = "py";
+  }
+
+  let data = {
+    code: code,
+    language: language,
+    input: input,
+  };
+  let config = {
+    method: "post",
+    url: "https://codexweb.netlify.app/.netlify/functions/enforceCode",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    data: data,
+  };
+  //calling the code compilation API
+  Axios(config)
+    .then((response) => {
+      res.send(response.data);
+      console.log(response.data);
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+});
+
+// ===========================
+
+app.post("/run", async (req, res) => {
+  const { language = "cpp", code } = req.body;
+
+  if (code === undefined) {
+    return res.status(400).json({ success: false, error: "Empty code body!" });
+  }
+  try {
+    //nead c++
+    const filepath = await generateFile(language, code);
+    //send request
+    const output = await executeCpp(filepath);
+
+    return res.json({ filepath, output });
+  } catch (err) {
+    res.status(500).json({ err });
+  }
+});
+
 app.listen(port, () => {
   console.log(`Server running at ${port}`);
 });
-
-
-
-
-
-
-
-app.use('/v6', require('./Routes/practiceTestRoutes'))
-
-
-//kumar
-
-
-
-
-
-app.use("/v1", require('./Routes/ChapterRoutes')) //api routes
-app.use('/v1',  require('./Routes/MCQRoutes'));
-app.use("/v2", require('./Routes/SubjectsRoutes')) 
-app.use('/v2',paragMCQRouter)
-app.use('/v4',require('./Routes/CodeingBasic'))
-app.use('/U1',require('./Routes/assessement'));
-app.use('/U2',require('./Routes/blogs'));
-
-
+app.use("/v6", require("./Routes/practiceTestRoutes"));
+app.use("/v1", require("./Routes/ChapterRoutes")); //api routes
+app.use("/v1", require("./Routes/MCQRoutes"));
+app.use("/v2", require("./Routes/SubjectsRoutes"));
+app.use("/v2", paragMCQRouter);
+app.use("/v4", require("./Routes/CodeingBasic"));
+app.use("/U1", require("./Routes/assessement"));
+app.use("/U2", require("./Routes/blogs"));
