@@ -1,9 +1,6 @@
 const express = require("express");
 const mongoose = require("mongoose");
-
-// const cors = require("cors");
 const Subject =require('./Model/Subject')
-
 const userData = require("./Model/userData");
 const cors = require("cors");
 const jwt = require("jsonwebtoken");
@@ -14,44 +11,18 @@ const AddUserByBatch = require("./Model/ByBatch");
 const ByList = require("./Model/ByList");
 const AddvideoData = require("./Model/LearnPath/Addvideo");
 const videoFile = require("./Model/LearnPath/AddVideoFile");
-
 const allLearningPaths = require("../skillhub_server/Model/LearnPath/AlllearningPaths");
 const paragMCQRouter = require('./Routes/ParagRoutes');
 const Categories = require("../skillhub_server/Model/categories")
 const Topic = require("../skillhub_server/Model/topic")
-// const bodyParser = require("body-parser");
-
-
-const app = express();
-// const port = 1412;
-
-
-
-// const port = 1412;
-
- 
-
 const AddVideoFile = require("./Model/LearnPath/AddVideoFile");
-
-
-
+const app = express();
 app.use(express.json());
 app.use(cors());
-
-// const bodyParser = require("body-parser");
 const port = 4010;
  
-
 const mogoURL =
-
   "mongodb+srv://badasiva22:Siva991276@cluster0.iis7lrd.mongodb.net/perfex-stack-project?retryWrites=true&w=majority";
-  // "mongodb+srv://pathlavathkishan77495:kishan789@cluster14.lafg4t1.mongodb.net/empDetails?retryWrites=true&w=majority"
-  
-
-
-  // "mongodb+srv://badasiva22:Siva991276@cluster0.iis7lrd.mongodb.net/perfex-stack-project?retryWrites=true&w=majority";
-
-
 app.use(express.json());
 app.use(cors({ origin: "*" }));
 //initalizing mongodb to node
@@ -479,7 +450,7 @@ app.put("/UpdateInstitute/:id", async (req, res) => {
 });
 
 //delete
-app.delete("/deleteInstitute/:id", middleware, async (req, res) => {
+app.delete("/deleteInstitute/:id", async (req, res) => {
   try {
     const id = req.params.id; // Use req.params.id to get the instituteId
     const deletedInstitute = await AddInstituteData.findByIdAndRemove(id);
@@ -793,7 +764,7 @@ app.get("/InstituteData123/:InstituteName", async (req, res) => {
 
 //Learn Path Data
 
-app.post("/AddVideoPath",middleware , async (req, res) => {
+app.post("/AddVideoPath", async (req, res) => {
   try {
     // Check if the VideofolderName already exists
     const existingVideo = await AddvideoData.findOne({  
@@ -816,17 +787,17 @@ app.post("/AddVideoPath",middleware , async (req, res) => {
   }
 });
 
-app.get("/allAddVideosData",middleware , async (req, res) => {
+app.get("/allAddVideosData", async (req, res) => {
   try {
     const allVideos = await AddvideoData.find({});
-    return res.json(allVideos);
+    return res.status(200).json(allVideos);
   } catch (error) {
     console.error(error.message, "allAddVideosData");
     return res.status(500).json("Internal Server Error");
   }
 });
 
-app.put("/UpdateVideosDetails/:selectedvideopathId",middleware , async (req, res) => {
+app.put("/UpdateVideosDetails/:selectedvideopathId", async (req, res) => {
   try {
     const { selectedvideopathId } = req.params;
     const video = await AddvideoData.findByIdAndUpdate(selectedvideopathId, req.body);
@@ -858,7 +829,7 @@ app.get("/DisplayIndividualVideo/:id", async (req, res) => {
   }
 });
 
-app.delete("/deleteVideo/:id",middleware , async (req, res) => {
+app.delete("/deleteVideo/:id" , async (req, res) => {
   try {
     const id = req.params.id; // Use req.params.id to get the instituteId
     const deletedVideo = await AddvideoData.findByIdAndRemove(id);
@@ -875,7 +846,7 @@ app.delete("/deleteVideo/:id",middleware , async (req, res) => {
 });
 
 //create videofile
-app.post("/AddVideoFilesData/:videopathId",middleware , async (req, res) => {
+app.post("/AddVideoFilesData/:videopathId", async (req, res) => {
   try {
     const videopathId = req.params.videopathId
     const {VideofolderName,VideoTitleName,SourceName,Video1} = req.body
@@ -910,7 +881,7 @@ app.post("/AddVideoFilesData/:videopathId",middleware , async (req, res) => {
   }
 });
 //delete videofiles
-app.delete("/deleteVideofiles/:videopathId/:videofileId",middleware , async (req, res) => {
+app.delete("/deleteVideofiles/:videopathId/:videofileId", async (req, res) => {
   try {
     const videopathId = req.params.videopathId;
     const videofileId = req.params.videofileId;
@@ -937,7 +908,7 @@ app.delete("/deleteVideofiles/:videopathId/:videofileId",middleware , async (req
 
    
 //get videofiles with videopathid
-app.get("/DisplayAllVideos/:videopathId",middleware , async (req, res) => {
+app.get("/DisplayAllVideos/:videopathId", async (req, res) => {
   try {
     const videopathId = req.params.videopathId;
     const existingVideoPath = await AddvideoData.findById(videopathId);
@@ -988,7 +959,7 @@ app.get("/foldersVideoData/:VideofolderName", async (req, res) => {
   }
 });
 //Update videofiles
-app.put("/UpdateVideofileDetails/:selectedvideopathId/:selectedVideofileId",middleware , async (req, res) => {
+app.put("/UpdateVideofileDetails/:selectedvideopathId/:selectedVideofileId", async (req, res) => {
   try {
     const selectedvideopathId = req.params.selectedvideopathId;
       const selectedVideofileId = req.params.selectedVideofileId;
@@ -2216,14 +2187,7 @@ app.listen(port, () => {
 
 
 app.use('/v6', require('./Routes/practiceTestRoutes'))
-
-
-//kumar
-
-
-
-
-
+app.use('/v5', require('./Routes/CategoriesRoutes'))
 app.use("/v1", require('./Routes/ChapterRoutes')) //api routes
 app.use('/v1',  require('./Routes/MCQRoutes'));
 app.use("/v2", require('./Routes/SubjectsRoutes')) 

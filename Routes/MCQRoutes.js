@@ -11,7 +11,7 @@ const Middlware = require("../middleware/jwtAuth");
 
 //http://localhost:4010/v1/addMCQ/6571ad89cf0acc567c548296/6571ae96cf0acc567c54829c
 // Example URL: http://localhost:4010/v1/addMCQ/subjectId/chapterId
-router.post('/addMCQ/:subjectId/:chapterId',Middlware , async (req, res) => {
+router.post('/addMCQ/:subjectId/:chapterId', async (req, res) => {
   try {
     const subjectId = req.params.subjectId;
     const chapterId = req.params.chapterId;
