@@ -1,7 +1,10 @@
 const express = require("express");
-
+const axios = require("axios");
+const cors = require("cors");
+const { exec } = require('child_process');
 const { generateFile } = require("./Model/CodeCompailer/generateFile");
 const { executeCpp } = require("./Model/CodeCompailer/executeCpp");
+const Job = require("../skillhub_server/Model/CodeCompailer/Job");
 const mongoose = require("mongoose");
 
 // const cors = require("cors");
@@ -9,7 +12,6 @@ const Subject = require("./Model/Subject");
 
 const userData = require("./Model/userData");
 
-const cors = require("cors");
 const jwt = require("jsonwebtoken");
 const middleware = require("./middleware/jwtAuth");
 const AddInstituteData = require("./Model/AddInstituteData");
@@ -23,7 +25,8 @@ const allLearningPaths = require("../skillhub_server/Model/LearnPath/Alllearning
 const paragMCQRouter = require("./Routes/ParagRoutes");
 const Categories = require("../skillhub_server/Model/categories");
 const Topic = require("../skillhub_server/Model/topic");
-// const bodyParser = require("body-parser");
+const bodyParser = require("body-parser");
+// const { compileJava } = require('java-compiler-api');
 
 const app = express();
 
@@ -33,10 +36,13 @@ app.use(cors());
 // const port = 1412;
 
 const AddVideoFile = require("./Model/LearnPath/AddVideoFile");
+const { executePy } = require("./Model/CodeCompailer/executepy");
+const {executeJava} = require("./Model/CodeCompailer/ececuteJava");
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use(cors());
+ 
+app.use(bodyParser.json());
 
 // const bodyParser = require("body-parser");
 const port = 4010;
@@ -2235,59 +2241,204 @@ app.post("/AccessGiven/:InstituteId", async (req, res) => {
 
 //  ========================
 
-app.post("/compile", (req, res) => {
-  //getting the required data from the request
-  let code = req.body.code;
-  let language = req.body.language;
-  let input = req.body.input;
+app.post("/compile", async (req, res) => {
+  try {
+    const { code, language, input } = req.body;
+    const adjustedLanguage = language === "python" ? "py" : language;
 
-  if (language === "python") {
-    language = "py";
+    const data = {
+      code: code,
+      language: adjustedLanguage,
+      input: input,
+    };
+
+    const config = {
+      method: "post",
+      url: "https://codexweb.netlify.app/.netlify/functions/enforceCode",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      data: data,
+    };
+
+    const response = await axios(config);
+    res.status(response.status).send(response.data);
+    console.log(response.data);
+  } catch (error) {
+    console.error(error.message);
+    res.status(error.response?.status || 500).send("Internal Server Error");
   }
-
-  let data = {
-    code: code,
-    language: language,
-    input: input,
-  };
-  let config = {
-    method: "post",
-    url: "https://codexweb.netlify.app/.netlify/functions/enforceCode",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    data: data,
-  };
-  //calling the code compilation API
-  Axios(config)
-    .then((response) => {
-      res.send(response.data);
-      console.log(response.data);
-    })
-    .catch((error) => {
-      console.log(error);
-    });
 });
 
 // ===========================
 
+
+app.get("/status", async (req, res) => {
+
+  const jobId = req.query.id;
+
+  if(jobId == undefined) {
+    return res.status(400).json({success: false, error: "Missing id query param"})
+  }
+  try{
+
+  
+  const job = await  Job.findById(jobId);
+   
+
+  if(job === undefined) {
+    return res.status(400).json({success: false, error: "Invalid job id"})
+  }
+
+  return res.status(200).json({success: true, job});
+
+  }catch (err) {
+    return res.status(400).json({success: false, error: JSON.stringify(err)});
+  }
+
+})
+
+
+// app.post("/run", async (req, res) => {
+//   const { language = "cpp", code } = req.body;
+
+//   console.log(language, code.length);
+
+//   if (code === undefined) {
+//     return res.status(400).json({ success: false, error: "Empty code body!" });
+//   }
+//   let job;
+
+//   try {
+//     //nead c++
+//     const filepath = await generateFile(language, code);
+
+//   job = await new Job({ language, filepath }).save();
+//     const jobId = job["_id"];
+//     console.log(job);
+//     res.status(201).json({ success: true, jobId });
+//     let output;
+
+//     job["startedAt"] = new Date();
+
+//     // if (language === "cpp") {
+//     //   output = await executeCpp(filepath);
+//     // } else {
+//     //   output = await executePy(filepath);
+//     // }
+//     if (language === "cpp") {
+//       output = await executeCpp(filepath);
+//     } else if (language === "py") {
+//       output = await executePy(filepath);
+//     } else if (language === "java") {
+//       output = await executeJava(filepath);
+//     } else {
+//       return res.status(400).json({ success: false, error: "Unsupported language!" });
+//     }
+
+//     job["completedAt"] = new Date();
+//     job["status"] = "success";
+//     job["output"] = output;
+
+//     await job.save();
+
+//    console.log( job );
+//     // return res.json({ filepath, output });
+//   } catch (err) {
+//     job["completedAt"] = new Date();
+//     job["status"] = "error";
+//     job["output"] = JSON.stringify(err);
+//     await job.save();
+//     console.log(job);
+//     // res.status(500).json({ err });
+//   }
+// });
+
 app.post("/run", async (req, res) => {
   const { language = "cpp", code } = req.body;
+
+  console.log(language, code.length);
 
   if (code === undefined) {
     return res.status(400).json({ success: false, error: "Empty code body!" });
   }
-  try {
-    //nead c++
-    const filepath = await generateFile(language, code);
-    //send request
-    const output = await executeCpp(filepath);
+  
+  let job;
 
-    return res.json({ filepath, output });
+  try {
+    const filepath = await generateFile(language, code);
+
+    job = await new Job({ language, filepath }).save();
+    const jobId = job["_id"];
+    console.log(job);
+    res.status(201).json({ success: true, jobId });
+    let output;
+
+    job["startedAt"] = new Date();
+
+    if (language.toLowerCase() === "cpp") {
+      output = await executeCpp(filepath);
+    } else if (language.toLowerCase() === "py") {
+      output = await executePy(filepath);
+    } else if (language.toLowerCase() === "java") {
+      output = await executeJava(filepath);
+    } else {
+      return res.status(400).json({ success: false, error: "Unsupported language!" });
+    }
+
+    job["completedAt"] = new Date();
+    job["status"] = "success";
+    job["output"] = output;
+
+    await job.save();
+
+    console.log(job);
   } catch (err) {
-    res.status(500).json({ err });
+    job["completedAt"] = new Date();
+    job["status"] = "error";
+    job["output"] = JSON.stringify(err);
+    await job.save();
+    console.log(job);
   }
 });
+
+
+
+
+// const snippetSchema = new mongoose.Schema({
+//   code: String,
+//   output: String,
+// });
+
+// const Snippet = mongoose.model('Snippet', snippetSchema);
+
+// // ... (rest of the code)
+
+// app.post('/run', async (req, res) => {
+//   const { code } = req.body;
+
+//   try {
+//     // Save the code snippet to MongoDB
+//     const newSnippet = new Snippet({ code });
+//     await newSnippet.save();
+
+//     // Execute the code using Node.js child_process
+//     exec(`node -e "${code}"`, (error, stdout, stderr) => {
+//       if (error) {
+//         newSnippet.output = stderr;
+//         newSnippet.save();
+//         res.status(500).json({ error: stderr });
+//       } else {
+//         newSnippet.output = stdout;
+//         newSnippet.save();
+//         res.json({ output: stdout });
+//       }
+//     });
+//   } catch (error) {
+//     console.error('Error:', error);
+//     res.status(500).json({ error: 'Internal Server Error' });
+//   }
+// });
 
 app.listen(port, () => {
   console.log(`Server running at ${port}`);
