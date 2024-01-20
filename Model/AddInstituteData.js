@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
-
 const AddInstituteData = new mongoose.Schema({
+  
   InstituteName: {
     type: String,
     require: true,
@@ -25,14 +25,7 @@ const AddInstituteData = new mongoose.Schema({
     type: String,
     require: true,
   },
-  BatchYear: {
-    type: String,
-    require: true,
-  },
-  SelectBatch: {
-    type: String,
-    require: true,
-  },
+
   Address: {
     type: String,
     require: true,
@@ -49,7 +42,7 @@ const AddInstituteData = new mongoose.Schema({
     type: String,
     require: true,
   },
-  AxiosPlans: {
+  AccessPlans: {
     type: String,
     require: true,
   },
@@ -57,12 +50,93 @@ const AddInstituteData = new mongoose.Schema({
     type: String,
     require: true,
   },
-  Access :{
+  currentTime: {
     type: String,
-  }
+    require: true,
+  },
+  Access:{
+    type: String,
+  },
+  listDataAccess:[
+    {
+      aboveData:String,
+      institutionpara: String,
+      InstituteType: String,
+      AxiosPlans: String,
+    }
+  ],
+  InstituteBatchYear: [
+    {
+      BatchYear: {
+        type: String,
+      },
+      InsituteBatch: [
+        {
+          Batch: {
+            type: String,
+          },
+          LearningPathAccess:{
+            type:String,
+          },
+          InstituteUsersList: [
+            {
+              Regdid: {
+                type: String,
+                require: true,
+              },
+              FirstName: {
+                type: String,
+                require: true,
+              },
+              LastName: {
+                type: String,
+                require: true,
+              },
+
+              userEmail: {
+                type: String,
+                require: true,
+              },
+              userNumber: {
+                type: String,
+                require: true,
+              },
+
+              AccessPlans: {
+                type: String,
+                require: true,
+              },
+              Password: {
+                type: String,
+                require: true,
+              },
+              Status: {
+                type: String,
+                require: true,
+              },
+              ExpiryDate: {
+                type: String,
+                require: true,
+              },
+              currentTime: {
+                type: String,
+                require: true,
+              },
+            },
+          ],
+          ExtendUsersAccess:[
+           { AccessPlans:{
+              type:String,
+            },
+            Access:{
+              type:String,
+            },
+          },
+          ]
+            },
+      ],
+    },
+  ],
 });
 
-module.exports = mongoose.model("AddInstituteData.data", AddInstituteData);
-
-  
-
+ module.exports = mongoose.model("AddInstituteData", AddInstituteData);

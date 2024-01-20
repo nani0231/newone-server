@@ -1,23 +1,3 @@
-
-
-// const mongoose = require("mongoose");
-// // const { Schema } = mongoose;
-
-// const categorySchema = new mongoose.Schema({
-//     Name: String,
-//     Description: String,
-//     Tag: String,
-//     Accesstype: String,
-//     Accessplan: String, 
-// });
-
-// const Category = mongoose.model("Category", categorySchema);
-
-// module.exports = Category;
-
-
-
-
 const mongoose = require("mongoose");
 
 const Allcategories = new mongoose.Schema({
@@ -44,7 +24,23 @@ const Allcategories = new mongoose.Schema({
     display: {
         type : String,
         required: true,
-    }
+    },
+    AccessDetails:[
+        {
+          InstituteName:{
+            type:String
+          },
+          BatchYear:{
+            type:String
+          },
+          Batch:[{
+            type:String
+          }],
+          Access:{
+            type:String
+          }
+        },
+    ]
 
 })
 
