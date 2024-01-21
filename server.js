@@ -13,8 +13,8 @@ const AddvideoData = require("./Model/LearnPath/Addvideo");
 const videoFile = require("./Model/LearnPath/AddVideoFile");
 const allLearningPaths = require("./Model/LearnPath/AlllearningPaths");
 const paragMCQRouter = require('./Routes/ParagRoutes');
-const Categories = require("../skillhub_server/Model/categories")
-const Topic = require("../skillhub_server/Model/topic")
+const Categories = require("./Model/categories")
+const Topic = require("./Model/topic")
 const AddVideoFile = require("./Model/LearnPath/AddVideoFile");
 const app = express();
 app.use(express.json());
