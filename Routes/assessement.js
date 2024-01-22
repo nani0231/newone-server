@@ -143,6 +143,9 @@ router.get("/allassessment", async (req, res) => {
         return res.status(500).json({ success: false, msg: "Internal Server Error" });
     }
 });
+
+// Assuming you have a route like "/getquestions/:category" to retrieve questions for a specific category
+
   router.get("/alladdquestion/:id", async (req, res) => {
     try {
       const _id = req.params.id;
@@ -163,6 +166,8 @@ router.get("/allassessment", async (req, res) => {
         .json({ msg: "Internal Server Error", status: "failed" });
     }
   });
+
+
   router.get("/alladdquestion1/:category", async (req, res) => {
     try {
       const category = req.params.category;

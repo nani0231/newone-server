@@ -18,7 +18,9 @@ const videoFile = require("./Model/LearnPath/AddVideoFile");
 const allLearningPaths = require("../skillhub_server/Model/LearnPath/AlllearningPaths");
 const paragMCQRouter = require('./Routes/ParagRoutes');
 const Categories = require("../skillhub_server/Model/categories")
-const Topic = require("../skillhub_server/Model/topic")
+const Topic = require("../skillhub_server/Model/topic") 
+
+
 // const bodyParser = require("body-parser");
 
 
@@ -2202,6 +2204,11 @@ app.post("/AccessGiven/:InstituteId", async (req, res) => {
     return res.status(500).json({ message: e.message });
   }
 });
+
+
+
+
+
 
 
  
