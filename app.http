@@ -168,6 +168,34 @@ Content-Type: application/json
     "questions" : "react12345"
 }
 
+# signupdata
+
+###
+POST http://localhost:4010/signupdata
+Content-Type: application/json
+
+{
+    "firstname" : "ajayr",
+    "lastname" : "puvadaa",
+    "email" : "ajayr1211@gmail.com",
+    "organizationname" : "wipro1",
+    " mobilenumber" : "914720357",
+    "password" : "ajay1234"
+   
+}
+
+# login up data
+
+
+###
+POST  http://localhost:4010/login
+Content-Type: application/json
+
+{
+    "email":"ajayr1211@gmail.com",
+    "password":"ajay1234"
+
+}
 
 
 

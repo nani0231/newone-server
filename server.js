@@ -24,6 +24,8 @@ const AddUserByBatch = require("./Model/ByBatch");
 const ByList = require("./Model/ByList");
 const AddvideoData = require("./Model/LearnPath/Addvideo");
 const videoFile = require("./Model/LearnPath/AddVideoFile");
+const signupData=require("./Model/signup/signform")
+
 
 const allLearningPaths = require("../skillhub_server/Model/LearnPath/AlllearningPaths");
 const paragMCQRouter = require("./Routes/ParagRoutes");
@@ -2086,6 +2088,310 @@ app.delete("/categories/:id", async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
+// signup admin
+
+const bcrypt = require('bcrypt'); // Require bcrypt for password hashing
+
+// ... (other code remains the same)
+
+// app.post("/signupdata", async (req, res) => {
+//   console.log(req.body);
+
+//   try {
+//     const user = await signupData.findOne({ email: req.body.email });
+
+//     if (!user) {
+//       const hashedPassword = await bcrypt.hash(req.body.password, 10); // Hash the password
+//       const newUser = {
+//         "firstname": req.body.firstname,
+//         "lastname": req.body.lastname,
+//         "email": req.body.email,
+//         "organizationname": req.body.organizationname,
+//         "mobilenumber": req.body.mobilenumber,
+//         "password": hashedPassword, // Store hashed password in the database
+//       };
+
+//       const userDetails = await signupData.create(newUser);
+//       console.log(userDetails);
+//       return res.status(200).send("user created successfully");
+//     } else {
+//       return res.status(400).json("user already registered");
+//     }
+//   } catch (error) {
+//     console.error(error.message);
+//     return res.status(500).send("server error");
+//   }
+// });
+
+// app.post("/loginupdata", async (req, res) => {
+//   const { email, password } = req.body;
+
+//   try {
+//     const user = await loginupData.findOne({ email });
+
+//     if (!user) {
+//       return res.status(401).json({ message: "Email not found" });
+//     }
+
+//     const passwordMatch = await bcrypt.compare(password, user.password);
+
+//     if (!passwordMatch) {
+//       return res.status(401).json({ message: "Incorrect password" });
+//     }
+
+//     const payload = {
+//       id: user._id
+//     };
+//     let token = jwt.sign(payload, 'jalaiah', { expiresIn: '24hr' });
+//     console.log(token);
+//     return res.status(200).json({ message: "User Login Success", token: token });
+
+//   } catch (error) {
+//     console.error(error.message, "loginupData");
+//     return res.status(500).json({
+//       message: "An error occurred on the server. Please try again later.",
+//     });
+//   }
+// });
+
+
+// app.post("/signupData", async (req, res) => {
+
+//   try {
+//     const {
+//       firstname,
+//       lastname,
+//       email,
+//       organizationname,
+//       mobilenumber,
+//       password
+
+
+
+
+
+//     } = req.body;
+//     let newUser = new signupData({
+//       firstname: firstname,
+//       lastname: lastname,
+//       email: email,
+//       organizationname:organizationname,
+//       mobilenumber:mobilenumber,
+//       password:password
+
+
+
+
+//     });
+//     const isUserExit = await signupData.findOne({ email: email });
+
+//     newUser.save();
+//     res.send("user created succesfully");
+//   }
+
+
+//   catch (e) {
+//     console.log(e.message);
+//     res.send("Internal server error")
+//   }
+// });
+
+// app.post("/signupdata", async (req, res) => {
+//   console.log(req.body);
+
+
+
+//   try {
+
+
+//     const user = await signupData.findOne({email: req.body.email })   // mongo db condition
+//     console.log(user)
+
+//     if (!user) {  // or if(user === undefined)
+
+//       // user not found excutes below code
+
+
+//       const newUser = {
+
+//         "firstname": req.body.firstname,
+//         "lastname": req.body.lastname,
+//         "email": req.body. email,
+//         "organizationname": req.body.organizationname,
+//         "mobilenumber": req.body.mobilenumber,
+//         "password": req.body.password
+
+//       };
+
+//       const userDetails = await signupData.create(newUser)   //  POSTING TO COLLECTION OR MODEL
+//       console.log(userDetails)
+
+//       res.status(200).send("user created successfully")
+
+
+//     } else {
+
+//       // if user mail id is founded send below response
+//       res.status(400).json("user already registered")
+
+//     }
+
+//   }
+//   catch (e) {
+//     console.log(e.message);
+//     return res.send("server error")
+//   }
+// });
+
+// login up admin
+
+
+
+// app.post("/loginupData", async (req, res) => {
+
+//   try {
+//     const {
+//       email1,
+//       password1
+     
+
+
+
+
+
+//     } = req.body;
+//     let newUser = new loginupData({
+//       email1:email1,
+//       password1:password1
+
+
+
+
+//     });
+//     const isUserExit = await loginupData.findOne({ email1: email1 });
+
+//     newUser.save();
+//     res.send("login created succesfully");
+//   }
+
+//   catch (e) {
+//     console.log(e.message);
+//     res.send("Internal server error")
+//   }
+// });
+
+// app.post("/loginupdata", async (req, res) => {
+//   const { email, password } = req.body;
+//   try {
+//     const user = await loginupData.findOne({ email });
+//     if (!user) {
+//       return res.status(401).json({ message: "Email not found" });
+//     }
+//     if ( password  !== user.password ) {
+//       return res.status(401).json({ message: "Incorrect password" });
+//     }
+   
+//     const payload = {
+//       id: user._id
+//     }
+//     let token = jwt.sign(payload, 'jalaiah', { expiresIn: '24hr' })
+//         console.log(token);
+//         return res.status(200).json({ message: "User Login Success", token: token });
+  
+//   } catch (error) {
+//     console.error(error.message, "loginupData");
+//     res.status(500).json({
+//       message: "An error occurred on the server. Please try again later.",
+//     });
+//   }
+// });
+
+
+// app.post("/loginupdata", async (req, res) => {
+//   const { email1, password1 } = req.body
+//   const isUserExit = await loginupData.findOne({ email1, password1 })
+
+
+//   if (isUserExit) {
+//     if (password1 === isUserExit.password1) 
+//     {
+//       let payload = {
+//         user: isUserExit.id,
+//       };
+//       jwt.sign(payload, 'jwtpassword', { expiresIn: 36000000 },
+//         (err, token) => {
+//           if (err) throw err;
+//           return res.json({ token });
+
+
+
+//         }
+//         );
+
+//     }
+//     else {
+//       return res.send("password not matched");
+//     }
+
+
+//   }
+
+// });
+
+
+app.post("/signupdata", async (req, res) => {
+  try {
+    const hashedPassword = await bcrypt.hash(req.body.password, 10); // Hash the password
+    const newUser = {
+      firstname: req.body.firstname,
+      lastname: req.body.lastname,
+      email: req.body.email,
+      organizationname: req.body.organizationname,
+      mobilenumber: req.body.mobilenumber,
+      password: hashedPassword, // Store hashed password in the database
+    };
+
+    const userDetails = await signupData.create(newUser);
+    console.log(userDetails);
+    return res.status(200).send("User created successfully");
+  } catch (error) {
+    console.error(error.message);
+    return res.status(500).send("Server error");
+  }
+});
+
+app.post("/login", async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    const user = await signupData.findOne({ email });
+
+    if (!user) {
+      return res.status(401).json({ message: "Email not found" });
+    }
+
+    const passwordMatch = await bcrypt.compare(password, user.password);
+
+    if (!passwordMatch) {
+      return res.status(401).json({ message: "Incorrect password" });
+    }
+
+    const payload = {
+      id: user._id
+    };
+    const token = jwt.sign(payload, 'siva', { expiresIn: '24hr' });
+    console.log(token);
+    return res.status(200).json({ message: "User Login Success", token: token });
+
+  } catch (error) {
+    console.error(error.message, "loginupData");
+    return res.status(500).json({
+      message: "An error occurred on the server. Please try again later.",
+    });
+  }
+});
+
 
 // Category
 
