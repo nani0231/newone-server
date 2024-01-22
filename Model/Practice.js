@@ -7,6 +7,16 @@ const categorySchema = new mongoose.Schema({
     tag: String,
     accesstype: String,
     accessplan: String, 
+    Practicetopic:[
+      {topicName:String,
+      topicdescription:String,
+    Testtopic:[{
+      testName:String,
+      practiceType:String,
+      questions:String,
+    }]
+      }
+    ],
     AccessDetails:[
         {
           InstituteName:{
@@ -25,6 +35,6 @@ const categorySchema = new mongoose.Schema({
     ]
 });
 
-const Category = mongoose.model("Category", categorySchema);
+const Practice = mongoose.model("Practice", categorySchema);
 
-module.exports = Category;
+module.exports = Practice;

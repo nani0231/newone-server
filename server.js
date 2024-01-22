@@ -8,12 +8,9 @@ const { executeC } = require("./Model/CodeCompailer/excecuteC");
 const { executeJavaScript } = require("./Model/CodeCompailer/ececutejavascript");
 const Job = require("../skillhub_server/Model/CodeCompailer/Job");
 const mongoose = require("mongoose");
-const executeRuby = require("./Model/CodeCompailer/executeRuby")
  
-
-// const cors = require("cors");
-const Subject = require("./Model/Subject");
-
+const Subject =require('./Model/Subject')
+ 
 const userData = require("./Model/userData");
 
 const jwt = require("jsonwebtoken");
@@ -24,41 +21,20 @@ const AddUserByBatch = require("./Model/ByBatch");
 const ByList = require("./Model/ByList");
 const AddvideoData = require("./Model/LearnPath/Addvideo");
 const videoFile = require("./Model/LearnPath/AddVideoFile");
-const signupData=require("./Model/signup/signform")
-
-
-const allLearningPaths = require("../skillhub_server/Model/LearnPath/AlllearningPaths");
-const paragMCQRouter = require("./Routes/ParagRoutes");
-const Categories = require("../skillhub_server/Model/categories");
-const Topic = require("../skillhub_server/Model/topic");
-const bodyParser = require("body-parser");
-// const { compileJava } = require('java-compiler-api');
-
-const app = express();
-
-app.use(cors());
-// const port = 1412;
-
-// const port = 1412;
-
-const AddVideoFile = require("./Model/LearnPath/AddVideoFile");
-const { executePy } = require("./Model/CodeCompailer/executepy");
-const {executeJava} = require("./Model/CodeCompailer/ececuteJava");
-
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
  
-app.use(bodyParser.json());
-
-// const bodyParser = require("body-parser");
+const allLearningPaths = require("./Model/LearnPath/AlllearningPaths");
+const paragMCQRouter = require('./Routes/ParagRoutes');
+const Categories = require("./Model/categories")
+const Topic = require("./Model/topic")
+const AddVideoFile = require("./Model/LearnPath/AddVideoFile");
+const app = express();
+app.use(express.json());
+app.use(cors());
 const port = 4010;
-
+ 
 const mogoURL =
   "mongodb+srv://badasiva22:Siva991276@cluster0.iis7lrd.mongodb.net/perfex-stack-project?retryWrites=true&w=majority";
-// "mongodb+srv://pathlavathkishan77495:kishan789@cluster14.lafg4t1.mongodb.net/empDetails?retryWrites=true&w=majority"
-
-// "mongodb+srv://badasiva22:Siva991276@cluster0.iis7lrd.mongodb.net/perfex-stack-project?retryWrites=true&w=majority";
-
+ 
 app.use(express.json());
 app.use(cors({ origin: "*" }));
 //initalizing mongodb to node
@@ -478,7 +454,7 @@ app.put("/UpdateInstitute/:id", async (req, res) => {
 });
 
 //delete
-app.delete("/deleteInstitute/:id", middleware, async (req, res) => {
+app.delete("/deleteInstitute/:id", async (req, res) => {
   try {
     const id = req.params.id; // Use req.params.id to get the instituteId
     const deletedInstitute = await AddInstituteData.findByIdAndRemove(id);
@@ -540,51 +516,519 @@ app.get(
     }
   }
 );
-
-//Add Users
-app.post("/AddUsers", middleware, async (req, res) => {
+//add batchyear
+app.post("/addBatchYear/:instituteId", async (req, res) => {
   try {
-    // Find the last document with the lowest Sno (ascending order)
-    const lastDocument = await AddUsersData.findOne({}, null, {
-      sort: { Sno: -1 },
-    });
+    const instituteId = req.params.instituteId;
+    const { BatchYear} = req.body;
 
-    let newSno = 1; // Default ID if the collection is empty
-    if (lastDocument) {
-      newSno = lastDocument.Sno + 1; // Calculate the new ID
+    // Find the existing learning path by ID
+    const existingInstituteBatchYear = await AddInstituteData.findById(
+      instituteId
+    );
+
+    if (!existingInstituteBatchYear) {
+      return res
+        .status(404)
+        .json({ msg: "Learning path not found", status: "failed" });
     }
 
-    const user = await AddUsersData.findOne({
-      userEmail: req.body.userEmail,
-    });
+    // Check if the topic with the same name already exists
+    const isBatchyearExist = existingInstituteBatchYear.InstituteBatchYear.some(
+      (each) => each.BatchYear === BatchYear
+    );
+
+    if (isBatchyearExist) {
+      return res.status(400).json({
+        msg: "Batchyear with the same Year already exists",
+        status: "failed",
+      });
+    }
+
+    // Create a new topic
+    const newBatchyear = {
+      BatchYear, // Assign the current date to TopicTime
+    };
+
+
+    // Add the new topic to the "topics" array in the learning path
+    existingInstituteBatchYear.InstituteBatchYear.push(newBatchyear);
+
+    // Save the updated learning path document
+    await existingInstituteBatchYear.save();
+
+    return res.json({ msg: "BatchYear added successfully", status: "success" });
+  } catch (e) {
+    console.error(e.message, "addBatchYear");
+    return res
+      .status(500)
+      .json({ msg: "Internal Server Error", status: "failed" });
+  }
+});
+//updateBatchyear
+app.put("/updateBatchYear/:instituteId/:BatchYearId", async (req, res) => {
+    try {
+      const instituteId = req.params.instituteId;
+      const BatchYearId = req.params.BatchYearId;
+      const BatchYear = req.body.BatchYear;
+      console.log(BatchYear)
+
+      // Find the existing learning path by ID
+      const existingInstitutePath = await AddInstituteData.findById(
+        instituteId
+      );
+
+      if (!existingInstitutePath) {
+        return res
+          .status(404)
+          .json({ msg: "Learning path not found", status: "failed" });
+      }
+
+      // Find the index of the topic within the "topics" array
+      const BatchYearIndex = existingInstitutePath.InstituteBatchYear.findIndex(
+        (t) => t._id.toString() === BatchYearId
+      );
+
+      if (BatchYearIndex === -1) {
+        return res
+          .status(404)
+          .json({ msg: "Topic not found", status: "failed" });
+      }
+
+      // Update the properties of the existing topic
+      existingInstitutePath.InstituteBatchYear[BatchYearIndex].BatchYear = BatchYear;
+
+      // Save the updated learning path document
+      await existingInstitutePath.save();
+
+      return res.json({ msg: "BatchYear updated successfully", status: "success" });
+    } catch (e) {
+      console.error(e.message, "updateBatchYear");
+      return res
+        .status(500)
+        .json({ msg: "Internal Server Error", status: "failed" });
+    }
+  }
+);
+//deleteBatchYear
+app.delete(
+  "/onselectedBatchyeardeleteinInstitutePath/:instituteId/:BatchYearId",  async (req, res) => {
+    try {
+      const instituteId = req.params.instituteId;
+      const BatchYearId = req.params.BatchYearId;
+
+      // Find the learning path by ID
+      const institutePath = await AddInstituteData.findById(instituteId);
+
+      if (!institutePath) {
+        return res
+          .status(404)
+          .json({ msg: "Learning path not found", status: "failed" });
+      }
+
+      // Find the index of the topic within the "topics" array
+      const BatchYearIndex = institutePath.InstituteBatchYear.findIndex(
+        (t) => t._id.toString() === BatchYearId
+      );
+
+      if (BatchYearIndex === -1) {
+        return res
+          .status(404)
+          .json({ msg: "Topic not found", status: "failed" });
+      }
+
+      // Remove the topic and all its content from the "topics" array
+      institutePath.InstituteBatchYear.splice(BatchYearIndex, 1);
+
+      // Save the updated learning path document
+      await institutePath.save();
+
+      return res.status(200).json({
+        msg: "BatchYear Deleted Successfully",
+        status: "success",
+      });
+    } catch (e) {
+      console.error(e.message, "/onselectedBatchYearDeleteininstitutePath");
+      return res
+        .status(500)
+        .json({ msg: "Internal Server Error", status: "failed" });
+    }
+  }
+);
+//add batches
+app.post(
+  "/addBatch/:instituteId/:BatchyearId", async (req, res) => {
+    try {
+      const instituteId = req.params.instituteId;
+      const BatchyearId = req.params.BatchyearId;
+      const {Batch} = req.body;
+     
+      const institutePath = await AddInstituteData.findById(instituteId);
+
+      if (!institutePath) {
+        return res
+          .status(404)
+          .json({ msg: "Learning path not found", status: "failed" });
+      }
+
+      // Find the topic within the learning path by ID
+      const BatchYear = institutePath.InstituteBatchYear.id(BatchyearId);
+
+      if (!BatchYear) {
+        return res
+          .status(404)
+          .json({ msg: "Topic not found", status: "failed" });
+      }
+
+      // Add the new content to the "content" array in the topic
+      BatchYear.InsituteBatch.push({
+        Batch
+      });
+
+      // Save the updated learning path document
+      await institutePath.save();
+
+      return res
+        .status(200)
+        .json({ msg: "Batch added successfully", status: "success" });
+    } catch (e) {
+      console.error(e.message, "addBatch");
+      return res
+        .status(500)
+        .json({ msg: "Internal Server Error", status: "failed" });
+    }
+  }
+);
+//update batch
+app.put(
+  "/updateBatch/:instituteId/:batchYearId/:batchId",
+
+  async (req, res) => {
+    try {
+      const instituteId = req.params.instituteId;
+      const batchYearId = req.params.batchYearId;
+      const batchId = req.params.batchId;
+      const { Batch } = req.body;
+
+      // Find the existing learning path by ID
+      const existingInstitutePath = await AddInstituteData.findById(
+        instituteId
+      );
+
+      if (!existingInstitutePath) {
+        return res
+          .status(404)
+          .json({ msg: "Learning path not found", status: "failed" });
+      }
+
+      // Find the batch year within the learning path by ID
+      const batchYear = existingInstitutePath.InstituteBatchYear.find(
+        (t) => t._id.toString() === batchYearId
+      );
+
+      if (!batchYear) {
+        return res
+          .status(404)
+          .json({ msg: "Batch year not found", status: "failed" });
+      }
+
+      // Find the batch item within the "InsituteBatch" array by batchId
+      const batchItem = batchYear.InsituteBatch.find(
+        (c) => c._id.toString() === batchId
+      );
+
+      if (!batchItem) {
+        return res
+          .status(404)
+          .json({ msg: "Batch not found", status: "failed" });
+      }
+
+      // Check if the new batch already exists in the batch year
+      const batchExists = batchYear.InsituteBatch.some(
+        (c) =>
+          c.Batch === Batch &&
+          c._id.toString() !== batchId
+      );
+
+      if (batchExists) {
+        return res
+          .status(400)
+          .json({ msg: "Batch already exists", status: "failed" });
+      }
+
+      // Update the properties of the existing batch
+      batchItem.Batch = Batch;
+
+      // Save the updated learning path document
+      await existingInstitutePath.save();
+
+      return res.json({
+        msg: "Batch updated successfully",
+        status: "success",
+      });
+    } catch (e) {
+      console.error(e.message, "updateBatch");
+      return res
+        .status(500)
+        .json({ msg: "Internal Server Error", status: "failed" });
+    }
+  }
+);
+//delete batch
+app.delete(
+  "/onselectedBatchinBatchYearininstitutePath/:instituteId/:BatchYearId/:batchId",
+  async (req, res) => {
+    try {
+      const instituteId = req.params.instituteId;
+      const BatchYearId = req.params.BatchYearId;
+      const batchId = req.params.batchId;
+
+      // Find the learning path by ID
+      const institutePath = await AddInstituteData.findById(instituteId);
+
+      if (!institutePath) {
+        return res
+          .status(404)
+          .json({ msg: "Learning path not found", status: "failed" });
+      }
+
+      // Find the batch year within the learning path by ID
+      const BatchYearpath = institutePath.InstituteBatchYear.find(
+        (t) => t._id.toString() === BatchYearId
+      );
+
+      if (!BatchYearpath) {
+        return res
+          .status(404)
+          .json({ msg: "Batch year not found", status: "failed" });
+      }
+
+      // Find the index of the batch within the "InsituteBatch" array
+      const BatchIndex = BatchYearpath.InsituteBatch.findIndex(
+        (batch) => batch._id.toString() === batchId
+      );
+
+      if (BatchIndex === -1) {
+        return res
+          .status(404)
+          .json({ msg: "Batch not found", status: "failed" });
+      }
+
+      // Remove the batch from the "InsituteBatch" array
+      BatchYearpath.InsituteBatch.splice(BatchIndex, 1);
+
+      // Save the updated learning path document
+      await institutePath.save();
+
+      return res
+        .status(200)
+        .json({ msg: "Batch deleted successfully", status: "success" });
+    } catch (e) {
+      console.error(e.message, "/onselectedBatchinBatchYearininstitutePath");
+
+      return res
+        .status(500)
+        .json({ msg: "Internal Server Error", status: "failed" });
+    }
+  }
+);
+//Add Users
+
+app.post(
+  "/AddUsers/:instituteId/:BatchyearId/:BatchId", async (req, res) => {
+    try {
+      const instituteId = req.params.instituteId;
+      const BatchyearId = req.params.BatchyearId;
+      const BatchId = req.params.BatchId;
+      const {Regdid,
+        FirstName,
+        LastName,
+        userEmail,
+        userNumber,
+        AccessPlans,
+        Password,
+        Status,
+        ExpiryDate} = req.body;
+     
+      const institutePath = await AddInstituteData.findById(instituteId);
+
+      if (!institutePath) {
+        return res
+          .status(404)
+          .json({ msg: "Learning path not found", status: "failed" });
+      }
+
+      // Find the topic within the learning path by ID
+      const BatchYear = institutePath.InstituteBatchYear.id(BatchyearId);
+
+      if (!BatchYear) {
+        return res
+          .status(404)
+          .json({ msg: "Topic not found", status: "failed" });
+      }
+
+      const Batch = BatchYear.InsituteBatch.id(BatchId);
+
+      if (!Batch) {
+        return res
+          .status(404)
+          .json({ msg: "Topic not found", status: "failed" });
+      }
+
+      // Add the new content to the "content" array in the topic
+      Batch.InstituteUsersList.push({
+        Regdid,
+        FirstName,
+        LastName,
+        userEmail,
+        userNumber,
+        AccessPlans,
+        Password,
+        Status,
+        ExpiryDate,
+        currentTime: new Date()
+      });
+
+      // Save the updated learning path document
+      await institutePath.save();
+
+      return res
+        .status(200)
+        .json({ msg: "User added successfully", status: "success" });
+    } catch (e) {
+      console.error(e.message, "Adduser");
+      return res
+        .status(500)
+        .json({ msg: "Internal Server Error", status: "failed" });
+    }
+  }
+);
+//get user
+app.get("/GetUserdetailseperatly/:instituteId/:batchyearId/:batchId/:userId", async (req, res) => {
+  try {
+    const instituteId = req.params.instituteId;
+    const batchyearId = req.params.batchyearId;
+    const batchId = req.params.batchId;
+    const userId = req.params.userId;
+
+    const institutePath = await AddInstituteData.findById(instituteId);
+
+    if (!institutePath) {
+      return res.status(404).json({ msg: "Institute not found", status: "failed" });
+    }
+
+    const batchYear = institutePath.InstituteBatchYear.id(batchyearId);
+
+    if (!batchYear) {
+      return res.status(404).json({ msg: "Batch year not found", status: "failed" });
+    }
+
+    const batch = batchYear.InsituteBatch.id(batchId);
+
+    if (!batch) {
+      return res.status(404).json({ msg: "Batch not found", status: "failed" });
+    }
+
+    const user = batch.InstituteUsersList.id(userId);
 
     if (!user) {
-      const UserDataDetails = {
-        Sno: newSno, // Use the newly calculated ID
-        Regdid: req.body.Regdid,
-        FirstName: req.body.FirstName,
-        LastName: req.body.LastName,
-        userEmail: req.body.userEmail,
-        userNumber: req.body.userNumber,
-        BatchYear: req.body.BatchYear,
-        SelectBatch: req.body.SelectBatch,
-        InstituteType: req.body.InstituteType,
-        AxiosPlans: req.body.AxiosPlans,
-        Password: req.body.Password,
-        Status: req.body.Status,
-        ExpiryDate: req.body.ExpiryDate,
-      };
-      const UserDetailsdata = await AddUsersData.create(UserDataDetails);
-      //siva
-
-      console.log(UserDetailsdata);
-      res.status(200).send("User created successfully");
-    } else {
-      res.status(400).json("User with the same email already registered");
+      return res.status(404).json({ msg: "User not found", status: "failed" });
     }
+
+    return res.status(200).json({ msg: "User found successfully", status: "success", user });
   } catch (e) {
-    console.error(e.message, "AddUsers");
-    return res.status(500).json(e.message);
+    console.error(e.message, "GetUser");
+    return res.status(500).json({ msg: "Internal Server Error", status: "failed" });
+  }
+});
+//update password in userdetails
+app.put("/UpdateUserPassword/:instituteId/:batchyearId/:batchId/:userId", async (req, res) => {
+  try {
+    const instituteId = req.params.instituteId;
+    const batchyearId = req.params.batchyearId;
+    const batchId = req.params.batchId;
+    const userId = req.params.userId;
+
+    const institutePath = await AddInstituteData.findById(instituteId);
+
+    if (!institutePath) {
+      return res.status(404).json({ msg: "Institute not found", status: "failed" });
+    }
+
+    const batchYear = institutePath.InstituteBatchYear.id(batchyearId);
+
+    if (!batchYear) {
+      return res.status(404).json({ msg: "Batch year not found", status: "failed" });
+    }
+
+    const batch = batchYear.InsituteBatch.id(batchId);
+
+    if (!batch) {
+      return res.status(404).json({ msg: "Batch not found", status: "failed" });
+    }
+
+    const user = batch.InstituteUsersList.id(userId);
+
+    if (!user) {
+      return res.status(404).json({ msg: "User not found", status: "failed" });
+    }
+    const newPassword = req.body.Password;
+    console.log(newPassword)
+    user.Password = newPassword;
+    await institutePath.save();
+    return res.status(200).json({ msg: "Password updated successfully", status: "success" });
+  } catch (e) {
+    console.error(e.message, "UpdateUserPassword");
+    return res.status(500).json({ msg: "Internal Server Error", status: "failed" });
+  }
+});
+//update userdetails
+app.put("/updateUserdetails/:instituteId/:batchyearId/:batchId/:userId", async (req, res) => {
+  try {
+    const instituteId = req.params.instituteId;
+    const batchyearId = req.params.batchyearId;
+    const batchId = req.params.batchId;
+    const userId = req.params.userId;
+
+    const institutePath = await AddInstituteData.findById(instituteId);
+
+    if (!institutePath) {
+      return res.status(404).json({ msg: "Institute not found", status: "failed" });
+    }
+
+    const batchYear = institutePath.InstituteBatchYear.id(batchyearId);
+
+    if (!batchYear) {
+      return res.status(404).json({ msg: "Batch year not found", status: "failed" });
+    }
+
+    const batch = batchYear.InsituteBatch.id(batchId);
+
+    if (!batch) {
+      return res.status(404).json({ msg: "Batch not found", status: "failed" });
+    }
+
+    const user = batch.InstituteUsersList.id(userId);
+
+    if (!user) {
+      return res.status(404).json({ msg: "User not found", status: "failed" });
+    }
+    const newDetails = req.body.newDetails;
+    // user.InstituteUsersList =newDetails
+    user.Regdid = newDetails.Regdid,
+    user.FirstName = newDetails.FirstName,
+    user.LastName = newDetails.LastName,
+    user.userEmail = newDetails.userEmail,
+    user.userNumber = newDetails.userNumber,
+    user.AccessPlans = newDetails.AccessPlans,
+    user.Password = newDetails.Password,
+    user.ExpiryDate = newDetails.ExpiryDate,
+    await institutePath.save();
+
+    return res.status(200).json({ msg: "User details updated successfully", status: "success" });
+  } catch (e) {
+    console.error(e.message, "UpdateUserDetails");
+    return res.status(500).json({ msg: "Internal Server Error", status: "failed" });
   }
 });
 
@@ -646,56 +1090,78 @@ app.get("/individualUser/:id", async (req, res) => {
     return res.status(500).json("Internal Server Error");
   }
 });
+app.post(
+  "/ByBatchData/:instituteId/:BatchyearId/:BatchId", async (req, res) => {
+    try {
+      const instituteId = req.params.instituteId;
+      const BatchyearId = req.params.BatchyearId;
+      const BatchId = req.params.BatchId;
+      const {AccessPlans,Access} = req.body;
+     
+      const institutePath = await AddInstituteData.findById(instituteId);
 
-app.post("/ByBatchData", async (req, res) => {
-  try {
-    // Find the last document with the lowest Sno (ascending order)
-    const lastDocument = await AddUserByBatch.findOne({}, null, {
-      sort: { Sno: -1 },
-    });
-    let newSno = 1; // Default ID if the collection is empty
-    if (lastDocument) {
-      newSno = lastDocument.Sno + 1; // Calculate the new ID
+      if (!institutePath) {
+        return res
+          .status(404)
+          .json({ msg: "Learning path not found", status: "failed" });
+      }
+
+      // Find the topic within the learning path by ID
+      const BatchYear = institutePath.InstituteBatchYear.id(BatchyearId);
+
+      if (!BatchYear) {
+        return res
+          .status(404)
+          .json({ msg: "Topic not found", status: "failed" });
+      }
+
+      const Batch = BatchYear.InsituteBatch.id(BatchId);
+
+      if (!Batch) {
+        return res
+          .status(404)
+          .json({ msg: "Topic not found", status: "failed" });
+      }
+
+      // Add the new content to the "content" array in the topic
+      Batch.ExtendUsersAccess.push({
+        AccessPlans,   
+        Access     
+      });
+
+      // Save the updated learning path document
+      await institutePath.save();
+
+      return res
+        .status(200)
+        .json({ msg: "User added successfully", status: "success" });
+    } catch (e) {
+      console.error(e.message, "Adduser");
+      return res
+        .status(500)
+        .json({ msg: "Internal Server Error", status: "failed" });
     }
-    const UserDataDetails = {
-      Sno: newSno, // Use the newly calculated ID
-      BatchYear: req.body.BatchYear,
-      SelectBatch: req.body.SelectBatch,
-      InstituteType: req.body.InstituteType,
-      AxiosPlans: req.body.AxiosPlans,
-    };
-    const ByBatchdata = await AddUserByBatch.create(UserDataDetails);
-    //siva
-
-    console.log(ByBatchdata);
-    res.status(200).send("User created successfully");
-  } catch (e) {
-    console.error(e.message, "ByBatchData");
-    return res.status(500).json(e.message);
   }
-});
+);
 
-app.post("/ByListData", middleware, async (req, res) => {
+
+app.post("/ByListData/:instituteId", async (req, res) => {
   try {
-    // Find the last document with the lowest Sno (ascending order)
-    const lastDocument = await ByList.findOne({}, null, {
-      sort: { Sno: -1 },
-    });
-    let newSno = 1; // Default ID if the collection is empty
-    if (lastDocument) {
-      newSno = lastDocument.Sno + 1; // Calculate the new ID
-    }
-    const UserDataDetails = {
-      Sno: newSno, // Use the newly calculated ID
-      aboveData: req.body.aboveData,
-      institutionpara: req.body.institutionpara,
-      InstituteType: req.body.InstituteType,
-      AxiosPlans: req.body.AxiosPlans,
-    };
-    const ByListdata = await ByList.create(UserDataDetails);
-    //siva
+    const instituteId = req.params.instituteId
+    const {aboveData,institutionpara,InstituteType,AxiosPlans} = req.body
+    const institutePath = await AddInstituteData.findById(instituteId);
 
-    console.log(ByListdata);
+      if (!institutePath) {
+        return res
+          .status(404)
+          .json({ msg: "Learning path not found", status: "failed" });
+      }
+
+      institutePath.listDataAccess.push({
+        aboveData,institutionpara,InstituteType,AxiosPlans
+      })
+      await institutePath.save()
+
     res.status(200).send("User created successfully");
   } catch (e) {
     console.error(e.message, "ByListData");
@@ -792,7 +1258,9 @@ app.get("/InstituteData123/:InstituteName", async (req, res) => {
 
 //Learn Path Data
 
-app.post("/AddVideoPath", middleware, async (req, res) => {
+ 
+app.post("/AddVideoPath", async (req, res) => {
+ 
   try {
     // Check if the VideofolderName already exists
     const existingVideo = await AddvideoData.findOne({
@@ -815,26 +1283,24 @@ app.post("/AddVideoPath", middleware, async (req, res) => {
   }
 });
 
-app.get("/allAddVideosData", middleware, async (req, res) => {
+ 
+app.get("/allAddVideosData", async (req, res) => {
+ 
   try {
     const allVideos = await AddvideoData.find({});
-    return res.json(allVideos);
+    return res.status(200).json(allVideos);
   } catch (error) {
     console.error(error.message, "allAddVideosData");
     return res.status(500).json("Internal Server Error");
   }
 });
 
-app.put(
-  "/UpdateVideosDetails/:selectedvideopathId",
-  middleware,
-  async (req, res) => {
-    try {
-      const { selectedvideopathId } = req.params;
-      const video = await AddvideoData.findByIdAndUpdate(
-        selectedvideopathId,
-        req.body
-      );
+ 
+app.put("/UpdateVideosDetails/:selectedvideopathId", async (req, res) => {
+  try {
+    const { selectedvideopathId } = req.params;
+    const video = await AddvideoData.findByIdAndUpdate(selectedvideopathId, req.body);
+ 
 
       if (!video) {
         return res.status(404).json("Video Not Found");
@@ -864,7 +1330,9 @@ app.get("/DisplayIndividualVideo/:id", async (req, res) => {
   }
 });
 
-app.delete("/deleteVideo/:id", middleware, async (req, res) => {
+ 
+app.delete("/deleteVideo/:id" , async (req, res) => {
+ 
   try {
     const id = req.params.id; // Use req.params.id to get the instituteId
     const deletedVideo = await AddvideoData.findByIdAndRemove(id);
@@ -881,7 +1349,9 @@ app.delete("/deleteVideo/:id", middleware, async (req, res) => {
 });
 
 //create videofile
-app.post("/AddVideoFilesData/:videopathId", middleware, async (req, res) => {
+ 
+app.post("/AddVideoFilesData/:videopathId", async (req, res) => {
+ 
   try {
     const videopathId = req.params.videopathId;
     const { VideofolderName, VideoTitleName, SourceName, Video1 } = req.body;
@@ -920,27 +1390,22 @@ app.post("/AddVideoFilesData/:videopathId", middleware, async (req, res) => {
   }
 });
 //delete videofiles
-app.delete(
-  "/deleteVideofiles/:videopathId/:videofileId",
-  middleware,
-  async (req, res) => {
-    try {
-      const videopathId = req.params.videopathId;
-      const videofileId = req.params.videofileId;
-      const existingVideopath = await AddvideoData.findById(videopathId);
-      if (!existingVideopath) {
-        return res
-          .status(404)
-          .json({ msg: "Videopath not found", status: "failed" });
-      }
-      const VideofileIndex = existingVideopath.videoFile.findIndex(
-        (file) => file._id.toString() === videofileId
-      );
-      if (VideofileIndex === -1) {
-        return res
-          .status(404)
-          .json({ msg: "Videofile not found", status: "failed" });
-      }
+ 
+app.delete("/deleteVideofiles/:videopathId/:videofileId", async (req, res) => {
+  try {
+    const videopathId = req.params.videopathId;
+    const videofileId = req.params.videofileId;
+    const existingVideopath = await AddvideoData.findById(videopathId);
+    if (!existingVideopath) {
+      return res.status(404).json({ msg: 'Videopath not found', status: 'failed' });
+    }
+    const VideofileIndex = existingVideopath.videoFile.findIndex(
+      (file) => file._id.toString() === videofileId
+    );
+    if (VideofileIndex === -1) {
+      return res.status(404).json({ msg: 'Videofile not found', status: 'failed' });
+    }
+ 
 
       existingVideopath.videoFile.splice(VideofileIndex, 1);
       await existingVideopath.save();
@@ -958,7 +1423,9 @@ app.delete(
 );
 
 //get videofiles with videopathid
-app.get("/DisplayAllVideos/:videopathId", middleware, async (req, res) => {
+ 
+app.get("/DisplayAllVideos/:videopathId", async (req, res) => {
+ 
   try {
     const videopathId = req.params.videopathId;
     const existingVideoPath = await AddvideoData.findById(videopathId);
@@ -1017,12 +1484,11 @@ app.get("/foldersVideoData/:VideofolderName", async (req, res) => {
   }
 });
 //Update videofiles
-app.put(
-  "/UpdateVideofileDetails/:selectedvideopathId/:selectedVideofileId",
-  middleware,
-  async (req, res) => {
-    try {
-      const selectedvideopathId = req.params.selectedvideopathId;
+ 
+app.put("/UpdateVideofileDetails/:selectedvideopathId/:selectedVideofileId", async (req, res) => {
+  try {
+    const selectedvideopathId = req.params.selectedvideopathId;
+ 
       const selectedVideofileId = req.params.selectedVideofileId;
       const VideoTitleName = req.body.VideoTitle;
       const Video1 = req.body.videofile;
@@ -2524,33 +2990,50 @@ app.get(
   }
 );
 //access given
-app.post("/AccessGiven/:InstituteId", async (req, res) => {
+app.post("/AccessGiven/:InstituteId/:batchyearId/:batchId", async (req, res) => {
   try {
     const InstituteId = req.params.InstituteId;
-    const Access = req.body.Access;
+ 
+    const BatchyearId = req.params.batchyearId;
+    const BatchId = req.params.batchId;
+    const Access = req.body.Access;    
+  
+    const institutePath = await AddInstituteData.findById(InstituteId);
 
-    // Find the institute by ID
-    const institute = await AddInstituteData.findById(InstituteId);
+    if (!institutePath) {
+      return res.status(404).json({ msg: "Institute not found", status: "failed" });
+ 
+    }
+    const BatchYear = institutePath.InstituteBatchYear.id(BatchyearId);
 
-    if (!institute) {
+    if (!BatchYear) {
       return res
         .status(404)
-        .json({ msg: "Institute not found", status: "failed" });
+        .json({ msg: "BatchYear not found", status: "failed" });
     }
 
-    // Update the Access field
-    institute.Access = Access;
+    const Batch = BatchYear.InsituteBatch.id(BatchId);
 
-    // Save the updated institute
-    await institute.save();
-
-    res.status(200).send("Access updated successfully");
+    if (!Batch) {
+      return res
+        .status(404)
+        .json({ msg: "Topic not found", status: "failed" });
+    }
+    Batch.LearningPathAccess = Access
+    await institutePath.save();
+    return res
+      .status(200)
+      .json({ msg: "Access added successfully", status: "success" });
   } catch (e) {
-    return res.status(500).json({ message: e.message });
+    console.error(e.message, "AddAccess");
+    return res
+      .status(500)
+      .json({ msg: "Internal Server Error", status: "failed" });
   }
-});
-
-//  ========================
+ 
+}
+);
+ 
 
 app.post("/compile", async (req, res) => {
   try {
@@ -2583,42 +3066,18 @@ app.post("/compile", async (req, res) => {
 
 // ===========================
 
-
-app.get("/status", async (req, res) => {
-
-  const jobId = req.query.id;
-
-  if(jobId == undefined) {
-    return res.status(400).json({success: false, error: "Missing id query param"})
-  }
-  try{
-
-  
-  const job = await  Job.findById(jobId);
-   
-
-  if(job === undefined) {
-    return res.status(400).json({success: false, error: "Invalid job id"})
-  }
-
-  return res.status(200).json({success: true, job});
-
-  }catch (err) {
-    return res.status(400).json({success: false, error: JSON.stringify(err)});
-  }
-
-})
-
-
-// app.post("/run", async (req, res) => {
-//   const { language = "cpp", code } = req.body;
-
-//   console.log(language, code.length);
-
-//   if (code === undefined) {
-//     return res.status(400).json({ success: false, error: "Empty code body!" });
-//   }
-//   let job;
+ 
+app.use('/v6', require('./Routes/practiceTestRoutes'))
+app.use('/v7', require('./Routes/PracticeRoutes'))
+app.use('/v5', require('./Routes/CategoriesRoutes'))
+app.use("/v1", require('./Routes/ChapterRoutes')) //api routes
+app.use('/v1',  require('./Routes/MCQRoutes'));
+app.use("/v2", require('./Routes/SubjectsRoutes')) 
+app.use('/v2',paragMCQRouter)
+app.use('/v4',require('./Routes/CodeingBasic'))
+app.use('/U1',require('./Routes/assessement'));
+app.use('/U2',require('./Routes/blogs'));
+ 
 
 //   try {
 //     //nead c++
