@@ -4,8 +4,12 @@ const cors = require("cors");
 const { exec } = require('child_process');
 const { generateFile } = require("./Model/CodeCompailer/generateFile");
 const { executeCpp } = require("./Model/CodeCompailer/executeCpp");
+const { executeC } = require("./Model/CodeCompailer/excecuteC");
+const { executeJavaScript } = require("./Model/CodeCompailer/ececutejavascript");
 const Job = require("../skillhub_server/Model/CodeCompailer/Job");
 const mongoose = require("mongoose");
+const executeRuby = require("./Model/CodeCompailer/executeRuby")
+ 
 
 // const cors = require("cors");
 const Subject = require("./Model/Subject");
@@ -1149,6 +1153,7 @@ app.post("/addlearningpath", async (req, res) => {
       fileName,
       requirements,
       CurrentTime,
+      
     });
     newLearningPath.save(); //saving mongodb collection
     return res.send({ msg: "Path Created Successfully", status: "success" });
@@ -2354,19 +2359,74 @@ app.get("/status", async (req, res) => {
 //   }
 // });
 
+
+
+
+
+// app.post("/run", async (req, res) => {
+//   const { language = "cpp", code } = req.body;
+
+//   console.log(language, code.length);
+
+//   if (code === undefined) {
+//     return res.status(400).json({ success: false, error: "Empty code body!" });
+//   }
+  
+//   let job;
+
+//   try {
+//     const filepath = await generateFile(language, code);
+
+//     job = await new Job({ language, filepath }).save();
+//     const jobId = job["_id"];
+//     console.log(job);
+//     res.status(201).json({ success: true, jobId });
+//     let output;
+
+//     job["startedAt"] = new Date();
+
+//     if (language.toLowerCase() === "cpp") {
+//       output = await executeCpp(filepath);
+//     } else if (language.toLowerCase() === "py") {
+//       output = await executePy(filepath);
+//     } else if (language.toLowerCase() === "java") {
+//       output = await executeJava(filepath);
+//     } else {
+//       return res.status(400).json({ success: false, error: "Unsupported language!" });
+//     }
+
+//     job["completedAt"] = new Date();
+//     job["status"] = "success";
+//     job["output"] = output;
+
+//     await job.save();
+
+//     console.log(job);
+//   } catch (err) {
+//     job["completedAt"] = new Date();
+//     job["status"] = "error";
+//     job["output"] = JSON.stringify(err);
+//     await job.save();
+//     console.log(job);
+//   }
+// });
+
+
 app.post("/run", async (req, res) => {
-  const { language = "cpp", code } = req.body;
+  const input = req.body.input;
+  const { language = "cpp", code} = req.body;
 
   console.log(language, code.length);
 
   if (code === undefined) {
     return res.status(400).json({ success: false, error: "Empty code body!" });
+    
   }
-  
+
   let job;
 
   try {
-    const filepath = await generateFile(language, code);
+    const filepath = await generateFile(language, code, input);
 
     job = await new Job({ language, filepath }).save();
     const jobId = job["_id"];
@@ -2376,12 +2436,18 @@ app.post("/run", async (req, res) => {
 
     job["startedAt"] = new Date();
 
-    if (language.toLowerCase() === "cpp") {
+    if (language.toLowerCase() === "c") {
+      output = await executeC(filepath);
+    } else if (language.toLowerCase() === "cpp") {
       output = await executeCpp(filepath);
     } else if (language.toLowerCase() === "py") {
       output = await executePy(filepath);
-    } else if (language.toLowerCase() === "java") {
+    } else if (language.toLowerCase() === "Java") {
       output = await executeJava(filepath);
+    } else if (language.toLowerCase() === "Ruby") {
+      output = await executeRuby(filepath);
+    }else if (language.toLowerCase() === "JavaScript") {
+      output = await executeJavaScript(filepath);
     } else {
       return res.status(400).json({ success: false, error: "Unsupported language!" });
     }
@@ -2389,6 +2455,7 @@ app.post("/run", async (req, res) => {
     job["completedAt"] = new Date();
     job["status"] = "success";
     job["output"] = output;
+    job["input"] = input;
 
     await job.save();
 
@@ -2404,41 +2471,30 @@ app.post("/run", async (req, res) => {
 
 
 
-
-// const snippetSchema = new mongoose.Schema({
+// const codeSchema = new mongoose.Schema({
 //   code: String,
-//   output: String,
+//   language: String,
 // });
 
-// const Snippet = mongoose.model('Snippet', snippetSchema);
+// const Code = mongoose.model('Code', codeSchema);
 
-// // ... (rest of the code)
+// app.post('/execute', (req, res) => {
+//   const { code, language } = req.body;
 
-// app.post('/run', async (req, res) => {
-//   const { code } = req.body;
+//   // Save code to MongoDB
+//   const newCode = new Code({ code, language });
+//   newCode.save();
 
-//   try {
-//     // Save the code snippet to MongoDB
-//     const newSnippet = new Snippet({ code });
-//     await newSnippet.save();
-
-//     // Execute the code using Node.js child_process
-//     exec(`node -e "${code}"`, (error, stdout, stderr) => {
-//       if (error) {
-//         newSnippet.output = stderr;
-//         newSnippet.save();
-//         res.status(500).json({ error: stderr });
-//       } else {
-//         newSnippet.output = stdout;
-//         newSnippet.save();
-//         res.json({ output: stdout });
-//       }
-//     });
-//   } catch (error) {
-//     console.error('Error:', error);
-//     res.status(500).json({ error: 'Internal Server Error' });
-//   }
+//   // Execute code
+//   exec(code, (error, stdout, stderr) => {
+//     if (error) {
+//       res.send({ result: stderr || error.message });
+//     } else {
+//       res.send({ result: stdout });
+//     }
+//   });
 // });
+
 
 app.listen(port, () => {
   console.log(`Server running at ${port}`);
