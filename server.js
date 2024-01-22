@@ -7,6 +7,7 @@ const { executeCpp } = require("./Model/CodeCompailer/executeCpp");
 const { executeC } = require("./Model/CodeCompailer/excecuteC");
 const { executeJavaScript } = require("./Model/CodeCompailer/ececutejavascript");
 const Job = require("../skillhub_server/Model/CodeCompailer/Job");
+
 const mongoose = require("mongoose");
  
 const Subject =require('./Model/Subject')
@@ -21,6 +22,7 @@ const AddUserByBatch = require("./Model/ByBatch");
 const ByList = require("./Model/ByList");
 const AddvideoData = require("./Model/LearnPath/Addvideo");
 const videoFile = require("./Model/LearnPath/AddVideoFile");
+const signupData = require("./Model/signup/signform");
  
 const allLearningPaths = require("./Model/LearnPath/AlllearningPaths");
 const paragMCQRouter = require('./Routes/ParagRoutes');
@@ -1421,6 +1423,24 @@ app.delete("/deleteVideofiles/:videopathId/:videofileId", async (req, res) => {
     }
   }
 );
+
+
+
+
+app.get("/getSingleVideoData/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const singleVideoData = await AddvideoData.findById({ _id: id });
+    if(!singleVideoData){
+      return res.status(404).send("video folder not found")
+    }
+    return res.send(singleVideoData)
+  } catch (error) {
+    console.error(error.message,"singleVideoData")
+   return res.status(500).json("internal servererror")
+}
+});
+
 
 //get videofiles with videopathid
  
@@ -3033,6 +3053,165 @@ app.post("/AccessGiven/:InstituteId/:batchyearId/:batchId", async (req, res) => 
  
 }
 );
+
+
+
+//addpostQuestions
+app.post('/addQuestion/:learningPathId/:topicId/:contentTitle', async (req, res) => {
+  const { learningPathId, topicId, contentTitle } = req.params;
+  const { question, inputFormat, outputFormat } = req.body;
+
+  try {
+    // Find the learning path by ID
+    const learningPath = await allLearningPaths.findById(learningPathId);
+
+    if (!learningPath) {
+      return res.status(404).json({ error: 'Learning path not found' });
+    }
+
+    // Find the topic within the learning path by ID
+    const topic = learningPath.topics.id(topicId);
+
+    if (!topic) {
+      return res.status(404).json({ error: 'Topic not found' });
+    }
+
+    // Find the content within the topic by title
+    const content = topic.content.find(
+      (contentItem) => contentItem.contentTitle === contentTitle
+    );
+
+    if (!content) {
+      return res.status(404).json({ error: 'Content not found' });
+    }
+
+    // Add the question to the content
+    content.question.push({ question, inputFormat, outputFormat });
+
+    // Save the updated learning path document
+    await learningPath.save();
+
+    // Respond with a success message
+    res.json({ message: 'Question added successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+//get all Questions
+app.get('/getQuestions/:learningPathId/:topicId/:contentTitle', async (req, res) => {
+  const { learningPathId, topicId, contentTitle } = req.params;
+
+  try {
+    // Find the learning path by ID
+    const learningPath = await allLearningPaths.findById(learningPathId);
+
+    if (!learningPath) {
+      return res.status(404).json({ error: 'Learning path not found' });
+    }
+
+    // Find the topic within the learning path by ID
+    const topic = learningPath.topics.id(topicId);
+
+    if (!topic) {
+      return res.status(404).json({ error: 'Topic not found' });
+    }
+
+    // Find the content within the topic by title
+    const content = topic.content.find(
+      (contentItem) => contentItem.contentTitle === contentTitle
+    );
+
+    if (!content) {
+      return res.status(404).json({ error: 'Content not found' });
+    }
+
+    // Retrieve only the questions for the specified content
+    const questions = content.question;
+
+    // Respond with the questions
+    res.json({ questions });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+//delete Questions
+app.delete('/deleteQuestion/:learningPathId/:topicId/:contentTitle/:questionId', async (req, res) => {
+  const { learningPathId, topicId, contentTitle, questionId } = req.params;
+
+  try {
+    // Find the learning path by ID
+    const learningPath = await allLearningPaths.findById(learningPathId);
+
+    if (!learningPath) {
+      return res.status(404).json({ error: 'Learning path not found' });
+    }
+
+    // Find the topic within the learning path by ID
+    const topic = learningPath.topics.id(topicId);
+
+    if (!topic) {
+      return res.status(404).json({ error: 'Topic not found' });
+    }
+
+    // Find the content within the topic by title
+    const content = topic.content.find(
+      (contentItem) => contentItem.contentTitle === contentTitle
+    );
+
+    if (!content) {
+      return res.status(404).json({ error: 'Content not found' });
+    }
+
+    // Find the question within the content by ID and remove it
+    const questionIndex = content.question.findIndex(q => q._id.toString() === questionId);
+    if (questionIndex !== -1) {
+      content.question.splice(questionIndex, 1);
+    } else {
+      return res.status(404).json({ error: 'Question not found' });
+    }
+
+    // Save the updated learning path document
+    await learningPath.save();
+
+    // Respond with a success message
+    res.json({ message: 'Question deleted successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+}
+});
+
+
+//get allcontentTitle
+app.get("/getAllContentTitles/:learningPathId/:topicId", async (req, res) => {
+  try {
+    const { learningPathId, topicId } = req.params;
+
+    // Find the learning path by ID
+    const learningPath = await allLearningPaths.findById(learningPathId);
+
+    if (!learningPath) {
+      return res.status(404).json({ msg: "Learning path not found", status: "failed" });
+    }
+
+    // Find the topic within the learning path by ID
+    const topic = learningPath.topics.find(t => t._id.toString() === topicId);
+
+    if (!topic) {
+      return res.status(404).json({ msg: "Topic not found", status: "failed" });
+    }
+
+    // Retrieve all contentTitles from the topic
+    const contentTitles = topic.content.map(contentItem => contentItem.contentTitle);
+
+    return res.status(200).json({ contentTitles, status: "success" });
+  } catch (e) {
+    console.error(e.message, "/getAllContentTitles");
+    return res.status(500).json({ msg: "Internal Server Error", status: "failed" });
+  }
+});
  
 
 app.post("/compile", async (req, res) => {
@@ -3177,8 +3356,34 @@ app.use('/U2',require('./Routes/blogs'));
 // });
 
 
+app.get("/status", async (req, res) => {
+
+  const jobId = req.query.id;
+
+  if(jobId == undefined) {
+    return res.status(400).json({success: false, error: "Missing id query param"})
+  }
+  try{
+
+  
+  const job = await  Job.findById(jobId);
+   
+
+  if(job === undefined) {
+    return res.status(400).json({success: false, error: "Invalid job id"})
+  }
+
+  return res.status(200).json({success: true, job});
+
+  }catch (err) {
+    return res.status(400).json({success: false, error: JSON.stringify(err)});
+  }
+
+})
+
+
 app.post("/run", async (req, res) => {
-  const input = req.body.input;
+  let input = req.body.input;
   const { language = "cpp", code} = req.body;
 
   console.log(language, code.length);
@@ -3220,7 +3425,6 @@ app.post("/run", async (req, res) => {
     job["completedAt"] = new Date();
     job["status"] = "success";
     job["output"] = output;
-    job["input"] = input;
 
     await job.save();
 
@@ -3233,7 +3437,6 @@ app.post("/run", async (req, res) => {
     console.log(job);
   }
 });
-
 
 
 // const codeSchema = new mongoose.Schema({
