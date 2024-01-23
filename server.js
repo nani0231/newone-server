@@ -22,7 +22,27 @@ const AddUserByBatch = require("./Model/ByBatch");
 const ByList = require("./Model/ByList");
 const AddvideoData = require("./Model/LearnPath/Addvideo");
 const videoFile = require("./Model/LearnPath/AddVideoFile");
+
 const signupData = require("./Model/signup/signform");
+
+
+const allLearningPaths = require("../skillhub_server/Model/LearnPath/AlllearningPaths");
+const paragMCQRouter = require('./Routes/ParagRoutes');
+const Categories = require("../skillhub_server/Model/categories")
+const Topic = require("../skillhub_server/Model/topic") 
+
+
+// const bodyParser = require("body-parser");
+
+
+const app = express();
+// const port = 1412;
+
+
+
+// const port = 1412;
+
+
  
 const allLearningPaths = require("./Model/LearnPath/AlllearningPaths");
 const paragMCQRouter = require('./Routes/ParagRoutes');
@@ -3106,6 +3126,7 @@ app.get('/getQuestions/:learningPathId/:topicId/:contentTitle', async (req, res)
     // Find the learning path by ID
     const learningPath = await allLearningPaths.findById(learningPathId);
 
+
     if (!learningPath) {
       return res.status(404).json({ error: 'Learning path not found' });
     }
@@ -3135,6 +3156,7 @@ app.get('/getQuestions/:learningPathId/:topicId/:contentTitle', async (req, res)
     console.error(error);
     res.status(500).json({ error: 'Internal server error' });
   }
+
 });
 //delete Questions
 app.delete('/deleteQuestion/:learningPathId/:topicId/:contentTitle/:questionId', async (req, res) => {
@@ -3243,7 +3265,7 @@ app.post("/compile", async (req, res) => {
   }
 });
 
-// ===========================
+
 
  
 app.use('/v6', require('./Routes/practiceTestRoutes'))
