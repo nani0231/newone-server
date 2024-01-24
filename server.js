@@ -3356,6 +3356,7 @@ app.use('/U2',require('./Routes/blogs'));
 // });
 
 
+
 app.get("/status", async (req, res) => {
 
   const jobId = req.query.id;
@@ -3438,32 +3439,7 @@ app.post("/run", async (req, res) => {
   }
 });
 
-
-// const codeSchema = new mongoose.Schema({
-//   code: String,
-//   language: String,
-// });
-
-// const Code = mongoose.model('Code', codeSchema);
-
-// app.post('/execute', (req, res) => {
-//   const { code, language } = req.body;
-
-//   // Save code to MongoDB
-//   const newCode = new Code({ code, language });
-//   newCode.save();
-
-//   // Execute code
-//   exec(code, (error, stdout, stderr) => {
-//     if (error) {
-//       res.send({ result: stderr || error.message });
-//     } else {
-//       res.send({ result: stdout });
-//     }
-//   });
-// });
-
-
+ 
 app.listen(port, () => {
   console.log(`Server running at ${port}`);
 });
