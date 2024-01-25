@@ -1,5 +1,6 @@
 const express = require("express");
-const Category = require("../Model/Category")
+const Category = require("../Model/Category");
+const Categories = require("../Model/categories");
 const router =  express.Router()
 
 //categories
@@ -53,13 +54,12 @@ router.post("/CategorywiseAccess/:selectedCategoryId", async (req, res) => {
     const { InstituteName,BatchYear,Batch,Access } = req.body;
     const CategoryId = req.params.selectedCategoryId
 
-    const CategoryPath = await Category.findById(CategoryId);
-
+    const CategoryPath = await Categories.findById(CategoryId);
     if (!CategoryPath) {
       return res.status(404).json({ msg: "CategoryPath not found", status: "failed" });
     }
     const isCategoryExist = CategoryPath.AccessDetails.some(
-        (each) => each.InstituteName === InstituteName
+        (each) => each.Batch === Batch
       );
   
       if (isCategoryExist) {

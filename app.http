@@ -207,6 +207,8 @@ Content-Type: application/json
   "questionNumber": 1,
   "selectedOption": "option1"
 }
+###
+DELETE http://localhost:4010/categoriesAccessDelete/659630340092744e5e566b28/65abacbc8ae3d4a09948af74
 
 
 

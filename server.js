@@ -3524,7 +3524,43 @@ app.use("/v4", require("./Routes/CodeingBasic"));
 app.use("/U1", require("./Routes/assessement"));
 app.use("/U2", require("./Routes/blogs"));
 
+//delete categoriesaccess
+app.delete("/categoriesAccessDelete/:categoryId/:accessId", async (req, res) => {
+  try {
+    const categoryId = req.params.categoryId;
+    const accessId = req.params.accessId;
 
+    // Find the category by ID
+    const category = await Categories.findById(categoryId);
+
+    if (!category) {
+      return res.status(404).json({ msg: "Category not found", status: "failed" });
+    }
+
+    // Find the index of the access detail within the "AccessDetails" array
+    const accessIndex = category.AccessDetails.findIndex(
+      (access) => access._id.toString() === accessId
+    );
+
+    if (accessIndex === -1) {
+      return res.status(404).json({ msg: "Access detail not found", status: "failed" });
+    }
+
+    // Remove the access detail from the "AccessDetails" array
+    category.AccessDetails.splice(accessIndex, 1);
+
+    // Save the updated category document
+    await category.save();
+
+    return res.status(200).json({
+      msg: "Access deleted successfully",
+      status: "success",
+    });
+  } catch (error) {
+    console.error(error.message, "/categoriesAccessDelete");
+    return res.status(500).json({ msg: "Internal Server Error", status: "failed" });
+  }
+});
 // GET endpoint to fetch assessments for a specific category
 app.get("/categories/:categoryId/assessments", async (req, res) => {
   try {
