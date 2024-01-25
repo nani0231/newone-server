@@ -198,6 +198,19 @@ Content-Type: application/json
 }
 
 
+### 
+POST http://localhost:4010/api/saveResponse
+Content-Type: application/json
+
+{
+  "userId": "user123",
+  "questionNumber": 1,
+  "selectedOption": "option1"
+}
+
+
+
+
 
 
 

@@ -3055,6 +3055,54 @@ app.post("/AccessGiven/:InstituteId/:batchyearId/:batchId", async (req, res) => 
 );
 
 
+// //accessview 
+
+app.post("/AccessView/:InstituteId/:batchyearId/:batchId", async (req, res) => {
+  try {
+    const InstituteId = req.params.InstituteId;
+ 
+    const BatchyearId = req.params.batchyearId;
+    const BatchId = req.params.batchId;
+    const Access = req.body.Access;    
+  
+    const institutePath = await AddInstituteData.findById(InstituteId);
+
+    if (!institutePath) {
+      return res.status(404).json({ msg: "Institute not found", status: "failed" });
+ 
+    }
+    const BatchYear = institutePath.InstituteBatchYear.id(BatchyearId);
+
+    if (!BatchYear) {
+      return res
+        .status(404)
+        .json({ msg: "BatchYear not found", status: "failed" });
+    }
+
+    const Batch = BatchYear.InsituteBatch.id(BatchId);
+
+    if (!Batch) {
+      return res
+        .status(404)
+        .json({ msg: "Topic not found", status: "failed" });
+    }
+    Batch.AccessView = AccessView
+    await institutePath.save();
+    return res
+      .status(200)
+      .json({ msg: "Access added successfully", status: "success" });
+  } catch (e) {
+    console.error(e.message, "AddAccess");
+    return res
+      .status(500)
+      .json({ msg: "Internal Server Error", status: "failed" });
+  }
+ 
+}
+);
+
+
+
 
 //addpostQuestions
 app.post('/addQuestion/:learningPathId/:topicId/:contentTitle', async (req, res) => {
@@ -3475,7 +3523,32 @@ app.use("/v2", paragMCQRouter);
 app.use("/v4", require("./Routes/CodeingBasic"));
 app.use("/U1", require("./Routes/assessement"));
 app.use("/U2", require("./Routes/blogs"));
+
+
+// GET endpoint to fetch assessments for a specific category
+app.get("/categories/:categoryId/assessments", async (req, res) => {
+  try {
+    // Extract the categoryId from the request parameters
+    const categoryId = req.params.categoryId;
+
+    // Find the category by ID
+    const category = await Categories.findById(categoryId);
+
+    if (!category) {
+      return res.status(404).json({ msg: "Category not found", status: "failed" });
+    }
+
+    // Extract and return the assessments from the category
+    const assessments = category.Assessment;
+
+    res.status(200).json({ assessments, status: "success" });
+  } catch (error) {
+    console.error(error.message, "/categories/:categoryId/assessments");
+    res.status(500).json({ msg: "Internal Server Error", status: "failed" });
+  }
+});
 //umadevi
+
 app.post("/assessment/:selectedCategoryId", async (req, res) => {
   try {
   const {assessmentname,
@@ -3529,6 +3602,17 @@ await CategoryPath.save();
   }
 }
 );
+//get all assement
+app.get('/assessments', async (req, res) => {
+  try {
+    const allAssessments = await Categories.find({}, 'Assessment -_id'); // Exclude _id field
+    res.json(allAssessments);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 app.post('/assessmentqestion/:selectedCategoryId/:assessementId', async (req, res) => {
   const { selectedCategoryId, assessementId } = req.params;
   const {  qustioncount,
@@ -3619,13 +3703,12 @@ app.post(
   }
 );
 
-
 app.post(
   "/Questions/:selectedCategoryId/:assessementId",
   async (req, res) => {
     const { selectedCategoryId, assessementId } = req.params;
     const { questions } = req.body;
-    
+
 
     try {
       const institutePath = await Categories.findById(selectedCategoryId);

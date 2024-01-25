@@ -54,9 +54,7 @@ const AddInstituteData = new mongoose.Schema({
     type: String,
     require: true,
   },
-  Access:{
-    type: String,
-  },
+  
   listDataAccess:[
     {
       aboveData:String,
@@ -73,6 +71,9 @@ const AddInstituteData = new mongoose.Schema({
       InsituteBatch: [
         {
           Batch: {
+            type: String,
+          },
+          Access:{
             type: String,
           },
           LearningPathAccess:{
