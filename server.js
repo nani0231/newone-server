@@ -3547,6 +3547,7 @@ app.get("/categories/:categoryId/assessments", async (req, res) => {
     res.status(500).json({ msg: "Internal Server Error", status: "failed" });
   }
 });
+//umadevi
 
 app.post("/assessment/:selectedCategoryId", async (req, res) => {
   try {
@@ -3594,7 +3595,7 @@ await CategoryPath.save();
       .status(200)
       .json({ msg: "User added successfully", status: "success" });
   } catch (e) {
-    console.error(e.message, "Adduser");
+    console.error(e.message, "assessment");
     return res
       .status(500)
       .json({ msg: "Internal Server Error", status: "failed" });
@@ -3611,7 +3612,6 @@ app.get('/assessments', async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
-
 
 app.post('/assessmentqestion/:selectedCategoryId/:assessementId', async (req, res) => {
   const { selectedCategoryId, assessementId } = req.params;
@@ -3694,7 +3694,7 @@ app.post(
         status: "success",
       });
     } catch (e) {
-      console.error(e.message, "Adduser");
+      console.error(e.message, "Assessmentsettings");
       return res.status(500).json({
         msg: "Internal Server Error",
         status: "failed",
@@ -3708,6 +3708,7 @@ app.post(
   async (req, res) => {
     const { selectedCategoryId, assessementId } = req.params;
     const { questions } = req.body;
+
 
     try {
       const institutePath = await Categories.findById(selectedCategoryId);
@@ -3748,6 +3749,23 @@ app.post(
     }
   }
 );
+
+app.get("/getIndiVIDUAL/:selectedCategoryId", async (req, res) => {
+  try {
+    const { selectedCategoryId } = req.params;
+    const category = await Categories.findById(selectedCategoryId);
+
+    if (!category) {
+      return res.status(404).json({ msg: "Category not found", status: "failed" });
+    }
+    
+
+    return res.status(200).json({ category, status: "success" });
+  } catch (e) {
+    console.error(e.message, "/getassessment");
+    return res.status(500).json({ msg: "Internal Server Error", status: "failed" });
+  }
+});
 
 app.get("/getassessment/:selectedCategoryId/:assessmentId", async (req, res) => {
   try {

@@ -1,46 +1,124 @@
 const mongoose = require("mongoose");
 
 const Allcategories = new mongoose.Schema({
-    name: {
+  name: {
+    type: String,
+    required: true,
+  },
+  description: {
+    type: String,
+    required: true,
+  },
+  tag: {
+    type: String,
+    required: true,
+  },
+  accesstype: {
+    type: String,
+    required: true,
+  },
+  accessplan: {
+    type: String,
+    required: true,
+  },
+  display: {
+    type: String,
+    required: true,
+  },
+  AccessDetails: [
+    {
+      InstituteName: {
+        type: String
+      },
+      BatchYear: {
+        type: String
+      },
+      Batch: [{
+        type: String
+      }],
+      Access: {
+        type: String
+      }
+    },
+  ],
+  Assessment: [
+    {
+      assessmentname: {
         type: String,
-        required : true,
-    },
-    description: {
+        require: true,
+      },
+      nooftimes: {
         type: String,
-        required : true,
-    },
-    tag: {
+        require: true,
+      },
+      assessmentpassword: {
         type: String,
-        required : true,
-    },
-    accesstype: {
+        require: true,
+      },
+      exametype: {
         type: String,
-        required : true,
-    },
-    accessplan : {
+        require: true,
+      },
+      cutofftype: {
         type: String,
-        required : true,
-    },
-    display: {
-        type : String,
-        required: true,
-    },
-    AccessDetails:[
+        require: true,
+      },
+      questionselection: {
+        type: String,
+        require: true,
+      },
+      assessmentreport: {
+        type: String,
+        require: true,
+      },
+      assessmentflow: {
+        type: String,
+        require: true,
+      },
+      assessmentadaptiveness: {
+        type: String,
+        require: true,
+      },
+      Qustionscount: [
         {
-          InstituteName:{
-            type:String
+          qustioncount: {
+            type: String,
           },
-          BatchYear:{
-            type:String
+          totalqustion: {
+            type: String,
           },
-          Batch:[{
-            type:String
-          }],
-          Access:{
-            type:String
-          }
-        },
-    ]
+          duration: {
+            type: String,
+          },
+          percentage: {
+            type: String,
+          },
+          modelname: {
+            type: String,
+          },
+          maxmarks: {
+            type: String,
+          },
+        }],
+      Assessmentsettings: [
+        {
+          Enable: {
+            type: String,
+          },
+          Restrict: {
+            type: String,
+          },
+          Tab: {
+            type: String,
+          },
+          assessmentTabs: {
+            type: String,
+          },
+
+        }],
+      Questions: []
+    }
+  ]
 
 })
 
@@ -48,4 +126,3 @@ const Allcategories = new mongoose.Schema({
 const Categories = mongoose.model("categories", Allcategories);
 
 module.exports = Categories;
-
