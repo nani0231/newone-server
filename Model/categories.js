@@ -44,6 +44,7 @@ const Allcategories = new mongoose.Schema({
 
 })
 
+
 const Categories = mongoose.model("categories", Allcategories);
 
 module.exports = Categories;
