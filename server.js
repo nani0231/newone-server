@@ -1616,6 +1616,7 @@ app.post("/addlearningpath", async (req, res) => {
       learningimg,
       fileName,
       requirements,
+      UploadVideoUrl,
     } = req.body;
     const isLearningPathExist = await allLearningPaths.findOne({
       learningPathTitle: learningPathTitle,
@@ -1640,6 +1641,7 @@ app.post("/addlearningpath", async (req, res) => {
       learningimg,
       fileName,
       requirements,
+      UploadVideoUrl,
       CurrentTime,
       
     });
@@ -1681,6 +1683,7 @@ app.put("/updatelearningpath/:learningPathId", async (req, res) => {
       learningimg,
       fileName,
       requirements,
+      UploadVideoUrl,
     } = req.body;
 
     // Find the existing learning path by ID
@@ -1709,6 +1712,9 @@ app.put("/updatelearningpath/:learningPathId", async (req, res) => {
     existingLearningPath.learningimg = learningimg;
     existingLearningPath.fileName = fileName;
     existingLearningPath.requirements = requirements;
+    existingLearningPath.UploadVideoUrl = UploadVideoUrl;
+
+    
 
     // Save the updated learning path document
     await existingLearningPath.save();

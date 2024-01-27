@@ -34,12 +34,15 @@ const productSchema = new mongoose.Schema({
         learningimg : {
             type : String
         },
-        fileName : {
+        fileName : [{
             type : String
-        },
-        requirements : {
+        }],
+        requirements :[ {
             type : String
-        },
+        }],
+        UploadVideoUrl:[ {
+          type: String,
+        }],
         topics: [
             {
               topicName: {
