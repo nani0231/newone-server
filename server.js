@@ -6,7 +6,7 @@ const { generateFile } = require("./Model/CodeCompailer/generateFile");
 const { executeCpp } = require("./Model/CodeCompailer/executeCpp");
 const { executeC } = require("./Model/CodeCompailer/excecuteC");
 const { executeJavaScript } = require("./Model/CodeCompailer/ececutejavascript");
-const Job = require("../skillhub_server/Model/CodeCompailer/Job");
+const Job = require("./Model/CodeCompailer/Job");
 
 const mongoose = require("mongoose");
  
