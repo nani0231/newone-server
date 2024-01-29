@@ -3829,3 +3829,41 @@ app.get("/getassessment/:selectedCategoryId/:assessmentId", async (req, res) => 
     return res.status(500).json({ msg: "Internal Server Error", status: "failed" });
   }
 });
+//umadevi
+//changepassword 
+app.put("/userchangepassword", async (req, res) => {
+  const { email, currentPassword, newPassword } = req.body;
+
+  try {
+      const user = await signupData.findOne({ email });
+
+      if (!user) {
+          return res.status(401).json({ message: "Email not found" });
+      }
+
+      const passwordMatch = await bcrypt.compare(currentPassword, user.password);
+      console.log(passwordMatch,currentPassword,user.password)
+      if (!passwordMatch) {
+          return res.status(401).json({ message: "Incorrect current password" });
+      }
+
+      // Hash the new password before updating
+      const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+
+      // Update the user's password in the database
+      await signupData.findByIdAndUpdate(user._id, { password: hashedNewPassword });
+
+      // Optionally, you can generate a new JWT token for the user
+      const payload = {
+          id: user._id
+      };
+      const newToken = jwt.sign(payload, 'siva', { expiresIn: '24hr' });
+
+      return res.status(200).json({ message: "Password changed successfully", newToken });
+  } catch (error) {
+      console.error(error.message, "changePassword");
+      return res.status(500).json({
+          message: "An error occurred on the server. Please try again later.",
+      });
+  }
+});
