@@ -20,6 +20,7 @@ const categorySchema = new mongoose.Schema({
           selectedChapters: [String],
           questionListMcq: [String],
           questionListParag: [String],
+          questionListCoding:[String]
         },
       ],
     },

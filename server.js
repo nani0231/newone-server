@@ -2183,6 +2183,32 @@ app.get(
     }
   }
 );
+//getallcontentsbasedonlearningpathId and topicId
+app.get('/getcontentsdetails/:learningPathId/:topicId', async (req, res) => {
+  try {
+    const { learningPathId, topicId } = req.params;
+
+    // Find the learning path by ID
+    const learningPath = await allLearningPaths.findById(learningPathId);
+
+    if (!learningPath) {
+      return res.status(404).json({ msg: 'Learning path not found', status: 'failed' });
+    }
+
+    // Find the topic within the learning path
+    const topic = learningPath.topics.find(t => t._id.toString() === topicId);
+
+    if (!topic) {
+      return res.status(404).json({ msg: 'Topic not found', status: 'failed' });
+    }
+
+    // Return the content array of the found topic
+    res.json(topic.content || []);
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ msg: 'Internal Server Error', status: 'failed' });
+  }
+});
 
 app.get("/getContentPath/:id", async (req, res) => {
   try {
@@ -2857,23 +2883,19 @@ app.post("/login", async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    const user = await signupData.findOne({ email });
+    const user = await AddInstituteData.findOne({ 'InstituteBatchYear.InsituteBatch.InstituteUsersList.userEmail': email });
 
     if (!user) {
       return res.status(401).json({ message: "Email not found" });
     }
-
-    const passwordMatch = await bcrypt.compare(password, user.password);
-
-    if (!passwordMatch) {
+    if (password !== user.Password) {
       return res.status(401).json({ message: "Incorrect password" });
     }
-
     const payload = {
       id: user._id
     };
-    const token = jwt.sign(payload, 'siva', { expiresIn: '24hr' });
-    console.log(token);
+    const token = jwt.sign(payload, 'your-secret-key', { expiresIn: '24hr' });
+
     return res.status(200).json({ message: "User Login Success", token: token });
 
   } catch (error) {
@@ -2883,6 +2905,7 @@ app.post("/login", async (req, res) => {
     });
   }
 });
+
 
 
 // Category
@@ -3827,5 +3850,42 @@ app.get("/getassessment/:selectedCategoryId/:assessmentId", async (req, res) => 
   } catch (e) {
     console.error(e.message, "/getassessment");
     return res.status(500).json({ msg: "Internal Server Error", status: "failed" });
+  }
+});
+
+app.put("/userchangepassword", async (req, res) => {
+  const { email, currentPassword, newPassword } = req.body;
+
+  try {
+      const user = await signupData.findOne({ email });
+
+      if (!user) {
+          return res.status(401).json({ message: "Email not found" });
+      }
+
+      const passwordMatch = await bcrypt.compare(currentPassword, user.password);
+
+      if (!passwordMatch) {
+          return res.status(401).json({ message: "Incorrect current password" });
+      }
+
+      // Hash the new password before updating
+      const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+
+      // Update the user's password in the database
+      await signupData.findByIdAndUpdate(user._id, { password: hashedNewPassword });
+
+      // Optionally, you can generate a new JWT token for the user
+      const payload = {
+          id: user._id
+      };
+      const newToken = jwt.sign(payload, 'siva', { expiresIn: '24hr' });
+
+      return res.status(200).json({ message: "Password changed successfully", newToken });
+  } catch (error) {
+      console.error(error.message, "changePassword");
+      return res.status(500).json({
+          message: "An error occurred on the server. Please try again later.",
+      });
   }
 });

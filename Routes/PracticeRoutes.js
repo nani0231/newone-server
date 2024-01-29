@@ -296,7 +296,8 @@ router.post("/addtestinpractice/:categoryId/:topicId", async (req, res) => {
       selectedSubject,
       selectedChapters,
       questionListMcq,
-      questionListParag
+      questionListParag,
+      questionListCoding
       
     } = req.body;
     // Find the subject by ID
@@ -324,7 +325,8 @@ router.post("/addtestinpractice/:categoryId/:topicId", async (req, res) => {
       selectedSubject,
       selectedChapters,
       questionListMcq,
-      questionListParag
+      questionListParag,
+      questionListCoding
     };
 
     // Add the new MCQ to the "MCQ" array in the chapter
