@@ -2888,7 +2888,19 @@ app.post("/login", async (req, res) => {
     if (!user) {
       return res.status(401).json({ message: "Email not found" });
     }
-    if (password !== user.Password) {
+
+    let isPasswordCorrect = false;
+
+    user.InstituteBatchYear.forEach(batchYear => {
+      batchYear.InsituteBatch.forEach(batch => {
+        const userInBatch = batch.InstituteUsersList.find(u => u.userEmail === email);
+        if (userInBatch && userInBatch.Password === password) {
+          isPasswordCorrect = true;
+        }
+      });
+    });
+
+    if (!isPasswordCorrect) {
       return res.status(401).json({ message: "Incorrect password" });
     }
     const payload = {
@@ -2905,7 +2917,6 @@ app.post("/login", async (req, res) => {
     });
   }
 });
-
 
 
 // Category
@@ -3887,5 +3898,164 @@ app.put("/userchangepassword", async (req, res) => {
       return res.status(500).json({
           message: "An error occurred on the server. Please try again later.",
       });
+  }
+});
+//update assessment
+app.put("/updateassessment/:selectedCategoryId", async (req, res) => {
+  try {
+    const {
+      assessmentname,
+      nooftimes,
+      assessmentpassword,
+      exametype,
+      cutofftype,
+      questionselection,
+      assessmentreport,
+      assessmentflow,
+      assessmentadaptiveness
+    } = req.body;
+    
+    const categoryId = req.params.selectedCategoryId;
+
+    const categoryPath = await Categories.findById(categoryId);
+
+    if (!categoryPath) {
+      return res.status(404).json({ msg: "CategoryPath not found", status: "failed" });
+    }
+    categoryPath.Assessment= {
+      assessmentname,
+      nooftimes,
+      assessmentpassword,
+      exametype,
+      cutofftype,
+      questionselection,
+      assessmentreport,
+      assessmentflow,
+      assessmentadaptiveness
+    };
+    
+    await categoryPath.save();
+
+    return res
+      .status(200)
+      .json({ msg: "Assessment fields update successfully", status: "success" });
+  } catch (e) {
+    console.error(e.message, "assessment");
+    return res
+      .status(500)
+      .json({ msg: "Internal Server Error", status: "failed" });
+  }
+});
+app.put(
+  "/Assessmentsettings/:selectedCategoryId/:assessementId",
+  async (req, res) => {
+    const { selectedCategoryId, assessementId } = req.params;
+    const { Enable, Restrict, Tab, assessmentTabs } = req.body;
+
+    try {
+      const institutePath = await Categories.findById(selectedCategoryId);
+
+      if (!institutePath) {
+        return res.status(404).json({
+          msg: "Learning path not found",
+          status: "failed",
+        });
+      }
+
+      const assessment = institutePath.Assessment.id(assessementId);
+
+      if (!assessment) {
+        return res.status(404).json({
+          msg: "Assessment not found",
+          status: "failed",
+        });
+      }
+      assessment.Assessmentsettings={
+        Enable,
+        Restrict,
+        Tab,
+        assessmentTabs,
+      };
+      await institutePath.save();
+
+      return res.status(200).json({
+        msg: "Assessment settings update successfully",
+        status: "success",
+      });
+    } catch (e) {
+      console.error(e.message, "Assessmentsettings");
+      return res.status(500).json({
+        msg: "Internal Server Error",
+        status: "failed",
+      });
+    }
+  }
+);
+app.put(
+  "/Questions/:selectedCategoryId/:assessementId",
+  async (req, res) => {
+    const { selectedCategoryId, assessementId } = req.params;
+    const { questions } = req.body;
+    
+
+    try {
+      const institutePath = await Categories.findById(selectedCategoryId);
+
+      if (!institutePath) {
+        return res.status(404).json({
+          msg: "Learning path not found",
+          status: "failed",
+        });
+      }
+
+      const assessment = institutePath.Assessment.id(assessementId);
+
+      if (!assessment) {
+        return res.status(404).json({
+          msg: "Assessment not found",
+          status: "failed",
+        });
+      }
+      if (!assessment.Questions) {
+        assessment.Questions = [];
+      }
+      assessment.Questions={
+        questions
+      };
+      await institutePath.save();
+
+      return res.status(200).json({
+        msg: "Questions update successfully",
+        status: "success",
+      });
+    } catch (e) {
+      console.error(e.message, "Adduser");
+      return res.status(500).json({
+        msg: "Internal Server Error",
+        status: "failed",
+      });
+    }
+  }
+);
+//delete assessment
+app.delete('/deletessessment/:selectedCategoryId/:assessmentId', async (req, res) => {
+  const { selectedCategoryId, assessmentId } = req.params;
+  try {
+    const CategoriesPath = await Categories.findById(selectedCategoryId);
+    if (!CategoriesPath) {
+      return res.status(404).json({ error: `CategoriesPath with ID ${selectedCategoryId} not found` });
+    }
+    const assessmentIndex = CategoriesPath.Assessment.findIndex(assessment => assessment._id == assessmentId);
+
+    if (assessmentIndex === -1) {
+      return res.status(404).json({ error: `assessment with ID ${assessmentId} not found in the learning path` });
+    }
+    CategoriesPath.Assessment.splice(assessmentIndex, 1)
+    await CategoriesPath.save();
+
+    res.json({ message: 'assessment deleted successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
