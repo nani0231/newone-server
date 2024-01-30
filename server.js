@@ -4059,3 +4059,14 @@ app.delete('/deletessessment/:selectedCategoryId/:assessmentId', async (req, res
     res.status(500).json({ error: 'Internal server error' });
   }
 });
+
+//keshav api
+app.get("/singleLearningPath/:id", async (req, res) => {
+  try {
+    const id = req.params.id;
+    const singleLearningPath = await allLearningPaths.findById({ _id: id });
+    res.status(200).send(singleLearningPath);
+  } catch (error) {
+    res.send(error);
+  }
+});

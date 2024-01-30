@@ -64,9 +64,7 @@ router.post("/Blogs", async (req, res) => {
       const result = await Blogs.findByIdAndUpdate({ _id: id });
       if (!result) {
         return res.status(404).json({ success: false, message: "blogs not found" });
-  
-      }
-     
+      }     
       result.Title = Title;
       result.Tags = Tags;
       result.Author = Author;
@@ -74,8 +72,7 @@ router.post("/Blogs", async (req, res) => {
       result.Image = Image;
       // Save the updated subject document
       await result.save();
-      return res.status(200).json("blogs update successfully");
-  
+      return res.status(200).json("blogs update successfully");  
     } catch (error) {
       console.error(error.message);
       res.status(500).json("Internal server error");
