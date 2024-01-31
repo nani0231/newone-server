@@ -18,6 +18,8 @@ router.post('/addbasic/:subjectId/:chapterId', async (req, res) => {
         Programminglanguage,
         Description,
         Constraints,
+        DescriptionImage,
+        ConstraintsImage,
       } = req.body;
   
       // Find the subject by ID
@@ -42,6 +44,8 @@ router.post('/addbasic/:subjectId/:chapterId', async (req, res) => {
         Programminglanguage,
         Description,
         Constraints,
+        DescriptionImage,
+        ConstraintsImage,
       };
   
       // Add the new codingbasic entry to the "codingbasic" array in the chapter

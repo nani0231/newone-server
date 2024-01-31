@@ -28,6 +28,7 @@ router.post('/addMCQ/:subjectId/:chapterId', async (req, res) => {
       Option3,
       correctAnswer,
       Explanation,
+      Image1,
     } = req.body;
     console.log(subjectId,chapterId,req.body,"sai")
     // Find the subject by ID
@@ -59,6 +60,7 @@ router.post('/addMCQ/:subjectId/:chapterId', async (req, res) => {
       Option3,
       correctAnswer,
       Explanation,
+      Image1,
     };
 
     // Add the new MCQ to the "MCQ" array in the chapter
@@ -195,6 +197,7 @@ router.put('/updateMCQ/:subjectId/:chapterId/:mcqId', async (req, res) => {
     mcqToUpdate.Option3 = Option3;
     mcqToUpdate.correctAnswer = correctAnswer;
     mcqToUpdate.Explanation = Explanation;
+  
 
     // Save the updated subject document
     await existingSubject.save();

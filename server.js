@@ -1,13 +1,18 @@
 const express = require("express");
 const axios = require("axios");
 const cors = require("cors");
-const { exec } = require('child_process');
+const { exec } = require("child_process");
 const { generateFile } = require("./Model/CodeCompailer/generateFile");
 const { executeCpp } = require("./Model/CodeCompailer/executeCpp");
 const { executeC } = require("./Model/CodeCompailer/excecuteC");
-const { executeJavaScript } = require("./Model/CodeCompailer/ececutejavascript");
-const Job = require("./Model/CodeCompailer/Job");
-
+const {
+  executeJavaScript,
+} = require("./Model/CodeCompailer/ececutejavascript");
+const Job = require("../skillhub_server/Model/CodeCompailer/Job");
+const { executePy } = require("./Model/CodeCompailer/executePy");
+const { executeRuby } = require("./Model/CodeCompailer/executeRuby");
+const { executeJava } = require("./Model/CodeCompailer/ececuteJava");
+require("dotenv").config();
 const mongoose = require("mongoose");
  
 const Subject =require('./Model/Subject')
@@ -835,14 +840,15 @@ app.delete(
   }
 );
 //Add Users
-
 app.post(
-  "/AddUsers/:instituteId/:BatchyearId/:BatchId", async (req, res) => {
+  "/AddUsers/:instituteId/:BatchyearId/:BatchId",
+  async (req, res) => {
     try {
       const instituteId = req.params.instituteId;
       const BatchyearId = req.params.BatchyearId;
       const BatchId = req.params.BatchId;
-      const {Regdid,
+      const {
+        Regdid,
         FirstName,
         LastName,
         userEmail,
@@ -850,34 +856,52 @@ app.post(
         AccessPlans,
         Password,
         Status,
-        ExpiryDate} = req.body;
-     
+        ExpiryDate
+      } = req.body;
+
+      // Check if email or mobile number already exists
+      const userExists = await AddInstituteData.findOne({
+        'InstituteBatchYear.InsituteBatch.InstituteUsersList': {
+          $elemMatch: {
+            $or: [{ userEmail: userEmail }, { userNumber: userNumber }]
+          }
+        }
+      });
+
+      if (userExists) {
+        return res.status(400).json({
+          msg: "Email or mobile number already exists",
+          status: "failed"
+        });
+      }
+
       const institutePath = await AddInstituteData.findById(instituteId);
 
       if (!institutePath) {
-        return res
-          .status(404)
-          .json({ msg: "Learning path not found", status: "failed" });
+        return res.status(404).json({
+          msg: "Learning path not found",
+          status: "failed"
+        });
       }
 
-      // Find the topic within the learning path by ID
       const BatchYear = institutePath.InstituteBatchYear.id(BatchyearId);
 
       if (!BatchYear) {
-        return res
-          .status(404)
-          .json({ msg: "Topic not found", status: "failed" });
+        return res.status(404).json({
+          msg: "Batch year not found",
+          status: "failed"
+        });
       }
 
       const Batch = BatchYear.InsituteBatch.id(BatchId);
 
       if (!Batch) {
-        return res
-          .status(404)
-          .json({ msg: "Topic not found", status: "failed" });
+        return res.status(404).json({
+          msg: "Batch not found",
+          status: "failed"
+        });
       }
 
-      // Add the new content to the "content" array in the topic
       Batch.InstituteUsersList.push({
         Regdid,
         FirstName,
@@ -891,20 +915,22 @@ app.post(
         currentTime: new Date()
       });
 
-      // Save the updated learning path document
       await institutePath.save();
 
-      return res
-        .status(200)
-        .json({ msg: "User added successfully", status: "success" });
+      return res.status(200).json({
+        msg: "User added successfully",
+        status: "success"
+      });
     } catch (e) {
       console.error(e.message, "Adduser");
-      return res
-        .status(500)
-        .json({ msg: "Internal Server Error", status: "failed" });
+      return res.status(500).json({
+        msg: "Internal Server Error",
+        status: "failed"
+      });
     }
   }
 );
+
 //get user
 app.get("/GetUserdetailseperatly/:instituteId/:batchyearId/:batchId/:userId", async (req, res) => {
   try {
@@ -3345,213 +3371,6 @@ app.use('/v4',require('./Routes/CodeingBasic'))
 app.use('/U1',require('./Routes/assessement'));
 app.use('/U2',require('./Routes/blogs'));
  
-
-//   try {
-//     //nead c++
-//     const filepath = await generateFile(language, code);
-
-//   job = await new Job({ language, filepath }).save();
-//     const jobId = job["_id"];
-//     console.log(job);
-//     res.status(201).json({ success: true, jobId });
-//     let output;
-
-//     job["startedAt"] = new Date();
-
-//     // if (language === "cpp") {
-//     //   output = await executeCpp(filepath);
-//     // } else {
-//     //   output = await executePy(filepath);
-//     // }
-//     if (language === "cpp") {
-//       output = await executeCpp(filepath);
-//     } else if (language === "py") {
-//       output = await executePy(filepath);
-//     } else if (language === "java") {
-//       output = await executeJava(filepath);
-//     } else {
-//       return res.status(400).json({ success: false, error: "Unsupported language!" });
-//     }
-
-//     job["completedAt"] = new Date();
-//     job["status"] = "success";
-//     job["output"] = output;
-
-//     await job.save();
-
-//    console.log( job );
-//     // return res.json({ filepath, output });
-//   } catch (err) {
-//     job["completedAt"] = new Date();
-//     job["status"] = "error";
-//     job["output"] = JSON.stringify(err);
-//     await job.save();
-//     console.log(job);
-//     // res.status(500).json({ err });
-//   }
-// });
-
-
-
-
-
-// app.post("/run", async (req, res) => {
-//   const { language = "cpp", code } = req.body;
-
-//   console.log(language, code.length);
-
-//   if (code === undefined) {
-//     return res.status(400).json({ success: false, error: "Empty code body!" });
-//   }
-  
-//   let job;
-
-//   try {
-//     const filepath = await generateFile(language, code);
-
-//     job = await new Job({ language, filepath }).save();
-//     const jobId = job["_id"];
-//     console.log(job);
-//     res.status(201).json({ success: true, jobId });
-//     let output;
-
-//     job["startedAt"] = new Date();
-
-//     if (language.toLowerCase() === "cpp") {
-//       output = await executeCpp(filepath);
-//     } else if (language.toLowerCase() === "py") {
-//       output = await executePy(filepath);
-//     } else if (language.toLowerCase() === "java") {
-//       output = await executeJava(filepath);
-//     } else {
-//       return res.status(400).json({ success: false, error: "Unsupported language!" });
-//     }
-
-//     job["completedAt"] = new Date();
-//     job["status"] = "success";
-//     job["output"] = output;
-
-//     await job.save();
-
-//     console.log(job);
-//   } catch (err) {
-//     job["completedAt"] = new Date();
-//     job["status"] = "error";
-//     job["output"] = JSON.stringify(err);
-//     await job.save();
-//     console.log(job);
-//   }
-// });
-
-
-app.get("/status", async (req, res) => {
-
-  const jobId = req.query.id;
-
-  if(jobId == undefined) {
-    return res.status(400).json({success: false, error: "Missing id query param"})
-  }
-  try{
-
-  
-  const job = await  Job.findById(jobId);
-   
-
-  if(job === undefined) {
-    return res.status(400).json({success: false, error: "Invalid job id"})
-  }
-
-  return res.status(200).json({success: true, job});
-
-  }catch (err) {
-    return res.status(400).json({success: false, error: JSON.stringify(err)});
-  }
-
-})
-
-
-app.post("/run", async (req, res) => {
-  let input = req.body.input;
-  const { language = "cpp", code} = req.body;
-
-  console.log(language, code.length);
-
-  if (code === undefined) {
-    return res.status(400).json({ success: false, error: "Empty code body!" });
-    
-  }
-
-  let job;
-
-  try {
-    const filepath = await generateFile(language, code, input);
-
-    job = await new Job({ language, filepath }).save();
-    const jobId = job["_id"];
-    console.log(job);
-    res.status(201).json({ success: true, jobId });
-    let output;
-
-    job["startedAt"] = new Date();
-
-    if (language.toLowerCase() === "c") {
-      output = await executeC(filepath);
-    } else if (language.toLowerCase() === "cpp") {
-      output = await executeCpp(filepath);
-    } else if (language.toLowerCase() === "py") {
-      output = await executePy(filepath);
-    } else if (language.toLowerCase() === "Java") {
-      output = await executeJava(filepath);
-    } else if (language.toLowerCase() === "Ruby") {
-      output = await executeRuby(filepath);
-    }else if (language.toLowerCase() === "JavaScript") {
-      output = await executeJavaScript(filepath);
-    } else {
-      return res.status(400).json({ success: false, error: "Unsupported language!" });
-    }
-
-    job["completedAt"] = new Date();
-    job["status"] = "success";
-    job["output"] = output;
-
-    await job.save();
-
-    console.log(job);
-  } catch (err) {
-    job["completedAt"] = new Date();
-    job["status"] = "error";
-    job["output"] = JSON.stringify(err);
-    await job.save();
-    console.log(job);
-  }
-});
-
-
-// const codeSchema = new mongoose.Schema({
-//   code: String,
-//   language: String,
-// });
-
-// const Code = mongoose.model('Code', codeSchema);
-
-// app.post('/execute', (req, res) => {
-//   const { code, language } = req.body;
-
-//   // Save code to MongoDB
-//   const newCode = new Code({ code, language });
-//   newCode.save();
-
-//   // Execute code
-//   exec(code, (error, stdout, stderr) => {
-//     if (error) {
-//       res.send({ result: stderr || error.message });
-//     } else {
-//       res.send({ result: stdout });
-//     }
-//   });
-// });
-
-
 app.listen(port, () => {
   console.log(`Server running at ${port}`);
 });
@@ -4068,5 +3887,186 @@ app.get("/singleLearningPath/:id", async (req, res) => {
     res.status(200).send(singleLearningPath);
   } catch (error) {
     res.send(error);
+  }
+});
+
+//umadevi userdashboardapi
+app.get("/user/:email", async (req, res) => {
+  const email = req.params.email;
+
+  try {
+    // Find user by email
+    const user = await AddInstituteData.findOne({ 'InstituteBatchYear.InsituteBatch.InstituteUsersList.userEmail': email });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Extract BatchYear, InstituteName, and InstituteUsersList details for the user
+    const userDetails = user.InstituteBatchYear.map(batchYear => {
+      return batchYear.InsituteBatch.map(batch => {
+        const batchDetails = {
+          BatchYear: batchYear.BatchYear,
+          InstituteName: user.InstituteName,
+          InstituteUsersList: batch.InstituteUsersList.filter(u => u.userEmail === email)
+        };
+        return batchDetails;
+      });
+    }).flat(2); // Flatten the array
+
+    return res.status(200).json({ userDetails });
+
+  } catch (error) {
+    console.error(error.message, "userdata");
+    return res.status(500).json({
+      message: "An error occurred on the server. Please try again later.",
+    });
+  }
+});
+//sriramapis
+
+app.get("/getassessments/:selectedCategoryId", async (req, res) => {
+  try {
+    const { selectedCategoryId } = req.params;
+    const category = await Categories.findById(selectedCategoryId);
+
+    if (!category) {
+      return res.status(404).json({ msg: "Category not found", status: "failed" });
+    }
+
+    const assessments = category.Assessment;
+
+    return res.status(200).json({ assessments, status: "success" });
+  } catch (e) {
+    console.error(e.message, "/getassessments");
+    return res.status(500).json({ msg: "Internal Server Error", status: "failed" });
+  }
+});
+app.get('/assessmentquestion/:selectedCategoryId/:assessmentId', async (req, res) => {
+  const { selectedCategoryId, assessmentId } = req.params;
+
+  try {
+    // Find the learning path by ID
+    // const learningPath = await Categories.findById(selectedCategoryId);
+    const learningPath = await Categories.findById(selectedCategoryId).populate('Assessment.Qustionscount');
+
+
+    if (!learningPath) {
+      return res.status(404).json({ error: 'Learning path not found' });
+    }
+
+    // Find the topic within the learning path by ID
+    const topic = learningPath.Assessment.id(assessmentId);
+
+    if (!topic) {
+      return res.status(404).json({ error: 'Topic not found' });
+    }
+
+    // Retrieve the list of questions from the topic
+    const questions = topic.Qustionscount;
+
+    // Respond with the list of questions
+    res.json({ questions });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+//sivacode apis
+app.get("/status", async (req, res) => {
+  const jobId = req.query.id;
+
+  if (jobId == undefined) {
+    return res
+      .status(400)
+      .json({ success: false, error: "Missing id query param" });
+  }
+  try {
+    const job = await Job.findById(jobId);
+
+    if (job === undefined) {
+      return res.status(400).json({ success: false, error: "Invalid job id" });
+    }
+
+    return res.status(200).json({ success: true, job });
+  } catch (err) {
+    return res.status(400).json({ success: false, error: JSON.stringify(err) });
+  }
+});
+
+app.post("/run", async (req, res) => {
+  const { input, language = "cpp", code } = req.body;
+
+  console.log("Received request for language:", language);
+
+  if (code === undefined) {
+    return res.status(400).json({ success: false, error: "Empty code body!" });
+  }
+
+  try {
+    const filepath = await generateFile(language, code, input);
+
+    const job = await new Job({ language, filepath }).save();
+    const jobId = job._id;
+    console.log("Job created:", job);
+
+    job.startedAt = new Date();
+
+    let output;
+
+    switch (language.toLowerCase()) {
+      case "c":
+        output = await executeC(filepath);
+        break;
+      case "cpp":
+        output = await executeCpp(filepath);
+        break;
+      case "py":
+        output = await executePy(filepath);
+        break;
+      case "java":
+        output = await executeJava(filepath);
+        break;
+      case "ruby":
+        output = await executeRuby(filepath);
+        break;
+      case "javascript":
+        output = await executeJavaScript(filepath);
+        break;
+      default:
+        throw new Error("Unsupported language!");
+    }
+
+    job.completedAt = new Date();
+    job.status = "success";
+    job.output = output;
+
+    await job.save();
+
+    console.log("Job completed:", job);
+
+    // Send the response after completing the job
+    res.status(201).json({ success: true, jobId });
+  } catch (err) {
+    console.error("Error in /run API:", err);
+
+    if (err instanceof Error && err.message === "Unsupported language!") {
+      return res
+        .status(400)
+        .json({ success: false, error: "Unsupported language!" });
+    }
+
+    // Handle other errors
+    let job;
+
+    if (job) {
+      job.completedAt = new Date();
+      job.status = "error";
+      job.output = JSON.stringify(err);
+      await job.save();
+      console.log("Job with error:", job);
+    }
+
+    res.status(500).json({ success: false, error: "Internal Server Error" });
   }
 });

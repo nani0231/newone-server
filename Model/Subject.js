@@ -133,6 +133,12 @@ const subjectSchema = new mongoose.Schema({
             required:true,
             
           },
+          DescriptionImage:{
+            type:String,  
+          },
+          ConstraintsImage:{
+            type:String,
+          },
           
       }
      ]

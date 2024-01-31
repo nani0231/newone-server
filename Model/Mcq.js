@@ -43,7 +43,11 @@ const MCQschema=new mongoose.Schema({
     Explanation:{
         type:String,
         require:true
-    }
+    },
+    Image1:{
+        type:String,
+       
+    },
 
 })
 const MCQ=mongoose.model("MCQ",MCQschema);

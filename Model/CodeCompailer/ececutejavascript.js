@@ -1,25 +1,23 @@
-const { exec } = require("child_process");
-const fs = require("fs");
-const path = require("path");
+const path = require('path');
+const fs = require('fs');
+const { exec } = require('child_process');
 
-const outputPath = path.join(__dirname, "outputs");
-if (!fs.existsSync(outputPath)) {
-  fs.mkdirSync(outputPath, { recursive: true });
-}
-
-const executeJavaScript = (code) => {
+const executeJavaScript = async (filepath) => {
   return new Promise((resolve, reject) => {
-    const jobId = "output"; // You can use a unique identifier here if needed
-    const outPath = path.join(outputPath, `${jobId}.js`);
-    
-    fs.writeFileSync(outPath, code);
+    if (!filepath || typeof filepath !== 'string' || filepath.trim() === '') {
+      reject(new Error('Invalid filepath. It must be a non-empty string.'));
+      return;
+    }
 
     exec(
-      `node "${outPath}"`,
+      `node "${filepath}"`,
       (error, stdout, stderr) => {
         if (error) {
+          console.error("Execution error:", error);
+          console.error("stderr:", stderr);
           reject({ error, stderr });
         } else {
+          console.log("Execution successful. Output:", stdout);
           resolve(stdout);
         }
       }
