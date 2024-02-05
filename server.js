@@ -8,7 +8,7 @@ const { executeC } = require("./Model/CodeCompailer/excecuteC");
 const {
   executeJavaScript,
 } = require("./Model/CodeCompailer/ececutejavascript");
-const Job = require("../skillhub_server/Model/CodeCompailer/Job");
+const Job = require("./Model/CodeCompailer/Job");
 const { executePy } = require("./Model/CodeCompailer/executePy");
 const { executeRuby } = require("./Model/CodeCompailer/executeRuby");
 const { executeJava } = require("./Model/CodeCompailer/ececuteJava");
