@@ -210,7 +210,8 @@ Content-Type: application/json
 ###
 DELETE http://localhost:4010/categoriesAccessDelete/659630340092744e5e566b28/65abacbc8ae3d4a09948af74
 
-
+###
+GET http://localhost:4010/getallassessments
 
 
 

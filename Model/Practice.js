@@ -18,9 +18,9 @@ const categorySchema = new mongoose.Schema({
           questions: String,
           selectedSubject: [String],
           selectedChapters: [String],
-          questionListMcq: [String],
-          questionListParag: [String],
-          questionListCoding:[String]
+          questionListMcq: [],
+          questionListParag: [],
+          questionListCoding:[]
         },
       ],
     },

@@ -3626,9 +3626,9 @@ app.post(
       if (!assessment.Questions) {
         assessment.Questions = [];
       }
-      assessment.Questions.push({
-        questions
-      });
+      assessment.Questions.push(
+        ...questions
+      );
       await institutePath.save();
 
       return res.status(200).json({
@@ -3902,17 +3902,22 @@ app.get("/user/:email", async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // Extract BatchYear, InstituteName, and InstituteUsersList details for the user
-    const userDetails = user.InstituteBatchYear.map(batchYear => {
-      return batchYear.InsituteBatch.map(batch => {
-        const batchDetails = {
-          BatchYear: batchYear.BatchYear,
-          InstituteName: user.InstituteName,
-          InstituteUsersList: batch.InstituteUsersList.filter(u => u.userEmail === email)
-        };
-        return batchDetails;
+    let userDetails = [];
+
+    user.InstituteBatchYear.forEach(batchYear => {
+      batchYear.InsituteBatch.forEach(batch => {
+        const userInBatch = batch.InstituteUsersList.find(u => u.userEmail === email);
+        if (userInBatch) {
+          const detail = {
+            InstituteName: user.InstituteName,
+            BatchYear: batchYear.BatchYear,
+            Batch: batch.Batch,
+            InstituteUsersList: userInBatch
+          };
+          userDetails.push(detail);
+        }
       });
-    }).flat(2); // Flatten the array
+    });
 
     return res.status(200).json({ userDetails });
 
@@ -3923,6 +3928,8 @@ app.get("/user/:email", async (req, res) => {
     });
   }
 });
+
+
 //sriramapis
 
 app.get("/getassessments/:selectedCategoryId", async (req, res) => {
@@ -3942,6 +3949,34 @@ app.get("/getassessments/:selectedCategoryId", async (req, res) => {
     return res.status(500).json({ msg: "Internal Server Error", status: "failed" });
   }
 });
+
+app.get("/getallassessments", async (req, res) => {
+  try {
+    // Assuming you have a MongoDB model named 'AssessmentModel'
+    const assessments = await Categories.find({}, { Assessment: 1 });
+
+    return res.status(200).json({ assessments, status: "success" });
+  } catch (e) {
+    console.error(e.message, "/getallassessments");
+    return res.status(500).json({ msg: "Internal Server Error", status: "failed" });
+  }
+});
+
+app.get("/getassessmentscategories", async (req, res) => {
+  try {
+    // Assuming you have a MongoDB model named 'AssessmentModel'
+    const assessments = await Categories.find();
+
+    return res.status(200).json({ assessments, status: "success" });
+  } catch (e) {
+    console.error(e.message, "/getallassessments");
+    return res.status(500).json({ msg: "Internal Server Error", status: "failed" });
+  }
+});
+
+
+
+
 app.get('/assessmentquestion/:selectedCategoryId/:assessmentId', async (req, res) => {
   const { selectedCategoryId, assessmentId } = req.params;
 
@@ -4068,5 +4103,62 @@ app.post("/run", async (req, res) => {
     }
 
     res.status(500).json({ success: false, error: "Internal Server Error" });
+  }
+});
+
+//getvideoswithcombined learningpath and videopath
+app.get('/coursesvideossectionwise/:learningPathTitle', async (req, res) => {
+  try {
+    const learningPathTitle = req.params.learningPathTitle;
+console.log(learningPathTitle)
+    const learningPath = await allLearningPaths.findOne({ learningPathTitle });
+
+    if (!learningPath) {
+      return res.status(404).json({ message: 'Learning path not found' });
+    }
+    const videofolderName = learningPath.learningPathTitle;
+
+    const videos = await AddvideoData.findOne({ VideofolderName: videofolderName });
+
+    if (!videos) {
+      return res.status(404).json({ message: 'Videos not found for the learning path' });
+    }
+
+    res.json({ videos });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+});
+
+app.put("/UpdatedashbordUserPassword/:email", async (req, res) => {
+  try {
+    const email = req.params.email;
+    const password = req.body.password;
+
+    // Find the user by email
+    const user = await AddInstituteData.findOne({ 'InstituteBatchYear.InsituteBatch.InstituteUsersList.userEmail': email });
+
+    if (!user) {
+      return res.status(404).json({ msg: "User not found", status: "failed" });
+    }
+
+    // Update the password
+    user.InstituteBatchYear.forEach(batchYear => {
+      batchYear.InsituteBatch.forEach(batch => {
+        const userInBatch = batch.InstituteUsersList.find(u => u.userEmail === email);
+        if (userInBatch) {
+          userInBatch.Password = password;
+        }
+      });
+    });
+
+    // Save the updated user data
+    await user.save();
+
+    return res.status(200).json({ msg: "Password updated successfully", status: "success" });
+  } catch (e) {
+    console.error(e.message, "UpdateUserPassword");
+    return res.status(500).json({ msg: "Internal Server Error", status: "failed" });
   }
 });
