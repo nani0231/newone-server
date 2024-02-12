@@ -947,7 +947,8 @@ router.post("/addtestinpractice/:categoryId/:topicId", async (req, res) => {
       selectedSubject,
       selectedChapters,
       questionListMcq,
-      questionListParag
+      questionListParag,
+      questionListCoding,
       
     } = req.body;
     // Find the subject by ID
@@ -975,7 +976,8 @@ router.post("/addtestinpractice/:categoryId/:topicId", async (req, res) => {
       selectedSubject,
       selectedChapters,
       questionListMcq,
-      questionListParag
+      questionListParag,
+      questionListCoding
     };
 
     // Add the new MCQ to the "MCQ" array in the chapter
@@ -1259,5 +1261,28 @@ router.get('/testtopics/:categoryId', async (req, res) => {
   } catch (error) {
     console.error('Error:', error);
     res.status(500).json({ message: 'Internal Server Error' });
+  }
+});
+//getwithtitle
+router.get("/getpracticeswithTitle/:selectedAssessmentName", async (req, res) => {
+  try {
+    const name = req.params.selectedAssessmentName;
+    console.log(name, "sai");
+
+    // Corrected function name from findone to findOne
+    const category = await Practice.findOne({ name });
+
+    console.log(category);
+
+    if (!category) {
+      return res.status(404).json({ msg: "Category not found", status: "failed" });
+    }
+
+    const assessments = category.Practicetopic;
+
+    return res.status(200).json({ assessments, status: "success" });
+  } catch (e) {
+    console.error(e.message, "/getassessments");
+    return res.status(500).json({ msg: "Internal Server Error", status: "failed" });
   }
 });

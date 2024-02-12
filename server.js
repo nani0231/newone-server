@@ -8,7 +8,7 @@ const { executeC } = require("./Model/CodeCompailer/excecuteC");
 const {
   executeJavaScript,
 } = require("./Model/CodeCompailer/ececutejavascript");
-const Job = require("../skillhub_server/Model/CodeCompailer/Job");
+const Job = require("./Model/CodeCompailer/Job");
 const { executePy } = require("./Model/CodeCompailer/executePy");
 const { executeRuby } = require("./Model/CodeCompailer/executeRuby");
 const { executeJava } = require("./Model/CodeCompailer/ececuteJava");
@@ -32,6 +32,7 @@ const signupData = require("./Model/signup/signform");
 const allLearningPaths = require("./Model/LearnPath/AlllearningPaths");
 const paragMCQRouter = require('./Routes/ParagRoutes');
 const Categories = require("./Model/categories")
+const TestAttemptData = require("./Model/TestAttempt")
 const Topic = require("./Model/topic")
 const AddVideoFile = require("./Model/LearnPath/AddVideoFile");
 const app = express();
@@ -40,8 +41,8 @@ app.use(cors());
 const port = 4010;
  
 const mogoURL =
-  "mongodb+srv://badasiva22:Siva991276@cluster0.iis7lrd.mongodb.net/perfex-stack-project?retryWrites=true&w=majority";
- 
+  // "mongodb+srv://badasiva22:Siva991276@cluster0.iis7lrd.mongodb.net/perfex-stack-project?retryWrites=true&w=majority";
+  "mongodb+srv://ajayjoji1723:Ajay123@cluster0.xs7ouo1.mongodb.net/skillhub?retryWrites=true&w=majority"; 
 app.use(express.json());
 app.use(cors({ origin: "*" }));
 //initalizing mongodb to node
@@ -3949,6 +3950,51 @@ app.get("/getassessments/:selectedCategoryId", async (req, res) => {
     return res.status(500).json({ msg: "Internal Server Error", status: "failed" });
   }
 });
+//withcategorytitle
+app.get("/getassessmentswithTitle/:selectedAssessmentName", async (req, res) => {
+  try {
+    const name = req.params.selectedAssessmentName;
+    console.log(name, "sai");
+
+    // Corrected function name from findone to findOne
+    const category = await Categories.findOne({ name });
+
+    console.log(category);
+
+    if (!category) {
+      return res.status(404).json({ msg: "Category not found", status: "failed" });
+    }
+
+    const assessments = category.Assessment;
+
+    return res.status(200).json({ assessments, status: "success" });
+  } catch (e) {
+    console.error(e.message, "/getassessments");
+    return res.status(500).json({ msg: "Internal Server Error", status: "failed" });
+  }
+});
+
+app.get("/getcourseswithTitle/:selectedAssessmentName", async (req, res) => {
+  try {
+    const VideofolderName = req.params.selectedAssessmentName;
+    // Corrected function name from findone to findOne
+    const category = await AddvideoData.findOne({ VideofolderName });
+
+    console.log(category);
+
+    if (!category) {
+      return res.status(404).json({ msg: "Category not found", status: "failed" });
+    }
+
+    const assessments = category.videoFile;
+
+    return res.status(200).json({ assessments, status: "success" });
+  } catch (e) {
+    console.error(e.message, "/getassessments");
+    return res.status(500).json({ msg: "Internal Server Error", status: "failed" });
+  }
+});
+
 
 app.get("/getallassessments", async (req, res) => {
   try {
@@ -4162,3 +4208,139 @@ app.put("/UpdatedashbordUserPassword/:email", async (req, res) => {
     return res.status(500).json({ msg: "Internal Server Error", status: "failed" });
   }
 });
+//post 
+app.post('/submitAssessmentAnswers/:selectedCategoryId/:assessmentId', async (req, res) => {
+  try {
+    const { selectedCategoryId, assessmentId } = req.params;
+    const selectedCategory = await Categories.findById(selectedCategoryId);
+
+    if (!selectedCategory) {
+      return res.status(404).json({ error: 'Selected category not found' });
+    }
+
+    if (!selectedCategory.Assessment || !Array.isArray(selectedCategory.Assessment)) {
+      return res.status(404).json({ error: 'Assessment not found or not properly defined' });
+    }
+
+    const selectedAssessment = selectedCategory.Assessment.find(assessment => assessment._id.toString() === assessmentId);
+
+    if (!selectedAssessment) {
+      return res.status(404).json({ error: 'Selected assessment not found' });
+    }
+
+    const correctAnswers = {};
+    selectedAssessment.Questions.forEach(question => {
+      correctAnswers[question._id] = question[question.correctAnswer];
+
+    });
+
+    let score = 0;
+    const submittedAnswers = req.body.userAnswers;
+     for (const questionId in submittedAnswers) {
+      const submittedAnswer = submittedAnswers[questionId]
+      const correctAnswer = correctAnswers[questionId];
+console.log(submittedAnswer,correctAnswer)
+      if (submittedAnswer === correctAnswer) {
+        score += 1;
+      }
+    }
+    const userId = req.body.userId;
+    const QuestionsData = req.body.QuestionsData;
+    const QualifingScale = req.body.QualifingScale;
+
+    let existingTestAttemptData = await TestAttemptData.findOne({ UserId: userId });
+
+    if (!existingTestAttemptData) {
+      existingTestAttemptData = await TestAttemptData.create({
+        UserId: userId,
+        AssessmentTestDetails: [],
+      });
+    }
+
+    existingTestAttemptData.AssessmentTestDetails.push({
+      CategoryId: selectedCategoryId,
+      AssessmentId: assessmentId,
+      QuestionsData: QuestionsData,
+      SubmittedAnswers: submittedAnswers,
+      Score: score.toString(),
+      QualifingScale: QualifingScale,
+      SubmittedTime: new Date().getTime(),
+    });
+    await existingTestAttemptData.save();
+
+    res.json({ success: true, score });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+//gettestdetails
+app.get('/getTestAssessmentDetails/:userId/:selectedCategoryId', async (req, res) => {
+  try {
+    const { userId, selectedCategoryId } = req.params;
+
+    const latestAssessment = await TestAttemptData.aggregate([
+      { $match: { UserId: userId } },
+      { $unwind: "$AssessmentTestDetails" },
+      { $sort: { "AssessmentTestDetails.SubmittedTime": -1 } },
+      { $group: { _id: "$_id", AssessmentTestDetails: { $first: "$AssessmentTestDetails" } } }
+    ]).exec();
+
+    if (!latestAssessment || !latestAssessment[0].AssessmentTestDetails) {
+      return res.status(404).json({ error: 'Assessment details not found' });
+    }
+
+    const latestDetails = latestAssessment[0].AssessmentTestDetails;
+
+    if (latestDetails.CategoryId !== selectedCategoryId) {
+      return res.status(404).json({ error: 'Assessment details for the specified category not found' });
+    }
+
+    res.json({
+      CategoryId: latestDetails.CategoryId,
+      AssessmentId: latestDetails.AssessmentId,
+      QuestionsData: latestDetails.QuestionsData,
+      SubmittedAnswers: latestDetails.SubmittedAnswers,
+      Score: latestDetails.Score,
+      QualifingScale: latestDetails.QualifingScale,
+      SubmittedTime: latestDetails.SubmittedTime,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+//get testdetails all from descending order 
+app.get('/getTestAssessmentDetailsalldescendingorder/:userId/:selectedCategoryId', async (req, res) => {
+  try {
+    const { userId, selectedCategoryId } = req.params;
+
+    const assessmentDetails = await TestAttemptData.aggregate([
+      { $match: { UserId: userId } },
+      { $unwind: "$AssessmentTestDetails" },
+      { $sort: { "AssessmentTestDetails.SubmittedTime": -1 } },
+      { $group: { _id: "$_id", AssessmentTestDetails: { $push: "$AssessmentTestDetails" } } }
+    ]).exec();
+
+    if (!assessmentDetails || !assessmentDetails[0].AssessmentTestDetails || assessmentDetails[0].AssessmentTestDetails.length === 0) {
+      return res.status(404).json({ error: 'Assessment details not found' });
+    }
+
+    const sortedDetails = assessmentDetails[0].AssessmentTestDetails;
+
+    const matchingDetails = sortedDetails.filter(detail => detail.CategoryId === selectedCategoryId);
+
+    if (matchingDetails.length === 0) {
+      return res.status(404).json({ error: 'Assessment details for the specified category not found' });
+    }
+
+    res.json(matchingDetails);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+

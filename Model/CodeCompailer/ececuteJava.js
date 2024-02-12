@@ -13,12 +13,14 @@ const executeJava = (filePath) => {
     const outPath = path.join(outputPath, jobId);
 
     const escapedFilePath = filePath.replace(/\\/g, "\\\\"); // Replace backslashes with double backslashes
-
+    console.log("Final path:",escapedFilePath);
     // Simplified javac command
     exec(`javac "${escapedFilePath}" -d "${outPath}"`, (compileError, compileStderr) => {
       if (compileError) {
+        // console.log("IF",compileError);
         reject({ compileError, compileStderr });
       } else {
+        // console.log("else",outPath);
         // Execute the compiled Java class
         exec(
           `java --enable-preview -XX:+ShowCodeDetailsInExceptionMessages -cp "${outPath}" ${jobId}`,
