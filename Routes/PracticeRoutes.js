@@ -1286,3 +1286,46 @@ router.get("/getpracticeswithTitle/:selectedAssessmentName", async (req, res) =>
     return res.status(500).json({ msg: "Internal Server Error", status: "failed" });
   }
 });
+//getMcqs
+router.get(
+    "/getPracticeMCQById/:categoryId/:topicId/:mcqId",
+    async (req, res) => {
+      try {
+        const categoryId = req.params.categoryId;
+        const topicId = req.params.topicId;
+        const mcqId = req.params.mcqId;
+  
+        // Find the subject by ID
+        const existingcategorypath = await Practice.findById(categoryId);
+  
+        if (!existingcategorypath) {
+          return res
+            .status(404)
+            .json({ msg: "Subject not found", status: "failed" });
+        }
+  
+        // Find the specific chapter within the subject
+        const topic = existingcategorypath.Practicetopic.id(topicId);
+  
+        if (!topic) {
+          return res
+            .status(404)
+            .json({ msg: "Chapter not found", status: "failed" });
+        }
+  
+        // Find the specific MCQ within the chapter
+        const mcq = topic.Testtopic.id(mcqId);
+  
+        if (!mcq) {
+          return res.status(404).json({ msg: "MCQ not found", status: "failed" });
+        }
+  
+        return res.json({ mcq, status: "success" });
+      } catch (error) {
+        console.error(error.message);
+        return res
+          .status(500)
+          .json({ msg: "Internal Server Error", status: "failed" });
+      }
+    }
+  );

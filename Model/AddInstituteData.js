@@ -76,9 +76,9 @@ const AddInstituteData = new mongoose.Schema({
           Access:{
             type: String,
           },
-          LearningPathAccess:{
-            type:String,
-          },
+          LearningPathAccess:[],
+          PracticeCategoriesAccess:[],
+          PracticeCategoriesTopicAccess:[],
           InstituteUsersList: [
             {
               Regdid: {

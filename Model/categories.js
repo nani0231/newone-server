@@ -67,10 +67,7 @@ const Allcategories = new mongoose.Schema({
         type: String,
         require: true,
       },
-      assessmentreport: {
-        type: String,
-        require: true,
-      },
+      assessmentreport: {},
       assessmentflow: {
         type: String,
         require: true,

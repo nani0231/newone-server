@@ -2637,6 +2637,7 @@ app.delete("/categories/:id", async (req, res) => {
 // signup admin
 
 const bcrypt = require('bcrypt'); // Require bcrypt for password hashing
+const Practice = require("./Model/Practice");
 
 // ... (other code remains the same)
 
@@ -3077,13 +3078,65 @@ app.get(
   }
 );
 //access given
+
 app.post("/AccessGiven/:InstituteId/:batchyearId/:batchId", async (req, res) => {
   try {
     const InstituteId = req.params.InstituteId;
- 
     const BatchyearId = req.params.batchyearId;
     const BatchId = req.params.batchId;
-    const Access = req.body.Access;    
+    const Access = req.body.Access;
+    const LearningpathId = req.body.LearnpathId;    
+    console.log(Access,LearningpathId)
+
+    const institutePath = await AddInstituteData.findById(InstituteId);
+    if (!institutePath) {
+      return res.status(404).json({ msg: "Institute not found", status: "failed" });
+    }
+    const BatchYear = institutePath.InstituteBatchYear.id(BatchyearId);
+
+    if (!BatchYear) {
+      return res
+        .status(404)
+        .json({ msg: "BatchYear not found", status: "failed" });
+    }
+
+    const Batch = BatchYear.InsituteBatch.id(BatchId);
+
+    if (!Batch) {
+      return res
+        .status(404)
+        .json({ msg: "Batch not found", status: "failed" });
+    }
+    const existingAccessEntry = Batch.LearningPathAccess.find(entry => entry.LearningpathId === LearningpathId);
+    console.log()
+    let AccessEntry = {};
+    if (existingAccessEntry) {
+      Batch.LearningPathAccess = Batch.LearningPathAccess.filter(entry => entry.LearningpathId !== LearningpathId);
+      AccessEntry = { Access: Access, LearningpathId: LearningpathId };
+    } else {
+      AccessEntry = { Access: Access, LearningpathId: LearningpathId };
+    }
+    Batch.LearningPathAccess.push(AccessEntry);
+    await institutePath.save();
+    return res
+      .status(200)
+      .json({ msg: "Access added successfully", status: "success" });
+   
+}catch (e) {
+    console.error(e.message, "AddAccess");
+    return res
+      .status(500)
+      .json({ msg: "Internal Server Error", status: "failed" });
+  }
+})
+//accessgivenbycategory
+app.post("/AccessGivenByCategory/:InstituteId/:batchyearId/:batchId/:CategoryId", async (req, res) => {
+  try {
+    const InstituteId = req.params.InstituteId;
+    const BatchyearId = req.params.batchyearId;
+    const BatchId = req.params.batchId;
+    const CategoryId = req.params.CategoryId;
+    const AccessCategory = req.body.AccessCategory;    
   
     const institutePath = await AddInstituteData.findById(InstituteId);
 
@@ -3106,7 +3159,16 @@ app.post("/AccessGiven/:InstituteId/:batchyearId/:batchId", async (req, res) => 
         .status(404)
         .json({ msg: "Topic not found", status: "failed" });
     }
-    Batch.LearningPathAccess = Access
+    // Batch.PracticeCategoriesAccess = [{AccessCategory:AccessCategory,CategoryId:CategoryId}]
+    const existingAccessEntry = Batch.PracticeCategoriesAccess.find(entry => entry.CategoryId === CategoryId);
+    let AccessEntry = {};
+    if (existingAccessEntry) {
+      Batch.PracticeCategoriesAccess = Batch.PracticeCategoriesAccess.filter(entry => entry.CategoryId !== CategoryId);
+      AccessEntry = { AccessCategory: AccessCategory, CategoryId: CategoryId };
+    } else {
+      AccessEntry = { AccessCategory: AccessCategory, CategoryId: CategoryId };
+    }
+    Batch.PracticeCategoriesAccess.push(AccessEntry);
     await institutePath.save();
     return res
       .status(200)
@@ -3120,8 +3182,61 @@ app.post("/AccessGiven/:InstituteId/:batchyearId/:batchId", async (req, res) => 
  
 }
 );
+//accessgivenpracticetopic
+app.post("/AccessGivenByTopic/:InstituteId/:batchyearId/:batchId/:categoryId/:topicId", async (req, res) => {
+  try {
+    const InstituteId = req.params.InstituteId;
+ 
+    const BatchyearId = req.params.batchyearId;
+    const BatchId = req.params.batchId;
+    const categoryId = req.params.categoryId;
+    const topicId = req.params.topicId;
+    const PracticeTopicAccess = req.body.PracticeAccessTopic;    
+  
+    const institutePath = await AddInstituteData.findById(InstituteId);
 
+    if (!institutePath) {
+      return res.status(404).json({ msg: "Institute not found", status: "failed" });
+ 
+    }
+    const BatchYear = institutePath.InstituteBatchYear.id(BatchyearId); 
 
+    if (!BatchYear) {
+      return res
+        .status(404)
+        .json({ msg: "BatchYear not found", status: "failed" });
+    }
+
+    const Batch = BatchYear.InsituteBatch.id(BatchId);
+
+    if (!Batch) {
+      return res
+        .status(404)
+        .json({ msg: "Topic not found", status: "failed" });
+    }
+    // Batch.PracticeCategoriesTopicAccess = [{categoryId:categoryId,topicId:topicId,PracticeTopicAccess:PracticeTopicAccess}]
+    const existingAccessEntry = Batch.PracticeCategoriesTopicAccess.find(entry => entry.topicId === topicId);
+    let AccessEntry = {};
+    if (existingAccessEntry) {
+      Batch.PracticeCategoriesTopicAccess = Batch.PracticeCategoriesTopicAccess.filter(entry => entry.topicId !== topicId && entry.categoryId);
+      AccessEntry = { PracticeTopicAccess: PracticeTopicAccess, topicId: topicId ,categoryId:categoryId};
+    } else {
+      AccessEntry = { PracticeTopicAccess: PracticeTopicAccess, topicId: topicId ,categoryId:categoryId};
+    }
+    Batch.PracticeCategoriesTopicAccess.push(AccessEntry);
+    await institutePath.save();
+    return res
+      .status(200)
+      .json({ msg: "Access added successfully", status: "success" });
+  } catch (e) {
+    console.error(e.message, "AddAccess");
+    return res
+      .status(500)
+      .json({ msg: "Internal Server Error", status: "failed" });
+  }
+ 
+}
+);
 // //accessview 
 
 app.post("/AccessView/:InstituteId/:batchyearId/:batchId", async (req, res) => {
@@ -3721,7 +3836,7 @@ app.put("/userchangepassword", async (req, res) => {
   }
 });
 //update assessment
-app.put("/updateassessment/:selectedCategoryId", async (req, res) => {
+app.put("/updateassessment/:selectedCategoryId/:selectedAssessmentId", async (req, res) => {
   try {
     const {
       assessmentname,
@@ -3734,26 +3849,37 @@ app.put("/updateassessment/:selectedCategoryId", async (req, res) => {
       assessmentflow,
       assessmentadaptiveness
     } = req.body;
-    
+  // const {assessmentreport} = req.body.assessmentreport
+    console.log(req.body,"sai")
     const categoryId = req.params.selectedCategoryId;
+    const selectedAssessmentId = req.params.selectedAssessmentId;
 
     const categoryPath = await Categories.findById(categoryId);
 
     if (!categoryPath) {
       return res.status(404).json({ msg: "CategoryPath not found", status: "failed" });
     }
-    categoryPath.Assessment= {
-      assessmentname,
-      nooftimes,
-      assessmentpassword,
-      exametype,
-      cutofftype,
-      questionselection,
-      assessmentreport,
-      assessmentflow,
-      assessmentadaptiveness
-    };
-    
+
+    // Find the index of the assessment with the specified ID
+    const assessmentIndex = categoryPath.Assessment.findIndex(
+      (assessment) => assessment._id.toString() === selectedAssessmentId
+    );
+
+    if (assessmentIndex === -1) {
+      return res.status(404).json({ msg: "Assessment not found", status: "failed" });
+    }
+
+    // Update the assessment fields
+    categoryPath.Assessment[assessmentIndex].assessmentname = assessmentname;
+    categoryPath.Assessment[assessmentIndex].nooftimes = nooftimes;
+    categoryPath.Assessment[assessmentIndex].assessmentpassword = assessmentpassword;
+    categoryPath.Assessment[assessmentIndex].exametype = exametype;
+    categoryPath.Assessment[assessmentIndex].cutofftype = cutofftype;
+    categoryPath.Assessment[assessmentIndex].questionselection = questionselection;
+    categoryPath.Assessment[assessmentIndex].assessmentreport = assessmentreport;
+    categoryPath.Assessment[assessmentIndex].assessmentflow = assessmentflow;
+    categoryPath.Assessment[assessmentIndex].assessmentadaptiveness = assessmentadaptiveness;
+
     await categoryPath.save();
 
     return res
@@ -3766,12 +3892,13 @@ app.put("/updateassessment/:selectedCategoryId", async (req, res) => {
       .json({ msg: "Internal Server Error", status: "failed" });
   }
 });
+
+
 app.put(
   "/Assessmentsettings/:selectedCategoryId/:assessementId",
   async (req, res) => {
     const { selectedCategoryId, assessementId } = req.params;
     const { Enable, Restrict, Tab, assessmentTabs } = req.body;
-
     try {
       const institutePath = await Categories.findById(selectedCategoryId);
 
@@ -4231,80 +4358,71 @@ app.post('/submitAssessmentAnswers/:selectedCategoryId/:assessmentId', async (re
     const correctAnswers = {};
     selectedAssessment.Questions.forEach(question => {
       correctAnswers[question._id] = question[question.correctAnswer];
-
     });
 
-    let score = 0;
-    const submittedAnswers = req.body.userAnswers;
-     for (const questionId in submittedAnswers) {
-      const submittedAnswer = submittedAnswers[questionId]
-      const correctAnswer = correctAnswers[questionId];
-console.log(submittedAnswer,correctAnswer)
-      if (submittedAnswer === correctAnswer) {
-        score += 1;
-      }
-    }
     const userId = req.body.userId;
+    const submittedAnswers = req.body.userAnswers;
     const QuestionsData = req.body.QuestionsData;
     const QualifingScale = req.body.QualifingScale;
-
-    let existingTestAttemptData = await TestAttemptData.findOne({ UserId: userId });
-
-    if (!existingTestAttemptData) {
-      existingTestAttemptData = await TestAttemptData.create({
-        UserId: userId,
-        AssessmentTestDetails: [],
-      });
-    }
-
-    existingTestAttemptData.AssessmentTestDetails.push({
+    const userdetails = req.body.userdetails;
+    const newTestAttemptData = await TestAttemptData.create({
+      UserId: userId,
+      userdetails:userdetails,
       CategoryId: selectedCategoryId,
       AssessmentId: assessmentId,
       QuestionsData: QuestionsData,
       SubmittedAnswers: submittedAnswers,
-      Score: score.toString(),
+      Score: calculateScore(QuestionsData, correctAnswers, submittedAnswers),
       QualifingScale: QualifingScale,
       SubmittedTime: new Date().getTime(),
     });
-    await existingTestAttemptData.save();
 
-    res.json({ success: true, score });
+    res.json({ success: true, score: newTestAttemptData.Score });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
 
+// Helper function to calculate the score
+function calculateScore(questionsData, correctAnswers, submittedAnswers) {
+  let score = 0;
+
+  for (const questionId in submittedAnswers) {
+    const submittedAnswer = submittedAnswers[questionId];
+    const correctAnswer = correctAnswers[questionId];
+
+    if (submittedAnswer === correctAnswer) {
+      score += 1;
+    }
+  }
+
+  return score.toString();
+}
+
 //gettestdetails
-app.get('/getTestAssessmentDetails/:userId/:selectedCategoryId', async (req, res) => {
+app.get('/getTestAssessmentDetails/:userId/:selectedCategoryId/:selectedAssessmentId', async (req, res) => {
   try {
-    const { userId, selectedCategoryId } = req.params;
+    const { userId, selectedCategoryId, selectedAssessmentId } = req.params;
 
-    const latestAssessment = await TestAttemptData.aggregate([
-      { $match: { UserId: userId } },
-      { $unwind: "$AssessmentTestDetails" },
-      { $sort: { "AssessmentTestDetails.SubmittedTime": -1 } },
-      { $group: { _id: "$_id", AssessmentTestDetails: { $first: "$AssessmentTestDetails" } } }
-    ]).exec();
+    const latestAttempt = await TestAttemptData.findOne({ UserId: userId ,CategoryId:selectedCategoryId,AssessmentId:selectedAssessmentId})
+      .sort({ 'SubmittedTime': -1 })
+      .exec();
 
-    if (!latestAssessment || !latestAssessment[0].AssessmentTestDetails) {
-      return res.status(404).json({ error: 'Assessment details not found' });
+    if (!latestAttempt) {
+      return res.status(404).json({ error: 'User has not attempted any assessments' });
     }
-
-    const latestDetails = latestAssessment[0].AssessmentTestDetails;
-
-    if (latestDetails.CategoryId !== selectedCategoryId) {
-      return res.status(404).json({ error: 'Assessment details for the specified category not found' });
-    }
+    const { UserId,CategoryId, AssessmentId, QuestionsData, SubmittedAnswers, Score, QualifingScale, SubmittedTime } = latestAttempt;
 
     res.json({
-      CategoryId: latestDetails.CategoryId,
-      AssessmentId: latestDetails.AssessmentId,
-      QuestionsData: latestDetails.QuestionsData,
-      SubmittedAnswers: latestDetails.SubmittedAnswers,
-      Score: latestDetails.Score,
-      QualifingScale: latestDetails.QualifingScale,
-      SubmittedTime: latestDetails.SubmittedTime,
+      UserId,
+      CategoryId,
+      AssessmentId,
+      QuestionsData,
+      SubmittedAnswers,
+      Score,
+      QualifingScale,
+      SubmittedTime,
     });
   } catch (error) {
     console.error(error);
@@ -4312,35 +4430,115 @@ app.get('/getTestAssessmentDetails/:userId/:selectedCategoryId', async (req, res
   }
 });
 
+
 //get testdetails all from descending order 
-app.get('/getTestAssessmentDetailsalldescendingorder/:userId/:selectedCategoryId', async (req, res) => {
+app.get('/getTestAssessmentDetailsalldescendingorder/:userId/:selectedCategoryId/:selectedAssessmentId', async (req, res) => {
   try {
-    const { userId, selectedCategoryId } = req.params;
+    const { userId, selectedCategoryId,selectedAssessmentId } = req.params;
 
     const assessmentDetails = await TestAttemptData.aggregate([
-      { $match: { UserId: userId } },
-      { $unwind: "$AssessmentTestDetails" },
-      { $sort: { "AssessmentTestDetails.SubmittedTime": -1 } },
-      { $group: { _id: "$_id", AssessmentTestDetails: { $push: "$AssessmentTestDetails" } } }
+      { $match: { UserId: userId ,CategoryId:selectedCategoryId,AssessmentId:selectedAssessmentId} },
+      { $sort: { "SubmittedTime": -1 } },
     ]).exec();
 
-    if (!assessmentDetails || !assessmentDetails[0].AssessmentTestDetails || assessmentDetails[0].AssessmentTestDetails.length === 0) {
-      return res.status(404).json({ error: 'Assessment details not found' });
-    }
-
-    const sortedDetails = assessmentDetails[0].AssessmentTestDetails;
-
-    const matchingDetails = sortedDetails.filter(detail => detail.CategoryId === selectedCategoryId);
-
-    if (matchingDetails.length === 0) {
-      return res.status(404).json({ error: 'Assessment details for the specified category not found' });
-    }
-
-    res.json(matchingDetails);
+    res.json(assessmentDetails);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+
+//gettestattempteduserdetails
+
+// app.get("/UserDetailstestattempts/:categoryId/:assessmentId", async (req, res) => {
+//   const categoryId = req.params.categoryId;
+//   const assessmentId = req.params.assessmentId;
+//   try {
+//     const matchingRecords = await TestAttemptData.find({
+//       CategoryId: categoryId,
+//       AssessmentId: assessmentId
+//     });
+//     res.json(matchingRecords);
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).send('Internal Server Error');
+//   }
+// });
+app.get("/UserDetailstestattempts/:categoryId/:assessmentId", async (req, res) => {
+  try {
+    const categoryId = req.params.categoryId;
+    const assessmentId = req.params.assessmentId;
+
+    const assessmentDetails = await TestAttemptData.aggregate([
+      { $match: { CategoryId: categoryId, AssessmentId: assessmentId }},
+      { $sort: { "SubmittedTime": -1 } },
+    ]).exec();
+
+    if (assessmentDetails.length === 0) {
+      return res.status(404).json({ msg: "Assessment details not found for the specified category and assessment", status: "failed" });
+    }
+
+    return res.status(200).json({ assessmentDetails, status: "success" });
+  } catch (e) {
+    console.error(e.message, "Error during assessment details retrieval");
+    return res.status(500).json({ msg: "Internal Server Error", status: "failed" });
+  }
+});
+
+//getReportsbasedon AssessmentId and CategoryId and QuestionId
+app.get("/getTestDetails/:categoryId/:assessmentId/:qualifingScaleId", async (req, res) => {
+  try {
+    const { categoryId, assessmentId, qualifingScaleId } = req.params;
+
+    const assessmentDetails = await TestAttemptData.find(
+      {
+        "CategoryId": categoryId,
+        "AssessmentId": assessmentId,
+        "QualifingScale._id": qualifingScaleId,
+      },
+      {
+        userdetails: 1,
+        QuestionsData: 1,
+        SubmittedAnswers: 1,
+        Score: 1,
+        SubmittedTime: 1,
+        QualifingScale: {
+          $elemMatch: { _id: qualifingScaleId },
+        },
+      }
+    );
+
+    if (!assessmentDetails || assessmentDetails.length === 0) {
+      return res.status(404).json({ error: 'Assessment details not found' });
+    }
+
+    const formattedDetails = assessmentDetails.map((details) => {
+      const {
+        userdetails,
+        QuestionsData,
+        SubmittedAnswers,
+        Score,
+        QualifingScale,
+        SubmittedTime,
+      } = details;
+
+      return {
+        userdetails,
+        QuestionsData,
+        SubmittedAnswers,
+        Score,
+        QualifingScale: QualifingScale[0],
+        SubmittedTime,
+      };
+    });
+
+    res.json(formattedDetails);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+
 
 
